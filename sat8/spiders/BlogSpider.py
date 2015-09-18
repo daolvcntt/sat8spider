@@ -41,6 +41,7 @@ class BlogSpider(Spider):
 		blog['title'] = sel.xpath('//*[@id="box_details_news"]/div/div[1]/div[1]/div[3]/h1//text()').extract()[0]
 		blog['teaser'] = sel.xpath('//*[@id="box_details_news"]/div/div[1]/div[1]/div[4]//text()').extract()[0]
 		blog['avatar'] = sel.xpath('//*[@id="left_calculator"]/div[1]/table/tbody/tr[1]/td/img/@src').extract()[0]
+		blog['image_urls'] = [blog['avatar']]
 		blog['content'] = sel.xpath('//*[@id="left_calculator"]/div[1]').extract()[0]
 		blog['category_id'] = 1
 		blog['product_id'] = 29

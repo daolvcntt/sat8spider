@@ -11,7 +11,18 @@ SPIDER_MODULES = ['sat8.spiders']
 NEWSPIDER_MODULE = 'sat8.spiders'
 ITEM_PIPELINES = {
 	'sat8.pipelines.MySQLStorePipeline' : 100,
+	'scrapy.pipelines.images.ImagesPipeline' : 101
 }
+
+# Image download settings
+IMAGES_STORE = '/Users/alvintran/Desktop/sat8/images'
+IMAGES_MIN_HEIGHT = 110
+IMAGES_MIN_WIDTH = 110
+IMAGES_THUMBS = {
+	'small': (50, 50),
+	'big': (270, 270),
+}
+DOWNLOAD_DELAY = 5
 
 # SQL DATABASE SETTING
 MYSQL_SERVER = '127.0.0.1'

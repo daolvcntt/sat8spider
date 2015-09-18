@@ -13,6 +13,7 @@ class ProductItem(Item):
 	name = Field()
 	price = Field()
 	image = Field()
+	image_urls = Field()
 	spec = Field()
 	link = Field()
 
@@ -22,6 +23,7 @@ class BlogItem(Item):
 	teaser = Field()
 	content = Field()
 	avatar = Field()
+	image_urls = Field()
 	category_id = Field()
 	product_id = Field()
 	user_id = Field()

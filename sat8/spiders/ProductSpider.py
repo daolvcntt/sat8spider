@@ -27,9 +27,11 @@ class ProductSpider(Spider):
 
     def parse_detail_content(self, response):
         pil = ProductItemLoader(item = ProductItem(), response = response)
-        pil.add_value('link', response.url)
-        pil.add_xpath('name', '//*[@id="product_addtocart_form"]/div[2]/div[1]/div[1]/h1//text()')
         pil.add_xpath('price', '//*[@id="price"]//text()')
+        pil.add_xpath('name', '//*[@id="product_addtocart_form"]/div[2]/div[1]/div[1]/h1//text()')
         pil.add_xpath('image', '//*[@id="image"]/@src')
         pil.add_css('spec', '.content-thongso > ul')
-        yield(pil.load_item())
+        product = pil.load_item()
+        product['link'] = response.url
+        product['image_urls'] = [pil.get_value(product['image'])]
+        yield(product)
