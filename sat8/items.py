@@ -11,11 +11,22 @@ def filter_price(val):
 
 class ProductItem(Item):
 	name = Field()
-	price = Field()
+	hash_name = Field()
+	brand = Field()
 	image = Field()
 	image_urls = Field()
 	spec = Field()
 	link = Field()
+	created_at = Field()
+	updated_at = Field()
+
+class ProductPriceItem(Item):
+	name = Field()
+	price = Field()
+	source = Field()
+	link = Field()
+	created_at = Field()
+	updated_at = Field()
 
 class BlogItem(Item):
 	link = Field()
@@ -41,13 +52,6 @@ class VideoItem(Item):
 	category_id = Field()
 	product_id = Field()
 	user_id = Field()
-
-class ProductPriceItem(Item):
-	product_id = Field()
-	price = Field()
-	source = Field()
-	created_at = Field()
-	updated_at = Field()
 
 class ProductItemLoader(ItemLoader):
 	default_output_processor = TakeFirst()

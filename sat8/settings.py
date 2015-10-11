@@ -13,6 +13,29 @@ ITEM_PIPELINES = {
 	'sat8.pipelines.MySQLStorePipeline' : 100,
 	'scrapy.pipelines.images.ImagesPipeline' : 101
 }
+COOKIES_ENABLED = False
+
+# Product price rules
+PRODUCT_PRICE_RULES = {
+	'cellphones.com.vn' : {
+		'Source' : 'cellphones.com.vn',
+		'StartUrls' : 'http://cellphones.com.vn/mobile.html',
+		'LEAllow' : 'mobile\.html\?p\=[0-9]+',
+		'LERestrict' : '//div[@class="pages"]',
+		'ProductList' : '//*[@class="product-image"]/@href',
+		'Title' : '//*[@id="product_addtocart_form"]//h1/text()',
+		'Price' : '//*[@id="price"]'
+	},
+	'thegioididong.com' : {
+		'Source' : 'thegioididong.com',
+		'StartUrls' : 'https://www.thegioididong.com/dtdd?trang=20',
+		'LEAllow' : '',
+		'LERestrict' : '',
+		'ProductList' : '//*[@id="lstprods"]/li/a/@href',
+		'Title' : '//*[@id="topdetail"]/div/div/h1/text()',
+		'Price' : '//*[@id="topdetail"]/section/div/aside[2]/strong'
+	}
+}
 
 # Image download settings
 IMAGES_STORE = '/Users/alvintran/Desktop/sat8/images'
