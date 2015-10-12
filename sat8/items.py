@@ -56,3 +56,6 @@ class VideoItem(Item):
 class ProductItemLoader(ItemLoader):
 	default_output_processor = TakeFirst()
 	price_in = MapCompose(remove_tags, filter_price)
+
+class PostItemLoader(ItemLoader):
+	default_output_processor = TakeFirst()

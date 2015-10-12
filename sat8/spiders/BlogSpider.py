@@ -9,23 +9,17 @@ from time import gmtime, strftime
 class BlogSpider(Spider):
 	name = "blog_spider"
 	allowed_domains = ["sohoa.vnexpress.net"]
-	start_urls = [
-		'http://timkiem.vnexpress.net/?q=iphone+5c',
-		'http://timkiem.vnexpress.net/?q=iphone+5c&page=2',
-		'http://timkiem.vnexpress.net/?q=iphone+5c&page=3',
-		'http://timkiem.vnexpress.net/?q=iphone+5c&page=4',
-	]
 
-	# def __init__(self):
-		# self.conn = settings['MYSQL_CONN']
-		# self.cursor = self.conn.cursor()
-		# query = "SELECT * FROM roles"
-		# self.cursor.execute(query)
-		# results = self.cursor.fetchall()
-		# print results
-		# self.start_urls =  (
-			# 'http://timkiem.vnexpress.net/sohoa?q=iphone+6',
-		# )
+	def __init__(self):
+		self.conn = settings['MYSQL_CONN']
+		self.cursor = self.conn.cursor()
+		query = "SELECT * FROM roles"
+		self.cursor.execute(query)
+		results = self.cursor.fetchall()
+		print results
+		self.start_urls =  (
+			'http://timkiem.vnexpress.net/sohoa?q=iphone+6',
+		)
 
 	def parse(self, response):
 		sel = Selector(response)
