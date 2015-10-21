@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 import scrapy
 from scrapy.conf import settings
-from scrapy.spiders import CrawlSpider, Rule
+from scrapy.spiders import CrawlSpider
 from scrapy.selector import Selector
-from scrapy.linkextractors import LinkExtractor
 from sat8.items import ProductPriceItem, ProductItemLoader
 from time import gmtime, strftime
 
