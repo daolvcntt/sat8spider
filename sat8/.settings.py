@@ -38,7 +38,7 @@ PRODUCT_PRICE_RULES = {
 }
 
 # Image download settings
-IMAGES_STORE = '/Users/alvintran/Desktop/sat8/images'
+IMAGES_STORE = '/home/justin/public_html/sat8web/public/uploads'
 IMAGES_MIN_HEIGHT = 110
 IMAGES_MIN_WIDTH = 110
 IMAGES_THUMBS = {
@@ -49,10 +49,10 @@ DOWNLOAD_DELAY = 5
 
 # SQL DATABASE SETTING
 MYSQL_SERVER = '127.0.0.1'
-MYSQL_PORT = 33060
-MYSQL_USER = 'homestead'
-MYSQL_PASSWORD = 'secret'
-MYSQL_DB = 'nht-starter'
+MYSQL_PORT = 3306
+MYSQL_USER = 'root'
+MYSQL_PASSWORD = 'root'
+MYSQL_DB = 'search'
 
 # connect to the MySQL server
 try:

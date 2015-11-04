@@ -14,14 +14,19 @@ class ProductItem(Item):
 	hash_name = Field()
 	brand = Field()
 	image = Field()
+	images = Field()
 	image_urls = Field()
 	spec = Field()
 	link = Field()
 	created_at = Field()
 	updated_at = Field()
+	image_paths = Field()
+	typ = Field()
 
 class ProductPriceItem(Item):
+	title = Field()
 	name = Field()
+	brand = Field()
 	price = Field()
 	source = Field()
 	link = Field()
@@ -41,6 +46,9 @@ class BlogItem(Item):
 	published_time = Field()
 	created_at = Field()
 	updated_at = Field()
+	image_paths = Field()
+	typ = Field()
+	category = Field()
 
 class VideoItem(Item):
 	link = Field()
