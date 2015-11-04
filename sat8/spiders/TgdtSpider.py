@@ -21,6 +21,8 @@ class TgdtSpider(CrawlSpider):
 	def parse_detail_content(self, response):
 		link = response.url
 		pil = ProductItemLoader(item = ProductPriceItem(), response = response)
+		pil.add_xpath('title', '//*[@class="rowtop"]/h1//text()')
+		pil.add_xpath('brand', '//*[@class="breadcrumb"]/li[@class="brand"]/a[1]/text()')
 		pil.add_xpath('price', '//*[@id="topdetail"]/section/div/aside[2]/strong')
 		pil.add_xpath('name', '//*[@id="topdetail"]/div/div/h1/text()')
 		pil.add_value('source', 'thegioididong.com')
@@ -28,6 +30,7 @@ class TgdtSpider(CrawlSpider):
 		pil.add_value('created_at', strftime("%Y-%m-%d %H:%M:%S", gmtime()))
 		pil.add_value('updated_at', strftime("%Y-%m-%d %H:%M:%S", gmtime()))
 		item = pil.load_item()
+
 		try:
 			item['price']
 		except Exception, e:
