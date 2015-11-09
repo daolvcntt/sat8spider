@@ -7,6 +7,8 @@ from scrapy.selector import Selector
 from scrapy.linkextractors import LinkExtractor
 from sat8.items import ProductItem, ProductItemLoader
 
+from time import gmtime, strftime
+
 class ProductSpider(CrawlSpider):
     name = "product_spider"
     allowed_domains = ["cellphones.com.vn"]
@@ -30,6 +32,7 @@ class ProductSpider(CrawlSpider):
         pil.add_xpath('image', '//*[@id="image"]/@src')
         pil.add_css('spec', '.content-thongso > ul')
         pil.add_xpath('images', '//*[@class="more-views"]/ul[1]/li/a/@href')
+        pil.add_xpath('price', '//*[@id="price"]//text()');
 
         # Ảnh chi tiết sản phẩm
         sel = Selector(response)
@@ -49,6 +52,11 @@ class ProductSpider(CrawlSpider):
 
         image_urls.append(pil.get_value(product['image']))
 
+        # Price
+        price = pil.get_value(product['price'].encode('utf-8'))
+        price = re.sub('\D', '', price)
+
+        product['price']      = price
         product['link']       = response.url
         product['image_urls'] = image_urls
         product['image']      = hashlib.sha1(pil.get_value(product['image'])).hexdigest() + '.jpg'

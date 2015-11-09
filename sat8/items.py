@@ -11,6 +11,7 @@ def filter_price(val):
 
 class ProductItem(Item):
 	name = Field()
+	price = Field()
 	hash_name = Field()
 	brand = Field()
 	image = Field()
@@ -49,6 +50,7 @@ class BlogItem(Item):
 	image_paths = Field()
 	typ = Field()
 	category = Field()
+	post_type = Field()
 
 class VideoItem(Item):
 	link = Field()

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import scrapy
 import hashlib
+import re
 from scrapy.conf import settings
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.selector import Selector
@@ -10,16 +11,16 @@ from scrapy.linkextractors import LinkExtractor
 from urlparse import urlparse
 
 
-class PostGenkSpider(CrawlSpider):
+class TgddPostSpider(CrawlSpider):
 	name = "blog_spider"
-	allowed_domains = ["genk.vn"]
+	allowed_domains = ["thegioididong.com"]
 	start_urls = [
-		'http://genk.vn/dien-thoai/page-2.chn'
+		'https://www.thegioididong.com/tin-tuc?page=1',
 	]
 
 	rules = (
-		Rule (LinkExtractor(allow=('dien-thoai/page-[0-9]+\.chn')),  callback='parse_item', follow= True),
-	)
+      Rule (LinkExtractor(allow=('tin-tuc\?page\=[0-9]+'), restrict_xpaths=('//div[@class="pagination"]')), callback='parse_item', follow= True),
+  	)
 
 	def test(self, response):
 
@@ -29,7 +30,7 @@ class PostGenkSpider(CrawlSpider):
 
 		sel = Selector(response)
 
-		blog_links = sel.xpath('//*[@class="list-news-status pt5 pr10"]/h2[1]/a/@href')
+		blog_links = sel.xpath('//*[@class="homenews"]/li/a/@href')
 
 		for href in blog_links:
 			url = response.urljoin(href.extract());
@@ -38,11 +39,11 @@ class PostGenkSpider(CrawlSpider):
 	def parse_detail_content(self, response):
 		il = PostItemLoader(item = BlogItem(), response=response)
 		il.add_value('link', response.url)
-		il.add_xpath('title', '//*[@class="news-showtitle mt10"]/h1[1]//text()')
-		il.add_xpath('category', '//*[@id="sub_title"]//text()');
-		il.add_xpath('teaser', '//*[@class="init_content oh"]//text()')
-		il.add_xpath('avatar', '//*[@class="VCSortableInPreviewMode"]/div[1]/img/@src')
-		il.add_xpath('content', '//*[@id="ContentDetail"]')
+		il.add_xpath('title', '//*[@class="article "]/h1[1]//text()')
+		il.add_xpath('category', '//*[@class="actnavi"]//text()');
+		il.add_xpath('teaser', '//*[@class="article "]/h1[1]//text()')
+		il.add_xpath('avatar', '//*[@class="cur pimg"]//img/@src')
+		il.add_xpath('content', '//article')
 		il.add_value('category_id', 1)
 		il.add_value('product_id', 0)
 		il.add_value('user_id', 1)
@@ -54,5 +55,15 @@ class PostGenkSpider(CrawlSpider):
 		item['typ'] = 'blog'
 		item['image_urls'] = [il.get_value(item['avatar'])]
 		item['avatar'] = hashlib.sha1(il.get_value(item['avatar'])).hexdigest() + '.jpg'
+
+		item['content'] = re.sub('<h1>.+</h1>', '', item['content']);
+		item['content'] = re.sub('<div class="timerepeat">.+</div>', '', item['content'])
+		item['content'] = re.sub('<div class="wrap_relate">.+</div>', '', item['content'])
+		item['content'] = re.sub('<div class="contrelate d1">.+</div>', '', item['content'])
+		item['content'] = re.sub('<div class="contrelate d2">.+</div>', '', item['content'])
+
+		print item['content']
+
+		return
 
 		yield(item)

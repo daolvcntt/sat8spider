@@ -31,8 +31,9 @@ class MyImagesPipeline(ImagesPipeline):
 					created_at = time.strftime("%Y-%m-%d %H:%M:%S")
 					updated_at = time.strftime("%Y-%m-%d %H:%M:%S")
 
-					sql = "INSERT INTO product_images (product_title, image, created_at, updated_at) VALUES (%s, %s, %s, %s)"
-					cursor.execute(sql, (item['name'].encode('utf-8'), image_paths, created_at, updated_at))
+					for image in image_paths:
+						sql = "INSERT INTO product_images (product_title, image, created_at, updated_at) VALUES (%s, %s, %s, %s)"
+						cursor.execute(sql, (item['name'].encode('utf-8'), image, created_at, updated_at))
 
 				# connection is not autocommit by default. So you must commit to save
 				# your changes.
