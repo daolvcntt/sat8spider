@@ -57,13 +57,5 @@ class TgddPostSpider(CrawlSpider):
 		item['avatar'] = hashlib.sha1(il.get_value(item['avatar'])).hexdigest() + '.jpg'
 
 		item['content'] = re.sub('<h1>.+</h1>', '', item['content']);
-		item['content'] = re.sub('<div class="timerepeat">.+</div>', '', item['content'])
-		item['content'] = re.sub('<div class="wrap_relate">.+</div>', '', item['content'])
-		item['content'] = re.sub('<div class="contrelate d1">.+</div>', '', item['content'])
-		item['content'] = re.sub('<div class="contrelate d2">.+</div>', '', item['content'])
-
-		print item['content']
-
-		return
 
 		yield(item)
