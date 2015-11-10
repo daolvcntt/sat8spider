@@ -7,6 +7,8 @@ from scrapy.exceptions import DropItem
 import logging
 import time
 
+import settings
+
 class MyImagesPipeline(ImagesPipeline):
 
 	def get_media_requests(self, item, info):
@@ -23,7 +25,7 @@ class MyImagesPipeline(ImagesPipeline):
 
 		if item['typ'] == 'product' :
 
-			connection = pymysql.connect(host='localhost',user='root',password='root',db='search',charset='utf8',cursorclass=pymysql.cursors.DictCursor)
+			connection = pymysql.connect(host='localhost',user=settings.MYSQL_USER, password=settings.MYSQL_PASSWORD,db=settings.MYSQL_DB,charset='utf8',cursorclass=pymysql.cursors.DictCursor)
 			logging.info("Shit connect")
 			try:
 				with connection.cursor() as cursor:
