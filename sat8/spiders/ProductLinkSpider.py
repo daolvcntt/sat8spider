@@ -32,6 +32,8 @@ class ProductLinkSpider(CrawlSpider):
 		pil.add_xpath('title', '//*[@id="topdetail"]/div/div/h1/text()')
 		pil.add_xpath('price', '//*[@id="price"]')
 		pil.add_xpath('price', '//*[@id="topdetail"]/section/div/aside[2]/strong')
+		pil.add_xpath('brand', '//*[@class="brand"]/a[1]/text()')
+		pil.add_xpath('brand', '//*[@id="product_addtocart_form"]//h1/text()')
 		pil.add_value('source', url_parts.geturl())
 		pil.add_value('link', link)
 		pil.add_value('created_at', strftime("%Y-%m-%d %H:%M:%S", gmtime()))
