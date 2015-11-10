@@ -10,15 +10,13 @@ from scrapy.linkextractors import LinkExtractor
 from urlparse import urlparse
 
 
-class PostGenkSpider(CrawlSpider):
+class GenkReviewSpider(CrawlSpider):
 	name = "blog_spider"
 	allowed_domains = ["genk.vn"]
-	start_urls = [
-		'http://genk.vn/dien-thoai/page-2.chn'
-	]
+	start_urls = [ 'http://genk.vn/review/page-2.htm']
 
 	rules = (
-		Rule (LinkExtractor(allow=('dien-thoai/page-[0-9]+\.chn')),  callback='parse_item', follow= True),
+		Rule (LinkExtractor(allow=('review/page-[0-9]+\.htm')),  callback='parse_item', follow= True),
 	)
 
 	def test(self, response):
@@ -29,7 +27,8 @@ class PostGenkSpider(CrawlSpider):
 
 		sel = Selector(response)
 
-		blog_links = sel.xpath('//*[@class="list-news-status pt5 pr10"]/h2[1]/a/@href')
+		blog_links = sel.xpath('//*[@class="list-news-other nob"]/li/h3[1]/a/@href')
+
 
 		for href in blog_links:
 			url = response.urljoin(href.extract());
@@ -46,7 +45,7 @@ class PostGenkSpider(CrawlSpider):
 		il.add_value('category_id', 1)
 		il.add_value('product_id', 0)
 		il.add_value('user_id', 1)
-		il.add_value('post_type', 'post')
+		il.add_value('post_type', 'review')
 		il.add_value('created_at', strftime("%Y-%m-%d %H:%M:%S"))
 		il.add_value('updated_at', strftime("%Y-%m-%d %H:%M:%S"))
 		item = il.load_item()

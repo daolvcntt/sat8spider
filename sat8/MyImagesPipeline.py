@@ -7,6 +7,8 @@ from scrapy.exceptions import DropItem
 import logging
 import time
 
+import settings
+
 class MyImagesPipeline(ImagesPipeline):
 
 	def get_media_requests(self, item, info):
@@ -23,7 +25,7 @@ class MyImagesPipeline(ImagesPipeline):
 
 		if item['typ'] == 'product' :
 
-			connection = pymysql.connect(host='localhost',user='root',password='stingdau2015',db='fp_searchon',charset='utf8',cursorclass=pymysql.cursors.DictCursor)
+			connection = pymysql.connect(host='localhost',user=settings.MYSQL_USER, password=settings.MYSQL_PASSWORD,db=settings.MYSQL_DB,charset='utf8',cursorclass=pymysql.cursors.DictCursor)
 			logging.info("Shit connect")
 			try:
 				with connection.cursor() as cursor:
@@ -31,8 +33,9 @@ class MyImagesPipeline(ImagesPipeline):
 					created_at = time.strftime("%Y-%m-%d %H:%M:%S")
 					updated_at = time.strftime("%Y-%m-%d %H:%M:%S")
 
-					sql = "INSERT INTO product_images (product_title, image, created_at, updated_at) VALUES (%s, %s, %s, %s)"
-					cursor.execute(sql, (item['name'].encode('utf-8'), image_paths, created_at, updated_at))
+					for image in image_paths:
+						sql = "INSERT INTO product_images (product_title, image, created_at, updated_at) VALUES (%s, %s, %s, %s)"
+						cursor.execute(sql, (item['name'].encode('utf-8'), image, created_at, updated_at))
 
 				# connection is not autocommit by default. So you must commit to save
 				# your changes.
