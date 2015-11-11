@@ -38,6 +38,8 @@ class BlogSpider(CrawlSpider):
 		il.add_value('user_id', 1)
 		il.add_value('created_at', strftime("%Y-%m-%d %H:%M:%S", gmtime()))
 		il.add_value('updated_at', strftime("%Y-%m-%d %H:%M:%S", gmtime()))
+		il.add_value('post_type', 'review')
+
 		item = il.load_item()
 
 		if 'avatar' in item:
