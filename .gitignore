@@ -2,4 +2,3 @@ images
 sat8/settings.py
 sat8/spiders/*.pyc
 sat8/*.pyc
-scrapy.cfg
