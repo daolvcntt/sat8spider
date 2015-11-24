@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import logging
+import cgi;
+import re;
 from scrapy.conf import settings
+from elasticsearch import Elasticsearch
 
 # Class kết nối mysql
 class MySQLStorePipeline(object):
@@ -18,8 +21,9 @@ class MySQLStorePipeline(object):
 			if result:
 				logging.info("Item already stored in db: %s" % item['link'])
 			else:
+				content = re.sub('<a.*?>.*?</a>', '', item['content']);
 				sql = "INSERT INTO posts (title, content, type, category, teaser, avatar, link, category_id, product_id, user_id, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-				self.cursor.execute(sql, (item['title'].encode('utf-8'), item['content'].encode('utf-8'), item['post_type'] ,item['category'].encode('utf-8') ,item['teaser'].encode('utf-8'), item['avatar'], item['link'], item['category_id'], item['product_id'], item['user_id'], item['created_at'], item['updated_at']))
+				self.cursor.execute(sql, (item['title'].encode('utf-8'), content, item['post_type'] ,item['category'].encode('utf-8') ,item['teaser'].encode('utf-8'), item['avatar'], item['link'], item['category_id'], item['product_id'], item['user_id'], item['created_at'], item['updated_at']))
 				self.conn.commit()
 				logging.info("Item stored in db: %s" % item['link'])
 
