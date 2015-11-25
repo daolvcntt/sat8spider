@@ -24,6 +24,20 @@ class ProductItem(Item):
 	image_paths = Field()
 	typ = Field()
 
+	def toJson(self):
+		return {
+			"name" : self["name"],
+			"price" : self["price"],
+			"hash_name" : self["hash_name"],
+			"brand" : self["brand"],
+			"image" : self["image"],
+			"images" : self["images"],
+			"spec" : self["spec"],
+			"link" : self["link"],
+			"created_at" : self["created_at"],
+			"updated_at" : self["updated_at"]
+		}
+
 class ProductPriceItem(Item):
 	title = Field()
 	name = Field()
@@ -33,6 +47,18 @@ class ProductPriceItem(Item):
 	link = Field()
 	created_at = Field()
 	updated_at = Field()
+
+	def toJson(self):
+		return {
+			"title" : self["title"],
+			"name" : self["name"],
+			"brand" : self["brand"],
+			"price" : self["price"],
+			"source" : self["source"],
+			"link" : self["link"],
+			"created_at" : self["created_at"],
+			"updated_at" : self["updated_at"]
+		}
 
 class BlogItem(Item):
 	link = Field()
@@ -52,6 +78,22 @@ class BlogItem(Item):
 	category = Field()
 	post_type = Field()
 
+	def toJson(self):
+		return {
+			"link" : self["link"],
+			"title" : self["title"],
+			"teaser" : self["teaser"],
+			"content" : self["content"],
+			"avatar" : self["avatar"],
+			"category_id" : self["category_id"],
+			"product_id" : self["product_id"],
+			"user_id" : self["user_id"],
+			"created_at" : self["created_at"],
+			"updated_at" : self["updated_at"],
+			"category" : self["category"],
+			"post_type" : self["post_type"]
+		}
+
 class VideoItem(Item):
 	link = Field()
 	title = Field()
@@ -62,6 +104,19 @@ class VideoItem(Item):
 	category_id = Field()
 	product_id = Field()
 	user_id = Field()
+
+	def toJson(self):
+		return {
+			"link" : self["link"],
+			"title" : self["title"],
+			"description" : self["description"],
+			"embed" : self["embed"],
+			"thumbnail" : self["embed"],
+			"author" : self["author"],
+			"category_id" : self["category_id"],
+			"product_id" : self["product_id"],
+			"user_id" : self["user_id"]
+		}
 
 class ProductItemLoader(ItemLoader):
 	default_output_processor = TakeFirst()

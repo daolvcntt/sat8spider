@@ -6,6 +6,7 @@ from scrapy.selector import Selector
 from sat8.items import ProductPriceItem, ProductItemLoader
 from time import gmtime, strftime
 
+
 class TgdtSpider(CrawlSpider):
 	name = "TgdtSpider"
 	allowed_domains = ['thegioididong.com', ]
