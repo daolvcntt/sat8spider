@@ -38,7 +38,7 @@ class MySQLStorePipeline(object):
 
 				# Insert to elasticsearch
 				postId = self.cursor.lastrowid
-				self.post.insertOrUpdate(postId, item)
+				self.post.insertOrUpdate(postId, item.toJson())
 				logging.info("Item stored in db: %s" % item['link'])
 
 		elif spider.name == 'product_spider':
@@ -54,7 +54,7 @@ class MySQLStorePipeline(object):
 				self.conn.commit()
 
 				productId = self.cursor.lastrowid
-				self.product.insertOrUpdate(productId, item)
+				self.product.insertOrUpdate(productId, item.toJson())
 
 				logging.info("Item stored in db: %s" % item['link'])
 
