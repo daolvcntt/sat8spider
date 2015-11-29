@@ -9,35 +9,37 @@ from sat8.items import ProductItem, ProductItemLoader
 
 from time import gmtime, strftime
 
-class NguyenKimLaptopProductSpider(CrawlSpider):
+class TgddLaptopSpider(CrawlSpider):
     name = "product_spider"
-    allowed_domains = ["www.nguyenkim.com"]
-    start_urls = ['http://www.nguyenkim.com/may-tinh-xach-tay/',]
+    allowed_domains = ["thegioididong.com"]
+    start_urls = ['https://www.thegioididong.com/laptop?trang=1','https://www.thegioididong.com/may-tinh-bang?trang=1']
     rules = (
-        Rule (LinkExtractor(allow=('may-tinh-xach-tay/page-[0-9]+/'), restrict_xpaths=('//div[@class="pagination"]')), callback='parse_item', follow= True),
+        Rule (LinkExtractor(allow=('laptop\?trang\=[0-9]+')), callback='parse_item', follow= True),
+        Rule (LinkExtractor(allow=('may-tinh-bang\?trang\=[0-9]+')), callback='parse_item', follow= True),
     )
 
     images = [];
 
     def parse_item(self, response):
     	sel = Selector(response)
-        product_links = sel.xpath('//*[@class="ty-grid-list__image"]/a[1]/@href');
+        product_links = sel.xpath('//*[@id="lstprods"]/li/a[1]/@href');
+
         for pl in product_links:
             url = response.urljoin(pl.extract());
             yield scrapy.Request(url, callback = self.parse_detail_content)
 
     def parse_detail_content(self, response):
         pil = ProductItemLoader(item = ProductItem(), response = response)
-        pil.add_xpath('name', '//*[@class="block_product-title"]/text()')
-        pil.add_xpath('image', '//*[@class="border-image-wrap cm-preview-wrapper"]/a[1]/img/@data-original')
-        pil.add_xpath('spec', '//*[@id="content_product_tab_58"]')
-        pil.add_xpath('images', '//*[@class="  pict imagelazyload"]/@data-original')
-        pil.add_xpath('price', '//*[@class="actual-price"]/span/span/span[1]/text()')
-        pil.add_xpath('brand', '//*[@id="breadcrumbs_320"]/div/a[4]/text()')
+        pil.add_xpath('name', '//*[@class="rowtop"]/h1//text()')
+        pil.add_xpath('image', '//*[@class="boxright"]/aside[1]/img/@src')
+        pil.add_xpath('spec', '//*[@class="parameter"]')
+        # pil.add_xpath('images', '//*[@class="owl-item"]/div/a/img/@src')
+        pil.add_xpath('price', '//*[@class="price_sale"]/strong[1]/text()');
+        pil.add_xpath('brand', '//*[@class="breadcrumb"]/li[@class="brand"]/a/text()');
 
         # Ảnh chi tiết sản phẩm
         sel = Selector(response)
-        images = sel.xpath('//*[@class="cm-item-gallery float-left"]/a/img/@data-original');
+        images = sel.xpath('//*[@id="characteristics"]/div/a/img/@data-src');
 
         dataImage = []
         image_urls = []

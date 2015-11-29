@@ -10,6 +10,7 @@ def filter_price(val):
 	return val if val.isdigit() else None
 
 class ProductItem(Item):
+	id = Field()
 	name = Field()
 	price = Field()
 	hash_name = Field()
@@ -26,6 +27,7 @@ class ProductItem(Item):
 
 	def toJson(self):
 		return {
+			"id" : self["id"],
 			"name" : self["name"],
 			"price" : self["price"],
 			"hash_name" : self["hash_name"],
@@ -39,6 +41,7 @@ class ProductItem(Item):
 		}
 
 class ProductPriceItem(Item):
+	id = Field()
 	title = Field()
 	name = Field()
 	brand = Field()
@@ -50,6 +53,7 @@ class ProductPriceItem(Item):
 
 	def toJson(self):
 		return {
+			"id" : self["id"],
 			"title" : self["title"],
 			"name" : self["name"],
 			"brand" : self["brand"],
@@ -61,6 +65,7 @@ class ProductPriceItem(Item):
 		}
 
 class BlogItem(Item):
+	id = Field()
 	link = Field()
 	title = Field()
 	teaser = Field()
@@ -80,6 +85,7 @@ class BlogItem(Item):
 
 	def toJson(self):
 		return {
+			"id" : self["id"],
 			"link" : self["link"],
 			"title" : self["title"],
 			"teaser" : self["teaser"],

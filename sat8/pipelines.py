@@ -38,6 +38,7 @@ class MySQLStorePipeline(object):
 
 				# Insert to elasticsearch
 				postId = self.cursor.lastrowid
+				item["id"] = postId
 				self.post.insertOrUpdate(postId, item.toJson())
 				logging.info("Item stored in db: %s" % item['link'])
 
@@ -54,6 +55,7 @@ class MySQLStorePipeline(object):
 				self.conn.commit()
 
 				productId = self.cursor.lastrowid
+				item["id"] = productId
 				self.product.insertOrUpdate(productId, item.toJson())
 
 				logging.info("Item stored in db: %s" % item['link'])
@@ -82,6 +84,7 @@ class MySQLStorePipeline(object):
 
 					priceId = self.cursor.lastrowid
 
+				item["id"] = priceId
 				# Insert to elasticsearch
 				self.price.insertOrUpdate(priceId, item.toJson())
 
