@@ -12,9 +12,15 @@ from urlparse import urlparse
 class TechzReviewSpider(CrawlSpider):
 	name = "blog_spider"
 	allowed_domains = ["www.techz.vn"]
-	start_urls = [ 'http://www.techz.vn/C/dien-thoai-rv']
+	start_urls = [
+		'http://www.techz.vn/C/dien-thoai-rv',
+		'http://www.techz.vn/C/danh-gia-may-tinh-bang',
+		'http://www.techz.vn/C/danh-gia'
+	]
 
 	rules = (
+		Rule (LinkExtractor(allow=('page/[0-9]+')),  callback='parse_item', follow= True),
+		Rule (LinkExtractor(allow=('page/[0-9]+')),  callback='parse_item', follow= True),
 		Rule (LinkExtractor(allow=('page/[0-9]+')),  callback='parse_item', follow= True),
 	)
 

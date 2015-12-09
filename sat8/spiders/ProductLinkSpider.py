@@ -11,8 +11,9 @@ from urlparse import urlparse
 class ProductLinkSpider(CrawlSpider):
 	name = "product_link"
 	allowed_domains = ['thegioididong.com', 'cellphones.com.vn', ]
-	start_urls = ['https://www.thegioididong.com/dtdd?trang=20', 'http://cellphones.com.vn/mobile.html', ]
+	start_urls = ['https://www.thegioididong.com/dtdd?trang=1', 'http://cellphones.com.vn/mobile.html', ]
 	rules = (
+		Rule (LinkExtractor(allow=('mobile\.html\?p\=[0-9]+'), restrict_xpaths=('//div[@class="pages"]')), callback='parse_item', follow= True),
 		Rule (LinkExtractor(allow=('mobile\.html\?p\=[0-9]+'), restrict_xpaths=('//div[@class="pages"]')), callback='parse_item', follow= True),
 	)
 
