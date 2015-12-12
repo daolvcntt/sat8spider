@@ -28,7 +28,7 @@ class TechzReviewSpider(CrawlSpider):
 
 		sel = Selector(response)
 
-		blog_links = sel.xpath('//*[@id="reviews-list"]/ul/li[@class="li"]/a/@href')
+		blog_links = sel.xpath('//*[@id="reviews-list"]/ul[1]/li[1]/a/@href')
 
 		for href in blog_links:
 			url = response.urljoin(href.extract());
@@ -37,9 +37,9 @@ class TechzReviewSpider(CrawlSpider):
 	def parse_detail_content(self, response):
 		il = PostItemLoader(item = BlogItem(), response=response)
 		il.add_value('link', response.url)
-		il.add_xpath('title', '//*[@class="header container"]/h1[1]//text()')
-		il.add_value('category', 'Review');
-		il.add_xpath('teaser', '//*[@class="desciption-top-detail"]/p[1]//text()')
+		il.add_xpath('title', '//*[@id="admwrapper"]/header/h1//text()')
+		il.add_value('category', '//*[@id="admwrapper"]/header/div[4]/p/span/a[2]/strong//text()');
+		il.add_xpath('teaser', '//*[@id="primary-content"]/div[1]/p//text()')
 		il.add_css('avatar', '.news-relation-top-detail p img[src]')
 		il.add_xpath('content', '//*[@class="news-relation-top-detail"]')
 		il.add_value('category_id', 1)

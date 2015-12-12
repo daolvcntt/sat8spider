@@ -28,7 +28,10 @@ class MySQLStorePipeline(object):
 			self.cursor.execute(query, (item['link']))
 			result = self.cursor.fetchone()
 
+			postId = 0
+
 			if result:
+				postId = result['id']
 				logging.info("Item already stored in db: %s" % item['link'])
 			else:
 				content = re.sub('<a.*?>.*?</a>', '', item['content']);
@@ -38,27 +41,32 @@ class MySQLStorePipeline(object):
 
 				# Insert to elasticsearch
 				postId = self.cursor.lastrowid
-				item["id"] = postId
-				self.post.insertOrUpdate(postId, item.toJson())
-				logging.info("Item stored in db: %s" % item['link'])
+
+			item["id"] = postId
+			self.post.insertOrUpdate(postId, item.toJson())
+			logging.info("Item stored in db: %s" % item['link'])
 
 		elif spider.name == 'product_spider':
 			query = "SELECT * FROM products WHERE hash_name = %s"
 			self.cursor.execute(query, (item['hash_name']))
 			result = self.cursor.fetchone()
 
+			productId = 0;
+
 			if result:
+				productId = result['id']
+
 				logging.info("Item already stored in db: %s" % item['name'])
 			else:
 				sql = "INSERT INTO products (name, price, hash_name, brand, image, images, link, spec, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 				self.cursor.execute(sql, (item['name'].encode('utf-8'), item['price'], item['hash_name'].encode('utf-8'), item['brand'].encode('utf-8'), item['image'].encode('utf-8'), item['images'] ,item['link'], item['spec'], item['created_at'], item['updated_at']))
 				self.conn.commit()
+				logging.info("Item stored in db: %s" % item['link'])
 
 				productId = self.cursor.lastrowid
-				item["id"] = productId
-				self.product.insertOrUpdate(productId, item.toJson())
 
-				logging.info("Item stored in db: %s" % item['link'])
+			item["id"] = productId
+			self.product.insertOrUpdate(productId, item.toJson())
 
 		else:
 			if item['price'] > 0:
