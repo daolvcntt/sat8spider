@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+import sys
+import logging
+import pymysql.cursors
+from time import gmtime, strftime
+from scrapy.utils.log import configure_logging
+
 # SQL DATABASE SETTING
 MYSQL_SERVER = '127.0.0.1'
 MYSQL_PORT = 3306
