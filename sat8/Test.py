@@ -8,9 +8,9 @@ from scrapy.utils.log import configure_logging
 # SQL DATABASE SETTING
 MYSQL_SERVER = '127.0.0.1'
 MYSQL_PORT = 3306
-MYSQL_USER = 'root'
-MYSQL_PASSWORD = 'root'
-MYSQL_DB = 'search'
+MYSQL_USER = 'fp_searchon'
+MYSQL_PASSWORD = 'bM3JTT5bpjnM5Ls7'
+MYSQL_DB = 'fp_searchon'
 
 # connect to the MySQL server
 try:
