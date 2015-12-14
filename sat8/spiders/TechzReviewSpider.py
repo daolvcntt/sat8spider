@@ -28,7 +28,7 @@ class TechzReviewSpider(CrawlSpider):
 
 		sel = Selector(response)
 
-		blog_links = sel.xpath('//*[@id="reviews-list"]/ul[1]/li[1]/a/@href')
+		blog_links = sel.xpath('//*[@id="reviews-list"]/ul[1]/li/a/@href')
 
 		for href in blog_links:
 			url = response.urljoin(href.extract());
@@ -49,6 +49,15 @@ class TechzReviewSpider(CrawlSpider):
 		il.add_value('created_at', strftime("%Y-%m-%d %H:%M:%S"))
 		il.add_value('updated_at', strftime("%Y-%m-%d %H:%M:%S"))
 		item = il.load_item()
+
+		if 'content' not in item:
+			il.add_xpath('content', '//*[@id="primary-content"]')
+
+		if 'category' not in item:
+			il.add_xpath('category', '//*[@id="admwrapper"]/header/div[4]/div/span/h2/a/strong//text()')
+
+		item = il.load_item()
+
 		item['typ'] = 'blog'
 
 		if 'avatar' in item:
