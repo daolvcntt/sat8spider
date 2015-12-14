@@ -21,7 +21,7 @@ class BlogSpider(CrawlSpider):
 	def parse_item(self, response):
 		sel = Selector(response)
 		# if response.url == 'genk.vn':
-		blog_links = sel.xpath('//*[@id="news_home"]/li/div/div[1]/a/@href')
+		blog_links = sel.xpath('//*[@class="title_news"]/a[1]/@href')
 
 		# else:
 			# blog_links = sel.xpath('//*[@id="admWrapsite"]//h2/a/@href')
