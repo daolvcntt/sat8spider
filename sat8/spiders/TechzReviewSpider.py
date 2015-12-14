@@ -56,6 +56,14 @@ class TechzReviewSpider(CrawlSpider):
 		if 'category' not in item:
 			il.add_xpath('category', '//*[@id="admwrapper"]/header/div[4]/div/span/h2/a/strong//text()')
 
+		if 'avatar' not in item:
+			il.add_xpath('avatar', '//*[@id="article_content"]//img[1]/@src')
+
+		item = il.load_item()
+
+		if 'avatar' not in item:
+			il.add_xpath('avatar', '//*[@id="admwrapper"]/header/img/@src')
+
 		item = il.load_item()
 
 		item['typ'] = 'blog'
