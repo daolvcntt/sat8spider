@@ -41,7 +41,7 @@ class TechzReviewSpider(CrawlSpider):
 		il.add_xpath('category', '//*[@id="admwrapper"]/header/div[4]/p/span/a[2]/strong//text()');
 		il.add_xpath('teaser', '//*[@id="primary-content"]/div[1]/p//text()')
 		il.add_css('avatar', '.news-relation-top-detail p img[src]')
-		il.add_xpath('content', '//*[@class="news-relation-top-detail"]')
+		il.add_xpath('content', '//*[@class="article-content"]')
 		il.add_value('category_id', 1)
 		il.add_value('product_id', 0)
 		il.add_value('user_id', 1)
