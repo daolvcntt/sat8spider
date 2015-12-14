@@ -9,21 +9,19 @@ from time import gmtime, strftime
 from scrapy.linkextractors import LinkExtractor
 from urlparse import urlparse
 
-class MasterPostSpider(CrawlSpider):
-	name = ""
-	allowed_domains = []
-	start_urls = []
+class TintucCnSpider(CrawlSpider):
+	name = "blog_spider"
+	allowed_domains = ["tintuccongnghe.net", ]
+	start_urls = ['http://www.tintuccongnghe.net/news/may-tinh']
 
-	rules = ()
-
-	def __init__(self, *a, **kw):
-
-    		super(MySpider, self).__init__(*a, **kw)
+	rules = (
+		Rule (LinkExtractor(allow=('news/may-tinh/page/[0-9]+'), restrict_xpaths=('//div[@class="pagination"]')), callback='parse_item', follow= True),
+	)
 
 	def parse_item(self, response):
 		sel = Selector(response)
 		# if response.url == 'genk.vn':
-		blog_links = sel.xpath('//*[@class="cate_content"]/article/header/h1/a/@href')
+		blog_links = sel.xpath('//*[@class="entry-title"]/a[1]/@href')
 
 		# else:
 			# blog_links = sel.xpath('//*[@id="admWrapsite"]//h2/a/@href')
@@ -35,16 +33,14 @@ class MasterPostSpider(CrawlSpider):
 	def parse_detail_content(self, response):
 		il = PostItemLoader(item = BlogItem(), response=response)
 		il.add_value('link', response.url)
-		il.add_xpath('title', '//*[@class="the-article-header"]/h1//text()')
-		il.add_xpath('teaser', '//*[@class="the-article-summary"]//text()')
-		# il.add_xpath('teaser', '//*[@class="short_intro txt_666"]/text()')
-		il.add_xpath('avatar', '//*[@class="the-article-body"]//img[1]/@src')
-		# il.add_xpath('avatar', '//*[@id="article_content"]/div/div[1]/img/@src')
-		il.add_xpath('content', '//*[@class="the-article-body"]')
+		il.add_xpath('title', '//*[@class="entry-title"]//text()')
+		il.add_xpath('teaser', '//*[@class="entry-content"]/p[1]//text()')
+		il.add_xpath('avatar', '//*[@class="entry-content"]//img[1]/@src')
+		il.add_xpath('content', '//*[@class="entry-content"]')
 		il.add_value('category_id', 1)
 		il.add_value('product_id', 0)
 		il.add_value('user_id', 1)
-		il.add_value('category', 'Điện thoại');
+		il.add_xpath('category', '//*[@class="entry-category"]/span/a[2]/text()');
 		il.add_value('created_at', strftime("%Y-%m-%d %H:%M:%S", gmtime()))
 		il.add_value('updated_at', strftime("%Y-%m-%d %H:%M:%S", gmtime()))
 		il.add_value('post_type', 'post')

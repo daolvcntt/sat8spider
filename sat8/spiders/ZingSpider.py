@@ -9,16 +9,14 @@ from time import gmtime, strftime
 from scrapy.linkextractors import LinkExtractor
 from urlparse import urlparse
 
-class MasterPostSpider(CrawlSpider):
-	name = ""
-	allowed_domains = []
-	start_urls = []
+class ZingSpider(CrawlSpider):
+	name = "blog_spider"
+	allowed_domains = ["news.zing.vn", ]
+	start_urls = ['http://news.zing.vn/cong-nghe/dien-thoai.html']
 
-	rules = ()
-
-	def __init__(self, *a, **kw):
-
-    		super(MySpider, self).__init__(*a, **kw)
+	rules = (
+		Rule (LinkExtractor(allow=('cong-nghe/dien-thoai/trang[0-9]+.html')), callback='parse_item', follow= True),
+	)
 
 	def parse_item(self, response):
 		sel = Selector(response)
@@ -44,7 +42,7 @@ class MasterPostSpider(CrawlSpider):
 		il.add_value('category_id', 1)
 		il.add_value('product_id', 0)
 		il.add_value('user_id', 1)
-		il.add_value('category', 'Điện thoại');
+		il.add_value('category', 'Dien thoai');
 		il.add_value('created_at', strftime("%Y-%m-%d %H:%M:%S", gmtime()))
 		il.add_value('updated_at', strftime("%Y-%m-%d %H:%M:%S", gmtime()))
 		il.add_value('post_type', 'post')
