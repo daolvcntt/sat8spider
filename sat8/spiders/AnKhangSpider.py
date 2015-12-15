@@ -13,7 +13,7 @@ class AnKhangSpider(CrawlSpider):
     name = "product_link"
     allowed_domains = ["www.ankhang.vn"]
     start_urls = [
-        'http://www.ankhang.vn/may-tinh-xach-tay_dm167.html',
+        'http://www.ankhang.vn/may-tinh-xach-tay_dm167.html?page=25',
     ]
     rules = (
         Rule (LinkExtractor(allow=('may-tinh-xach-tay_dm167.html\?page=[0-9]+')), callback='parse_item', follow= True),
