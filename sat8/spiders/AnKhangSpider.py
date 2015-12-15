@@ -16,7 +16,7 @@ class AnKhangSpider(CrawlSpider):
         'http://www.ankhang.vn/may-tinh-xach-tay_dm167.html',
     ]
     rules = (
-        Rule (LinkExtractor(allow=('may-tinh-xach-tay_dm167.html?page=[0-9]+')), callback='parse_item', follow= True),
+        Rule (LinkExtractor(allow=('may-tinh-xach-tay_dm167.html\?page=[0-9]+')), callback='parse_item', follow= True),
     )
 
     images = [];
@@ -34,7 +34,7 @@ class AnKhangSpider(CrawlSpider):
 
         pil = ProductItemLoader(item = ProductPriceItem(), response = response)
         pil.add_xpath('title', '//*[@id="overview"]/h1/text()')
-        pil.add_xpath('price', '//*[@id="price_detail"]//[@class="img_price_full"]/text()')
+        pil.add_xpath('price', '//*[@id="price_detail"]/div[@class="img_price_full"]/text()')
         pil.add_value('source', url_parts.netloc)
         pil.add_value('link', link)
 
@@ -48,9 +48,5 @@ class AnKhangSpider(CrawlSpider):
         product['created_at'] = strftime("%Y-%m-%d %H:%M:%S")
         product['updated_at'] = strftime("%Y-%m-%d %H:%M:%S")
         product['brand']      = (pil.get_value(product['title'])).split(" ")[0]
-
-        print product
-
-        return
 
         yield(product)
