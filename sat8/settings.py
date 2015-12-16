@@ -9,6 +9,8 @@ from scrapy.utils.log import configure_logging
 
 BOT_NAME = 'sat8'
 
+DOWNLOAD_TIMEOUT = 300
+
 USER_AGENT = 'Googlebot/2.1 (+http://www.google.com/bot.html)'
 
 SPIDER_MODULES = ['sat8.spiders']
