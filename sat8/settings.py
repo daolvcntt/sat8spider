@@ -37,7 +37,7 @@ PRODUCT_PRICE_RULES = {
 	},
 	'thegioididong.com' : {
 		'Source' : 'thegioididong.com',
-		'StartUrls' : 'https://www.thegioididong.com/dtdd?trang=20',
+		'StartUrls' : 'https://www.thegioididong.com/dtdd?trang=1',
 		'LEAllow' : '',
 		'LERestrict' : '',
 		'ProductList' : '//*[@id="lstprods"]/li/a/@href',
