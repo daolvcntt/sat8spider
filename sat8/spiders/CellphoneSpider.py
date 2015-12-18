@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
 import scrapy
-from scrapy.conf import settings
-from scrapy.spiders import CrawlSpider, Rule
-from scrapy.selector import Selector
+from scrapy.spiders import Rule
 from scrapy.linkextractors import LinkExtractor
-from sat8.items import ProductPriceItem, ProductItemLoader
-from time import gmtime, strftime
-from urlparse import urlparse
+from AbstractPriceSpider import AbstractPriceSpider
 
-class CellphoneSpider(CrawlSpider):
+class CellphoneSpider(AbstractPriceSpider):
 	name = "CellphoneSpider"
 	allowed_domains = ['cellphones.com.vn', ]
 	start_urls = ['http://cellphones.com.vn/mobile.html', ]
@@ -16,28 +12,9 @@ class CellphoneSpider(CrawlSpider):
 		Rule (LinkExtractor(allow=('mobile\.html\?p\=[0-9]+'), restrict_xpaths=('//div[@class="pages"]')), callback='parse_item', follow= True),
 	)
 
-	def parse_item(self, response):
-		sel = Selector(response)
-		product_links = sel.xpath('//*[@class="product-image"]/@href')
-		product_links.append(sel.xpath('//*[@id="lstprods"]/li/a/@href'))
-		for href in product_links:
-			url = response.urljoin(href.extract());
-			yield scrapy.Request(url, callback = self.parse_detail_content)
-
-	def parse_detail_content(self, response):
-		link = response.url
-		url_parts = urlparse(link)
-		pil = ProductItemLoader(item = ProductPriceItem(), response = response)
-		pil.add_xpath('name', '//*[@id="product_addtocart_form"]//h1/text()')
-		pil.add_xpath('price', '//*[@id="price"]')
-		pil.add_value('source', url_parts.geturl())
-		pil.add_value('link', link)
-		pil.add_value('created_at', strftime("%Y-%m-%d %H:%M:%S", gmtime()))
-		pil.add_value('updated_at', strftime("%Y-%m-%d %H:%M:%S", gmtime()))
-		item = pil.load_item()
-		try:
-			item['price']
-		except Exception, e:
-			print "Price is null"
-		else:
-			yield(item)
+	configs = {
+		'product_links' : '//*[@class="product-image"]/@href',
+		'source' : 'cellphones.com.vn',
+		'title' : '//*[@id="product_addtocart_form"]//h1/text()',
+		'price' : '//*[@id="price"]'
+	}
