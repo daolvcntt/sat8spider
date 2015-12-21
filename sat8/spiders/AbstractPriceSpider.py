@@ -38,7 +38,7 @@ class AbstractPriceSpider(CrawlSpider):
         price = pil.get_value(product['price'].encode('utf-8'))
         price = re.sub('\D', '', price)
 
-        arrStringShit = ['ĐTDĐ', 'Điện thoại di dộng', 'Điện thoại']
+        arrStringShit = ['ĐTDĐ', 'Điện thoại di dộng', 'Điện thoại', 'Mua Trả Góp', 'Điện Thoại']
         for strValue in arrStringShit:
             product['title'] = re.sub(strValue.decode('utf-8'), '', product['title'])
 
