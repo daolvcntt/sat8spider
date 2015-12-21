@@ -9,8 +9,9 @@ from scrapy.utils.log import configure_logging
 
 BOT_NAME = 'sat8'
 
-DOWNLOAD_TIMEOUT = 300
+REACTOR_THREADPOOL_MAXSIZE = 20
 
+DOWNLOAD_TIMEOUT = 300
 
 USER_AGENT = 'Googlebot/2.1 (+http://www.google.com/bot.html)'
 
@@ -47,7 +48,7 @@ PRODUCT_PRICE_RULES = {
 }
 
 # Image download settings
-IMAGES_STORE = '/home/justin/public_html/sat8web/public/uploads'
+IMAGES_STORE = env.IMAGES_STORE
 IMAGES_MIN_HEIGHT = 110
 IMAGES_MIN_WIDTH = 110
 IMAGES_THUMBS = {
