@@ -12,7 +12,8 @@ from time import gmtime, strftime
 class TgddLaptopSpider(CrawlSpider):
     name = "product_spider"
     allowed_domains = ["thegioididong.com"]
-    start_urls = ['https://www.thegioididong.com/laptop?trang=1','https://www.thegioididong.com/may-tinh-bang?trang=1']
+    start_urls = ['https://www.thegioididong.com/laptop?trang=1',
+    'https://www.thegioididong.com/may-tinh-bang?trang=1']
     rules = (
         Rule (LinkExtractor(allow=('laptop\?trang\=[0-9]+')), callback='parse_item', follow= True),
         Rule (LinkExtractor(allow=('may-tinh-bang\?trang\=[0-9]+')), callback='parse_item', follow= True),

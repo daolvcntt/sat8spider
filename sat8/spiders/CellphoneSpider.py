@@ -5,7 +5,7 @@ from scrapy.linkextractors import LinkExtractor
 from AbstractPriceSpider import AbstractPriceSpider
 
 class CellphoneSpider(AbstractPriceSpider):
-	name = "CellphoneSpider"
+	name = "product_link"
 	allowed_domains = ['cellphones.com.vn', ]
 	start_urls = ['http://cellphones.com.vn/mobile.html', ]
 	rules = (
