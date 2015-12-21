@@ -18,7 +18,7 @@ class LazadaSpider(AbstractPriceSpider):
 
     configs = {
         'product_links' : '//*[@class="cm-gallery-item cm-item-gallery"]/a/@href',
-        'source' : 'banhangtructuyen.vn',
+        'source' : 'www.lazada.vn',
         'title' : '//*[@id="prod_title"]/text()',
         'price' : '//*[@id="special_price_box"]/text()'
     }
