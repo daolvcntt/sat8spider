@@ -11,6 +11,8 @@ BOT_NAME = 'sat8'
 
 REACTOR_THREADPOOL_MAXSIZE = 20
 
+CONCURRENT_REQUESTS = 10
+
 DOWNLOAD_TIMEOUT = 300
 
 USER_AGENT = 'Googlebot/2.1 (+http://www.google.com/bot.html)'
