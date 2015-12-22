@@ -10,10 +10,10 @@ from scrapy.utils.log import configure_logging
 BOT_NAME = 'sat8'
 
 REACTOR_THREADPOOL_MAXSIZE = 20
-
-CONCURRENT_REQUESTS = 10
-
-DOWNLOAD_TIMEOUT = 300
+CONCURRENT_REQUESTS        = 100
+RETRY_ENABLED              = False
+DOWNLOAD_TIMEOUT           = 300
+COOKIES_ENABLED            = False
 
 USER_AGENT = 'Googlebot/2.1 (+http://www.google.com/bot.html)'
 
@@ -25,7 +25,7 @@ ITEM_PIPELINES = {
 	'sat8.MyImagesPipeline.MyImagesPipeline' : 101
 	# 'sat8.ElasticsearchPipelines.ElasticsearchPipelines' : 102
 }
-COOKIES_ENABLED = False
+
 
 # Product price rules
 PRODUCT_PRICE_RULES = {
