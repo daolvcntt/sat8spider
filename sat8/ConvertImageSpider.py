@@ -27,7 +27,7 @@ class ConvertImageSpider():
       for pl in image_links:
          url = pl.extract();
          imageName = hashlib.sha1(url).hexdigest() + '.jpg'
-         urllib.urlretrieve(url, settings['IMAGES_STORE'] + '/' + imageName)
+         urllib.urlretrieve(url, settings['IMAGES_STORE'] + '/posts/' + imageName)
 
    def setText(self, text):
       self.text = text
