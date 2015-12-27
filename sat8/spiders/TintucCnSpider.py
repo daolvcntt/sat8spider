@@ -35,18 +35,21 @@ class TintucCnSpider(CrawlSpider):
 		il.add_value('link', response.url)
 		il.add_xpath('title', '//*[@class="entry-title"]//text()')
 		il.add_xpath('teaser', '//*[@class="entry-content"]/p[1]//text()')
-		il.add_xpath('avatar', '//*[@class="entry-content"]//img[1]/@src')
+		il.add_xpath('avatar', '//*[@class="entry-content" or @class="post-content"]//img[1]/@src')
 		il.add_xpath('content', '//*[@class="entry-content"]')
 		il.add_value('category_id', 1)
 		il.add_value('product_id', 0)
 		il.add_value('user_id', 1)
-		il.add_xpath('category', '//*[@class="entry-category"]/span/a[2]/text()');
+		il.add_xpath('category', '//*[@class="entry-category"]/span/a[2 or 1]/text()');
 		il.add_value('created_at', strftime("%Y-%m-%d %H:%M:%S"))
 		il.add_value('updated_at', strftime("%Y-%m-%d %H:%M:%S"))
 		il.add_value('post_type', 'post')
 
 		item = il.load_item()
 		item['typ'] = 'blog'
+
+		print item['category']
+		return
 
 		if 'avatar' in item:
 			item['image_urls'] = [il.get_value(item['avatar'])]
