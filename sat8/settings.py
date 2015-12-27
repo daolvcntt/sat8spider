@@ -22,7 +22,8 @@ NEWSPIDER_MODULE = 'sat8.spiders'
 ITEM_PIPELINES = {
 	'sat8.pipelines.MySQLStorePipeline' : 100,
 	# 'scrapy.pipelines.images.ImagesPipeline' : 101,
-	'sat8.MyImagesPipeline.MyImagesPipeline' : 101
+	'sat8.MyImagesPipeline.MyImagesPipeline' : 101,
+	'sat8.ConverImagePipeline.ConverImagePipeline' : 102
 	# 'sat8.ElasticsearchPipelines.ElasticsearchPipelines' : 102
 }
 

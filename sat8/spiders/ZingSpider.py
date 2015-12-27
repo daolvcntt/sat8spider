@@ -43,8 +43,8 @@ class ZingSpider(CrawlSpider):
 		il.add_value('product_id', 0)
 		il.add_value('user_id', 1)
 		il.add_value('category', 'Dien thoai');
-		il.add_value('created_at', strftime("%Y-%m-%d %H:%M:%S", gmtime()))
-		il.add_value('updated_at', strftime("%Y-%m-%d %H:%M:%S", gmtime()))
+		il.add_value('created_at', strftime("%Y-%m-%d %H:%M:%S"))
+		il.add_value('updated_at', strftime("%Y-%m-%d %H:%M:%S"))
 		il.add_value('post_type', 'post')
 
 		item = il.load_item()
