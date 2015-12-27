@@ -41,8 +41,8 @@ class TintucCnSpider(CrawlSpider):
 		il.add_value('product_id', 0)
 		il.add_value('user_id', 1)
 		il.add_xpath('category', '//*[@class="entry-category"]/span/a[2]/text()');
-		il.add_value('created_at', strftime("%Y-%m-%d %H:%M:%S", gmtime()))
-		il.add_value('updated_at', strftime("%Y-%m-%d %H:%M:%S", gmtime()))
+		il.add_value('created_at', strftime("%Y-%m-%d %H:%M:%S"))
+		il.add_value('updated_at', strftime("%Y-%m-%d %H:%M:%S"))
 		il.add_value('post_type', 'post')
 
 		item = il.load_item()
@@ -50,6 +50,6 @@ class TintucCnSpider(CrawlSpider):
 
 		if 'avatar' in item:
 			item['image_urls'] = [il.get_value(item['avatar'])]
-			item['avatar'] = hashlib.md5(il.get_value(item['avatar']).encode('utf-8')).hexdigest() + '.jpg'
+			item['avatar'] = hashlib.sha1(il.get_value(item['avatar']).encode('utf-8')).hexdigest() + '.jpg'
 
 		yield(item)
