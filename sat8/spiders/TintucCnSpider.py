@@ -48,9 +48,6 @@ class TintucCnSpider(CrawlSpider):
 		item = il.load_item()
 		item['typ'] = 'blog'
 
-		print item['category']
-		return
-
 		if 'avatar' in item:
 			item['image_urls'] = [il.get_value(item['avatar'])]
 			item['avatar'] = hashlib.sha1(il.get_value(item['avatar']).encode('utf-8')).hexdigest() + '.jpg'
