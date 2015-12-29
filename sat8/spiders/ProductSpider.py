@@ -53,6 +53,9 @@ class ProductSpider(CrawlSpider):
         image_urls.append(pil.get_value(product['image']))
 
         # Price
+        if 'price' not in product:
+            product['price'] = '0'
+
         price = pil.get_value(product['price'].encode('utf-8'))
         price = re.sub('\D', '', price)
 
