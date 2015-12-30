@@ -25,9 +25,9 @@ class YoutubePipeline(object):
       self.video = ProductVideoES()
 
    def process_item(self, item, spider):
-      print 'YOUTUBE', "\n\n"
-      print item, "--------------\n\n---------------"
       if spider.name == 'product_link' or spider.name == 'product_spider':
+         print 'YOUTUBE', "\n\n"
+         print item, "--------------\n\n---------------"
          self.getVideo(item['name'][:20])
          return item
 
