@@ -27,8 +27,9 @@ class YoutubePipeline(object):
    def process_item(self, item, spider):
       print 'YOUTUBE', "\n\n"
       print item, "--------------\n\n---------------"
-      self.getVideo(item['name'][:20])
-      return item
+      if spider.name == 'product_link' or spider.name == 'product_spider':
+         self.getVideo(item['name'][:20])
+         return item
 
    def getVideo(self, keyword):
 
@@ -36,7 +37,11 @@ class YoutubePipeline(object):
 
       # Call the search.list method to retrieve results matching the specified
       # query term.
-      keyword = "đánh giá " + keyword.encode('utf-8') + " việt nam"
+
+      try:
+         keyword = "đánh giá " + keyword.encode('utf-8') + " việt nam"
+      finally:
+         keyword = "đánh giá " + keyword + " việt nam"
 
       search_response = youtube.search().list(
          q=keyword,
@@ -95,7 +100,7 @@ class YoutubePipeline(object):
          })
 
    def getVideosByProducts(self):
-      self.cursor.execute("SELECT keyword FROM products")
+      self.cursor.execute("SELECT keyword FROM products WHERE keyword != '' OR keyword != NULL")
       products = self.cursor.fetchall()
 
       for product in products:

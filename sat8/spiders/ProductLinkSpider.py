@@ -39,6 +39,4 @@ class ProductLinkSpider(CrawlSpider):
 		product = pil.load_item()
 		product['brand'] = (pil.get_value(product['title'])).split(" ")[0]
 
-		print product
-		return
 		yield(product)

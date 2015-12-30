@@ -42,6 +42,7 @@ class ProductItem(Item):
 
 class ProductPriceItem(Item):
 	id = Field()
+	name = Field()
 	title = Field()
 	brand = Field()
 	price = Field()
