@@ -23,7 +23,7 @@ ITEM_PIPELINES = {
 	'sat8.pipelines.MySQLStorePipeline' : 100,
 	'sat8.MyImagesPipeline.MyImagesPipeline' : 102,
 	'sat8.ConverImagePipeline.ConverImagePipeline' : 102,
-	'sat8.YoutubePipeline.YoutubePipeline' : 101,
+	# 'sat8.YoutubePipeline.YoutubePipeline' : 101,
 }
 
 
