@@ -38,9 +38,9 @@ class AbstractPriceSpider(CrawlSpider):
         price = pil.get_value(product['price'].encode('utf-8'))
         price = re.sub('\D', '', price)
 
-        arrStringShit = ['ĐTDĐ', 'Điện thoại di dộng', 'Điện thoại', 'Mua Trả Góp', 'Điện Thoại', 'Máy tính bảng', 'Máy tính xách tay', 'Máy tính', 'máy tính', 'Laptop', 'laptop', 'Di Động']
-        for strValue in arrStringShit:
-            product['title'] = re.sub(strValue.decode('utf-8'), '', product['title'])
+        # arrStringShit = ['ĐTDĐ', 'Điện thoại di dộng', 'Điện thoại', 'Mua Trả Góp', 'Điện Thoại', 'Máy tính bảng', 'Máy Tính Bảng' ,'Máy tính xách tay', 'Máy tính', 'máy tính', 'Laptop', 'laptop', 'Di Động']
+        # for strValue in arrStringShit:
+        #     product['title'] = re.sub(strValue.decode('utf-8'), '', product['title'])
 
         product['title'] = product['title'].strip(' \t\n\r')
         product['title'] = product['title'].strip()
@@ -49,6 +49,9 @@ class AbstractPriceSpider(CrawlSpider):
         product['price']      = price
         product['created_at'] = strftime("%Y-%m-%d %H:%M:%S")
         product['updated_at'] = strftime("%Y-%m-%d %H:%M:%S")
-        product['brand']      = (pil.get_value(product['title'])).split(" ")[0]
+        # product['brand']      = (pil.get_value(product['title'])).split(" ")[0]
+
+        # print product
+        # return
 
         yield(product)

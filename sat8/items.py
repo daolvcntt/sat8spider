@@ -55,7 +55,6 @@ class ProductPriceItem(Item):
 		return {
 			"id" : self["id"],
 			"title" : self["title"],
-			"brand" : self["brand"],
 			"price" : int(self["price"]),
 			"source" : self["source"],
 			"link" : self["link"],

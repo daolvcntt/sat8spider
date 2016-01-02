@@ -85,8 +85,8 @@ class MySQLStorePipeline(object):
 					priceId = result['id']
 
 				else:
-					sql = "INSERT INTO product_prices (title, brand, price, source, link, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-					self.cursor.execute(sql, (item['title'].encode('utf-8'), item['brand'], item['price'], item['source'].encode('utf-8'), item['link'].encode('utf-8'), item['created_at'], item['updated_at']))
+					sql = "INSERT INTO product_prices (title, price, source, link, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s)"
+					self.cursor.execute(sql, (item['title'].encode('utf-8'), item['price'], item['source'].encode('utf-8'), item['link'].encode('utf-8'), item['created_at'], item['updated_at']))
 					self.conn.commit()
 					logging.info("Item stored in db: %s" % item['link'])
 
