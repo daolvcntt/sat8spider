@@ -9,7 +9,7 @@ class AnKhangSpider(AbstractPriceSpider):
     allowed_domains = ["www.ankhang.vn"]
 
     start_urls = [
-        'http://www.ankhang.vn/may-tinh-xach-tay_dm167.html?page=25',
+        'http://www.ankhang.vn/may-tinh-xach-tay_dm167.html?page=1',
     ]
 
     rules = (
