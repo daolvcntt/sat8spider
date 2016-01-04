@@ -41,10 +41,11 @@ class MySQLStorePipeline(object):
 
 				# Insert to elasticsearch
 				postId = self.cursor.lastrowid
+				logging.info("Item stored in db: %s" % item['link'])
 
 			item["id"] = postId
 			self.post.insertOrUpdate(postId, item.toJson())
-			logging.info("Item stored in db: %s" % item['link'])
+
 
 		elif spider.name == 'product_spider':
 			query = "SELECT * FROM products WHERE hash_name = %s"
