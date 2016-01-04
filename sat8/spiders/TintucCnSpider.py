@@ -11,6 +11,7 @@ class TintucCnSpider(AbstractPostSpider):
 	start_urls = [
 		'http://www.tintuccongnghe.net/news/may-tinh',
 		'http://www.tintuccongnghe.net/news/dien-thoai'
+		'http://www.tintuccongnghe.net/news/iphone-7-khong-con-dai-nhua-nua-va-se-chong-nuoc.ttcn'
 	]
 
 	rules = (

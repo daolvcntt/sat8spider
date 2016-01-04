@@ -49,6 +49,7 @@ class AbstractPostSpider(CrawlSpider):
             item['image_urls'] = [il.get_value(item['avatar'])]
             item['avatar'] = hashlib.sha1(il.get_value(item['avatar'])).hexdigest() + '.jpg'
 
+
         # print item
         # return
 
