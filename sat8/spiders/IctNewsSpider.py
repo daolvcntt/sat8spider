@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
 import hashlib
-import re
 from scrapy.conf import settings
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.selector import Selector
@@ -10,27 +9,21 @@ from time import gmtime, strftime
 from scrapy.linkextractors import LinkExtractor
 from urlparse import urlparse
 
-
-class TgddPostSpider(CrawlSpider):
+class IctNewsSpider(CrawlSpider):
 	name = "blog_spider"
-	allowed_domains = ["thegioididong.com"]
-	start_urls = [
-		'https://www.thegioididong.com/tin-tuc?page=1',
-	]
+	allowed_domains = ["ictnews.vn"]
+	start_urls = [ 'http://ictnews.vn/the-gioi-so/di-dong', 'http://ictnews.vn/the-gioi-so/may-tinh']
 
 	rules = (
-      Rule (LinkExtractor(allow=('tin-tuc\?page\=[0-9]+'), restrict_xpaths=('//div[@class="pagination"]')), callback='parse_item', follow= True),
-  	)
-
-	def test(self, response):
-
-		print "CHinh no"
+		Rule (LinkExtractor(allow=('http://ictnews.vn/the-gioi-so/di-dong/trang-[0-9]+')),  callback='parse_item', follow= True),
+		Rule (LinkExtractor(allow=('http://ictnews.vn/the-gioi-so/may-tinh/trang-[0-9]+')),  callback='parse_item', follow= True),
+	)
 
 	def parse_item(self, response):
 
 		sel = Selector(response)
 
-		blog_links = sel.xpath('//*[@class="homenews"]/li/a/@href')
+		blog_links = sel.xpath('//*[@id="listArticles"]/div/a[1]/@href')
 
 		for href in blog_links:
 			url = response.urljoin(href.extract());
@@ -39,11 +32,11 @@ class TgddPostSpider(CrawlSpider):
 	def parse_detail_content(self, response):
 		il = PostItemLoader(item = BlogItem(), response=response)
 		il.add_value('link', response.url)
-		il.add_xpath('title', '//*[@class="article "]/h1[1]//text()')
-		il.add_xpath('category', '//*[@class="actnavi"]//text()');
-		il.add_xpath('teaser', '//*[@class="article "]/h1[1]//text()')
-		il.add_xpath('avatar', '//*[@class="cur pimg"]//img/@src')
-		il.add_xpath('content', '//article')
+		il.add_xpath('title', '//*[@class="article-brand"]/h1[1]//text()')
+		il.add_xpath('category', '//*[@class="article-brand"]//a[@class="channelname"]/text()');
+		il.add_xpath('teaser', '//*[@class="article-brand"]//h2[@class="pSapo"]//text()')
+		il.add_xpath('avatar', '//*[@class="content-detail"]//img[1]/@src')
+		il.add_xpath('content', '//*[@class="content-detail"]')
 		il.add_value('category_id', 1)
 		il.add_value('product_id', 0)
 		il.add_value('user_id', 1)
@@ -55,7 +48,5 @@ class TgddPostSpider(CrawlSpider):
 		item['typ'] = 'blog'
 		item['image_urls'] = [il.get_value(item['avatar'])]
 		item['avatar'] = hashlib.sha1(il.get_value(item['avatar'])).hexdigest() + '.jpg'
-
-		item['content'] = re.sub('<h1>.+</h1>', '', item['content']);
 
 		yield(item)

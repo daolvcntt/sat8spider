@@ -42,6 +42,7 @@ class ProductItem(Item):
 
 class ProductPriceItem(Item):
 	id = Field()
+	name = Field()
 	title = Field()
 	brand = Field()
 	price = Field()
@@ -54,7 +55,6 @@ class ProductPriceItem(Item):
 		return {
 			"id" : self["id"],
 			"title" : self["title"],
-			"brand" : self["brand"],
 			"price" : int(self["price"]),
 			"source" : self["source"],
 			"link" : self["link"],

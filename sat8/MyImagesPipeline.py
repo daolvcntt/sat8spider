@@ -26,7 +26,6 @@ class MyImagesPipeline(ImagesPipeline):
 		if item['typ'] == 'product' :
 
 			connection = pymysql.connect(host='localhost',user=settings.MYSQL_USER, password=settings.MYSQL_PASSWORD,db=settings.MYSQL_DB,charset='utf8',cursorclass=pymysql.cursors.DictCursor)
-			logging.info("Shit connect")
 			try:
 				with connection.cursor() as cursor:
 					# Create a new record
