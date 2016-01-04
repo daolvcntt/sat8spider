@@ -2,30 +2,19 @@
 import sys
 import logging
 import pymysql.cursors
-import env
 from time import gmtime, strftime
 from scrapy.utils.log import configure_logging
 
-
 BOT_NAME = 'sat8'
-
-REACTOR_THREADPOOL_MAXSIZE = 20
-CONCURRENT_REQUESTS        = 100
-RETRY_ENABLED              = False
-DOWNLOAD_TIMEOUT           = 300
-COOKIES_ENABLED            = False
-
-USER_AGENT = 'Googlebot/2.1 (+http://www.google.com/bot.html)'
 
 SPIDER_MODULES = ['sat8.spiders']
 NEWSPIDER_MODULE = 'sat8.spiders'
 ITEM_PIPELINES = {
-	'sat8.pipelines.MySQLStorePipeline' : 100,
-	'sat8.MyImagesPipeline.MyImagesPipeline' : 102,
-	'sat8.ConverImagePipeline.ConverImagePipeline' : 102,
-	# 'sat8.YoutubePipeline.YoutubePipeline' : 101,
+	# 'sat8.pipelines.MySQLStorePipeline' : 100,
+	# 'scrapy.pipelines.images.ImagesPipeline' : 101,
+	'sat8.ElasticsearchPipelines.ElasticsearchPipelines' : 102
 }
-
+COOKIES_ENABLED = False
 
 # Product price rules
 PRODUCT_PRICE_RULES = {
@@ -40,7 +29,7 @@ PRODUCT_PRICE_RULES = {
 	},
 	'thegioididong.com' : {
 		'Source' : 'thegioididong.com',
-		'StartUrls' : 'https://www.thegioididong.com/dtdd?trang=1',
+		'StartUrls' : 'https://www.thegioididong.com/dtdd?trang=20',
 		'LEAllow' : '',
 		'LERestrict' : '',
 		'ProductList' : '//*[@id="lstprods"]/li/a/@href',
@@ -50,21 +39,21 @@ PRODUCT_PRICE_RULES = {
 }
 
 # Image download settings
-IMAGES_STORE = env.IMAGES_STORE
+IMAGES_STORE = '/home/justin/public_html/sat8web/public/uploads'
 IMAGES_MIN_HEIGHT = 110
 IMAGES_MIN_WIDTH = 110
 IMAGES_THUMBS = {
-	'small': (120, 120),
+	'small': (50, 50),
 	'big': (270, 270),
 }
-DOWNLOAD_DELAY = 0.5
+DOWNLOAD_DELAY = 5
 
 # SQL DATABASE SETTING
-MYSQL_SERVER   = env.MYSQL_SERVER
-MYSQL_PORT     = env.MYSQL_PORT
-MYSQL_USER     = env.MYSQL_USER
-MYSQL_PASSWORD = env.MYSQL_PASSWORD
-MYSQL_DB       = env.MYSQL_DB
+MYSQL_SERVER = '127.0.0.1'
+MYSQL_PORT = 3306
+MYSQL_USER = 'root'
+MYSQL_PASSWORD = 'root'
+MYSQL_DB = 'search'
 
 # connect to the MySQL server
 try:

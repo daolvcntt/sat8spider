@@ -9,34 +9,38 @@ from sat8.items import ProductItem, ProductItemLoader
 
 from time import gmtime, strftime
 
-class ProductSpider(CrawlSpider):
+class TgddLaptopSpider(CrawlSpider):
     name = "product_spider"
-    allowed_domains = ["cellphones.com.vn"]
-    start_urls = ['http://cellphones.com.vn/mobile.html',]
+    allowed_domains = ["thegioididong.com"]
+    start_urls = ['https://www.thegioididong.com/laptop?trang=1',
+    'https://www.thegioididong.com/may-tinh-bang?trang=1']
     rules = (
-        Rule (LinkExtractor(allow=('mobile\.html\?p\=[0-9]+'), restrict_xpaths=('//div[@class="pages"]')), callback='parse_item', follow= True),
+        Rule (LinkExtractor(allow=('laptop\?trang\=[0-9]+')), callback='parse_item', follow= True),
+        Rule (LinkExtractor(allow=('may-tinh-bang\?trang\=[0-9]+')), callback='parse_item', follow= True),
     )
 
     images = [];
 
     def parse_item(self, response):
     	sel = Selector(response)
-        product_links = sel.xpath('//*[@class="product-image"]/@href');
+        product_links = sel.xpath('//*[@id="lstprods"]/li/a[1]/@href');
+
         for pl in product_links:
             url = response.urljoin(pl.extract());
             yield scrapy.Request(url, callback = self.parse_detail_content)
 
     def parse_detail_content(self, response):
         pil = ProductItemLoader(item = ProductItem(), response = response)
-        pil.add_xpath('name', '//*[@id="product_addtocart_form"]/div[2]/div[1]/div[1]/h1//text()')
-        pil.add_xpath('image', '//*[@id="image"]/@src')
-        pil.add_css('spec', '.content-thongso > ul')
-        pil.add_xpath('images', '//*[@class="more-views"]/ul[1]/li/a/@href')
-        pil.add_xpath('price', '//*[@id="price"]//text()');
+        pil.add_xpath('name', '//*[@class="rowtop"]/h1//text()')
+        pil.add_xpath('image', '//*[@class="boxright"]/aside[1]/img/@src')
+        pil.add_xpath('spec', '//*[@class="parameter"]')
+        # pil.add_xpath('images', '//*[@class="owl-item"]/div/a/img/@src')
+        pil.add_xpath('price', '//*[@class="price_sale"]/strong[1]/text()');
+        pil.add_xpath('brand', '//*[@class="breadcrumb"]/li[@class="brand"]/a/text()');
 
         # Ảnh chi tiết sản phẩm
         sel = Selector(response)
-        images = sel.xpath('//*[@class="more-views"]/ul[1]/li/a/@href');
+        images = sel.xpath('//*[@id="characteristics"]/div/a/img/@data-src');
 
         dataImage = []
         image_urls = []
@@ -53,9 +57,6 @@ class ProductSpider(CrawlSpider):
         image_urls.append(pil.get_value(product['image']))
 
         # Price
-        if 'price' not in product:
-            product['price'] = '0'
-
         price = pil.get_value(product['price'].encode('utf-8'))
         price = re.sub('\D', '', price)
 
@@ -65,7 +66,7 @@ class ProductSpider(CrawlSpider):
         product['image']      = hashlib.sha1(pil.get_value(product['image'])).hexdigest() + '.jpg'
         product['images']     = ',' . join(dataImage)
         product['hash_name']  = hashlib.md5(pil.get_value(product['name']).encode('utf-8')).hexdigest()
-        product['brand']      = (pil.get_value(product['name'])).split(" ")[0]
+        product['brand']      = pil.get_value(product['brand'])
         product['typ']        = 'product'
         product['created_at'] = strftime("%Y-%m-%d %H:%M:%S")
         product['updated_at'] = strftime("%Y-%m-%d %H:%M:%S")
