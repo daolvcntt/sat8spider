@@ -15,6 +15,9 @@ class AbstractPriceSpider(CrawlSpider):
     start_urls = []
     rules = ()
 
+    # def parse(self, response):
+    #     return self.parse_item(response)
+
     def parse_item(self, response):
     	sel = Selector(response)
         product_links = sel.xpath(self.configs['product_links']);
@@ -55,3 +58,10 @@ class AbstractPriceSpider(CrawlSpider):
         # return
 
         yield(product)
+
+
+    def parse_start_url(self, response):
+        print '------------------------------', "\n"
+        print response.url
+        yield scrapy.Request(response.url, callback=self.parse_item)
+        print '------------------------------', "\n\n"

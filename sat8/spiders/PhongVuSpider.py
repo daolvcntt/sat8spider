@@ -16,7 +16,7 @@ class PhongVuSpider(AbstractPriceSpider):
     rules = (
         Rule (LinkExtractor(allow=('http://phongvu.vn/may-tinh/may-tinh-xach-tay-laptop-1670/cpage\-[0-9]+\.html')), callback='parse_item', follow= True),
         Rule (LinkExtractor(allow=('http://phongvu.vn/dien-thoai/dien-thoai-di-dong-1192/cpage\-[0-9]+\.html')), callback='parse_item', follow= True),
-        Rule (LinkExtractor(allow=('http://phongvu.vn/san-pham-apple/iphone-1676c/cpage\-[0-9]+\.html')), callback='parse_item', follow= True),
+        Rule (LinkExtractor(allow=('http://phongvu.vn/san-pham-apple/iphone-1676/cpage\-[0-9]+\.html')), callback='parse_item', follow= True),
     )
 
     configs = {

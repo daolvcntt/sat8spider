@@ -16,6 +16,9 @@ class AbstractPostSpider(CrawlSpider):
 
     rules = ()
 
+    # def parse(self, response):
+    #     return self.parse_item(response)
+
     def parse_item(self, response):
         sel = Selector(response)
 

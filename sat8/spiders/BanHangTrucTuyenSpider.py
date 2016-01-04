@@ -14,6 +14,7 @@ class BanHangTrucTuyenSpider(AbstractPriceSpider):
 	]
 	rules = (
 	  	Rule (LinkExtractor(allow=('https://banhangtructuyen.vn/dien-thoai-di-dong-page-[0-9]+.html')), callback='parse_item', follow= True),
+	  	Rule (LinkExtractor(allow=('https://banhangtructuyen.vn/may-tinh-bang.html')), callback='parse_item', follow= True),
 	)
 
 	configs = {
