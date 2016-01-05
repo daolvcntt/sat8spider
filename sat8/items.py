@@ -122,9 +122,37 @@ class VideoItem(Item):
 			"user_id" : self["user_id"]
 		}
 
+class QuestionItem(Item):
+	id = Field()
+	question = Field()
+	product_id = Field()
+	content = Field()
+	user = Field()
+	link = Field()
+	created_at = Field()
+	updated_at = Field()
+
+class AnswerItem(Item):
+	id = Field()
+	answer = Field()
+	question_id = Field()
+	user = Field()
+	created_at = Field()
+	updated_at = Field()
+
 class ProductItemLoader(ItemLoader):
 	default_output_processor = TakeFirst()
 	price_in = MapCompose(remove_tags, filter_price)
 
 class PostItemLoader(ItemLoader):
 	default_output_processor = TakeFirst()
+
+class QuestionItemLoader(ItemLoader):
+	default_output_processor = TakeFirst()
+	user_in = MapCompose(unicode.strip)
+	question_in = MapCompose(unicode.strip)
+
+class AnswerItemLoader(ItemLoader):
+	default_output_processor = TakeFirst()
+	user_in = MapCompose(unicode.strip)
+	answer_in = MapCompose(unicode.strip)
