@@ -10,12 +10,14 @@ class Yes24Spider(AbstractPriceSpider):
     start_urls = [
         'http://www.yes24.vn/Display/Item/NewItem2nd.aspx?FCategoryNo=480570&SCategoryNo=480590',
         'http://www.yes24.vn/Display/Item/NewItem2nd.aspx?FCategoryNo=480570&SCategoryNo=480580',
+        'http://www.yes24.vn/Display/Item/NewItem2nd.aspx?FCategoryNo=480570&SCategoryNo=480590&sortIndex=2&currentPage=1',
         'http://www.yes24.vn/yes24vina/dien-thoai'
     ]
 
     rules = (
         Rule (LinkExtractor(allow=('http://www.yes24.vn/Display/Item/NewItem2nd.aspx\?FCategoryNo=480570\&SCategoryNo=480590\&currentPage=[0-9]+\#ListTop'), restrict_xpaths=('//div[@id="ctl00_ContentPlaceHolder2_pnItemProductList"]')), callback='parse_item', follow= True),
         Rule (LinkExtractor(allow=('http://www.yes24.vn/Display/Item/NewItem2nd.aspx\?FCategoryNo=480570\&SCategoryNo=480580\&currentPage=[0-9]+\#ListTop'), restrict_xpaths=('//div[@id="ctl00_ContentPlaceHolder2_pnItemProductList"]')), callback='parse_item', follow= True),
+        Rule (LinkExtractor(allow=('http://www.yes24.vn/Display/Item/NewItem2nd.aspx\?FCategoryNo=480570\&SCategoryNo=480590\&sortIndex=2\&currentPage=[0-9]+\#ListTop'), restrict_xpaths=('//div[@id="ctl00_ContentPlaceHolder2_pnItemProductList"]')), callback='parse_item', follow= True),
     )
 
     configs = {
