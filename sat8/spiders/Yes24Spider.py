@@ -8,15 +8,14 @@ from AbstractPriceSpider import AbstractPriceSpider
 class Yes24Spider(AbstractPriceSpider):
     allowed_domains = ['www.yes24.vn']
     start_urls = [
-        # 'http://www.yes24.vn/Display/Item/NewItem2nd.aspx?FCategoryNo=480570&SCategoryNo=480590',
+        'http://www.yes24.vn/Display/Item/NewItem2nd.aspx?FCategoryNo=480570&SCategoryNo=480590',
         'http://www.yes24.vn/Display/Item/NewItem2nd.aspx?FCategoryNo=480570&SCategoryNo=480580',
         'http://www.yes24.vn/yes24vina/dien-thoai'
     ]
 
     rules = (
-        # Rule (LinkExtractor(allow=('http://www.yes24.vn/Display/Item/NewItem2nd.aspx\?FCategoryNo=480570\&SCategoryNo=480590\&currentPage=[0-9]+\#ListTop'), restrict_xpaths=('//div[@id="ctl00_ContentPlaceHolder2_pnItemProductList"]')), callback='parse_item', follow= True),
+        Rule (LinkExtractor(allow=('http://www.yes24.vn/Display/Item/NewItem2nd.aspx\?FCategoryNo=480570\&SCategoryNo=480590\&currentPage=[0-9]+\#ListTop'), restrict_xpaths=('//div[@id="ctl00_ContentPlaceHolder2_pnItemProductList"]')), callback='parse_item', follow= True),
         Rule (LinkExtractor(allow=('http://www.yes24.vn/Display/Item/NewItem2nd.aspx\?FCategoryNo=480570\&SCategoryNo=480580\&currentPage=[0-9]+\#ListTop'), restrict_xpaths=('//div[@id="ctl00_ContentPlaceHolder2_pnItemProductList"]')), callback='parse_item', follow= True),
-        Rule (LinkExtractor('http://www.yes24.vn/yes24vina/dien-thoai'), callback='parse_item', follow= True),
     )
 
     configs = {
