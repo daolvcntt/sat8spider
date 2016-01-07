@@ -11,7 +11,7 @@ BOT_NAME = 'sat8'
 
 REACTOR_THREADPOOL_MAXSIZE = 20
 CONCURRENT_REQUESTS        = 100
-RETRY_ENABLED              = False
+RETRY_ENABLED              = True
 DOWNLOAD_TIMEOUT           = 300
 COOKIES_ENABLED            = False
 
@@ -21,7 +21,7 @@ SPIDER_MODULES = ['sat8.spiders']
 NEWSPIDER_MODULE = 'sat8.spiders'
 ITEM_PIPELINES = {
 	'sat8.pipelines.MySQLStorePipeline' : 100,
-	'sat8.MyImagesPipeline.MyImagesPipeline' : 102,
+	# 'sat8.MyImagesPipeline.MyImagesPipeline' : 102,
 	'sat8.ConverImagePipeline.ConverImagePipeline' : 102,
 	# 'sat8.YoutubePipeline.YoutubePipeline' : 101,
 }

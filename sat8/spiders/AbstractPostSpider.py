@@ -50,10 +50,17 @@ class AbstractPostSpider(CrawlSpider):
 
         if 'avatar' in item:
             item['image_urls'] = [il.get_value(item['avatar'])]
-            item['avatar'] = hashlib.sha1(il.get_value(item['avatar'])).hexdigest() + '.jpg'
+            item['avatar'] = hashlib.sha1(il.get_value(item['avatar'].encode('utf-8'))).hexdigest() + '.jpg'
 
 
         # print item
         # return
 
         yield(item)
+
+
+    def parse_start_url(self, response):
+        print '------------------------------', "\n"
+        print response.url
+        yield scrapy.Request(response.url, callback=self.parse_item)
+        print '------------------------------', "\n\n"

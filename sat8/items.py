@@ -27,17 +27,17 @@ class ProductItem(Item):
 
 	def toJson(self):
 		return {
-			"id" : self["id"],
-			"name" : self["name"],
-			"price" : self["price"],
-			"hash_name" : self["hash_name"],
-			"brand" : self["brand"],
-			"image" : self["image"],
-			"images" : self["images"],
-			"spec" : self["spec"],
-			"link" : self["link"],
-			"created_at" : self["created_at"],
-			"updated_at" : self["updated_at"]
+			"id" : self.get("id"),
+			"name" : self.get("name", ""),
+			"price" : self.get("price", 0),
+			"hash_name" : self.get("hash_name", ""),
+			"brand" : self.get("brand", ""),
+			"image" : self.get("image", ""),
+			"images" : self.get("images", ""),
+			"spec" : self.get("spec", ""),
+			"link" : self.get("link", ""),
+			"created_at" : self.get("created_at"),
+			"updated_at" : self.get("updated_at"),
 		}
 
 class ProductPriceItem(Item):
@@ -53,13 +53,13 @@ class ProductPriceItem(Item):
 
 	def toJson(self):
 		return {
-			"id" : self["id"],
-			"title" : self["title"],
-			"price" : int(self["price"]),
-			"source" : self["source"],
-			"link" : self["link"],
-			"created_at" : self["created_at"],
-			"updated_at" : self["updated_at"]
+			"id" : self.get("id"),
+			"title" : self.get("title", ""),
+			"price" : int(self.get("price", "")),
+			"source" : self.get("source", ""),
+			"link" : self.get("link", ""),
+			"created_at" : self.get("created_at"),
+			"updated_at" : self.get("updated_at"),
 		}
 
 class BlogItem(Item):
@@ -83,19 +83,19 @@ class BlogItem(Item):
 
 	def toJson(self):
 		return {
-			"id" : self["id"],
-			"link" : self["link"],
-			"title" : self["title"],
-			"teaser" : self["teaser"],
-			"content" : self["content"],
-			"avatar" : self["avatar"],
-			"category_id" : self["category_id"],
-			"product_id" : self["product_id"],
-			"user_id" : self["user_id"],
-			"created_at" : self["created_at"],
-			"updated_at" : self["updated_at"],
-			"category" : self["category"],
-			"post_type" : self["post_type"]
+			"id" : self.get("id"),
+			"link" : self.get("link", ""),
+			"title" : self.get("title", ""),
+			"teaser" : self.get("teaser", ""),
+			"content" : self.get("content", ""),
+			"avatar" : self.get("avatar", ""),
+			"category_id" : self.get("category_id", 0),
+			"product_id" : self.get("product_id", 0),
+			"user_id" : self.get("user_id", 0),
+			"created_at" : self.get("created_at"),
+			"updated_at" : self.get("updated_at"),
+			"category" : self.get("category", ""),
+			"post_type" : self.get("post_type", "post")
 		}
 
 class VideoItem(Item):
@@ -111,15 +111,15 @@ class VideoItem(Item):
 
 	def toJson(self):
 		return {
-			"link" : self["link"],
-			"title" : self["title"],
-			"description" : self["description"],
-			"embed" : self["embed"],
-			"thumbnail" : self["embed"],
-			"author" : self["author"],
-			"category_id" : self["category_id"],
-			"product_id" : self["product_id"],
-			"user_id" : self["user_id"]
+			"link" : self.get("link", ""),
+			"title" : self.get("title", ""),
+			"description" : self.get("description", ""),
+			"embed" : self.get("embed", ""),
+			"thumbnail" : self.get("embed", ""),
+			"author" : self.get("author", ""),
+			"category_id" : self.get("category_id", ""),
+			"product_id" : self.get("product_id", ""),
+			"user_id" : self.get("user_id", "")
 		}
 
 class QuestionItem(Item):
