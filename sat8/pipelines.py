@@ -30,9 +30,6 @@ class MySQLStorePipeline(object):
 
 			postId = 0
 
-			print item.toJson()
-
-
 			if result:
 				postId = result['id']
 				logging.info("Item already stored in db: %s" % item['link'])

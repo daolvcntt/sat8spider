@@ -9,6 +9,8 @@ from sat8.Products.ProductPriceES import ProductPriceES
 
 from sat8.Products.ProductVideoES import ProductVideoES
 
+from time import gmtime, strftime
+
 conn = settings['MYSQL_CONN']
 cursor = conn.cursor()
 
@@ -19,6 +21,8 @@ products = cursor.fetchall()
 
 for product in products:
     productEs = ProductES()
+    product['created_at'] = product['created_at'].strftime("%Y-%m-%d %H:%M:%S")
+    product['updated_at'] = product['updated_at'].strftime("%Y-%m-%d %H:%M:%S")
     productEs.insertOrUpdate(product['id'], product)
 
 
@@ -28,6 +32,8 @@ prices = cursor.fetchall()
 
 for price in prices:
     priceEs = ProductPriceES()
+    price['created_at'] = price['created_at'].strftime("%Y-%m-%d %H:%M:%S")
+    price['updated_at'] = price['updated_at'].strftime("%Y-%m-%d %H:%M:%S")
     priceEs.insertOrUpdate(price['id'], price)
 
 
@@ -37,6 +43,8 @@ posts = cursor.fetchall()
 
 for post in posts:
     postEs = PostES()
+    post['created_at'] = post['created_at'].strftime("%Y-%m-%d %H:%M:%S")
+    post['updated_at'] = post['updated_at'].strftime("%Y-%m-%d %H:%M:%S")
     postEs.insertOrUpdate(post['id'], post)
 
 
@@ -46,6 +54,8 @@ videos = cursor.fetchall()
 
 for video in videos:
     videoEs = ProductVideoES()
+    video['created_at'] = video['created_at'].strftime("%Y-%m-%d %H:%M:%S")
+    video['updated_at'] = video['updated_at'].strftime("%Y-%m-%d %H:%M:%S")
     videoEs.insertOrUpdate(video['id'], video)
 
 

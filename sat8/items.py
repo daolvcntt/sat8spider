@@ -3,6 +3,7 @@ from scrapy.loader import ItemLoader
 from scrapy.loader.processors import MapCompose, TakeFirst, Join
 from w3lib.html import remove_tags
 import re
+from time import gmtime, strftime
 
 def filter_price(val):
 	m = re.compile(r'\D+')
@@ -36,8 +37,8 @@ class ProductItem(Item):
 			"images" : self.get("images", ""),
 			"spec" : self.get("spec", ""),
 			"link" : self.get("link", ""),
-			"created_at" : self.get("created_at"),
-			"updated_at" : self.get("updated_at"),
+			"created_at" : self.get("created_at", strftime("%Y-%m-%d %H:%M:%S")),
+			"updated_at" : self.get("updated_at", strftime("%Y-%m-%d %H:%M:%S")),
 		}
 
 class ProductPriceItem(Item):
@@ -58,8 +59,8 @@ class ProductPriceItem(Item):
 			"price" : int(self.get("price", "")),
 			"source" : self.get("source", ""),
 			"link" : self.get("link", ""),
-			"created_at" : self.get("created_at"),
-			"updated_at" : self.get("updated_at"),
+			"created_at" : self.get("created_at", strftime("%Y-%m-%d %H:%M:%S")),
+			"updated_at" : self.get("updated_at", strftime("%Y-%m-%d %H:%M:%S")),
 		}
 
 class BlogItem(Item):
@@ -92,8 +93,8 @@ class BlogItem(Item):
 			"category_id" : self.get("category_id", 0),
 			"product_id" : self.get("product_id", 0),
 			"user_id" : self.get("user_id", 0),
-			"created_at" : self.get("created_at"),
-			"updated_at" : self.get("updated_at"),
+			"created_at" : self.get("created_at", strftime("%Y-%m-%d %H:%M:%S")),
+			"updated_at" : self.get("updated_at", strftime("%Y-%m-%d %H:%M:%S")),
 			"category" : self.get("category", ""),
 			"post_type" : self.get("post_type", "post")
 		}
