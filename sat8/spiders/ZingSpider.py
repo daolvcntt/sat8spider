@@ -7,20 +7,22 @@ from scrapy.linkextractors import LinkExtractor
 from AbstractPostSpider import AbstractPostSpider
 
 class ZingSpider(AbstractPostSpider):
-	name = "blog_spider"
-	allowed_domains = ["news.zing.vn", ]
-	start_urls = ['http://news.zing.vn/cong-nghe/dien-thoai.html']
+    name = "blog_spider"
+    allowed_domains = ["news.zing.vn", ]
 
-	rules = (
-		Rule (LinkExtractor(allow=('cong-nghe/dien-thoai/trang[0-9]+.html')), callback='parse_item', follow= True),
-	)
+    config_urls = [
+        {
+            "url" : "http://news.zing.vn/cong-nghe/dien-thoai/trang[0-9]+.html",
+            "max_page" : 10
+        }
+    ]
 
-	configs = {
-		'links' : '//*[@class="cate_content"]/article/header/h1/a/@href',
-		'title' : '//*[@class="the-article-header"]/h1//text()',
-		'teaser' : '//*[@class="the-article-summary"]//text()',
-		'avatar' : '//*[@class="the-article-body"]//img[1]/@src',
-		'content' : '//*[@class="the-article-body"]',
-		'category' : '//*[contains(@class, "parent") and contains(@class, "current") and not(contains(@class, "homepage"))]/a[1]//text()',
-		'type' : 'post'
-	}
+    configs = {
+        "links" : '//*[@class="cate_content"]/article/header/h1/a/@href',
+        'title' : '//*[@class="the-article-header"]/h1//text()',
+        'teaser' : '//*[@class="the-article-summary"]//text()',
+        'avatar' : '//*[@class="the-article-body"]//img[1]/@src',
+        'content' : '//*[@class="the-article-body"]',
+        'category' : '//*[contains(@class, "parent") and contains(@class, "current") and not(contains(@class, "homepage"))]/a[1]//text()',
+        'type' : 'post'
+    }

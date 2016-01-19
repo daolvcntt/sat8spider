@@ -14,6 +14,10 @@ arrayDir = [
 
 arrayExts = ['.png', '.jpg', '.jpeg', '.bmp', '.gif', '.css', '.js']
 
+# filePath = '/home/justin/public_html/sat8web/public/images/post_default_image.jpg'
+# filePathGzip = filePath + '.gz'
+# with open(filePath , 'rb') as f_in, gzip.open(filePathGzip, 'wb') as f_out:
+#     shutil.copyfileobj(f_in, f_out)
 
 # print arrayDir
 

@@ -47,6 +47,7 @@ class ProductPriceItem(Item):
 	title = Field()
 	brand = Field()
 	price = Field()
+	price_save = Field()
 	source = Field()
 	link = Field()
 	created_at = Field()
@@ -56,7 +57,7 @@ class ProductPriceItem(Item):
 		return {
 			"id" : self.get("id"),
 			"title" : self.get("title", ""),
-			"price" : int(self.get("price", "")),
+			"price" : int(self.get("price", 0)),
 			"source" : self.get("source", ""),
 			"link" : self.get("link", ""),
 			"created_at" : self.get("created_at", strftime("%Y-%m-%d %H:%M:%S")),

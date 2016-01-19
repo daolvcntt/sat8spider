@@ -9,11 +9,13 @@ from AbstractPostSpider import AbstractPostSpider
 class GenkReviewSpider(AbstractPostSpider):
 
     allowed_domains = ["genk.vn"]
-    start_urls = [ 'http://genk.vn/review/page-2.htm']
 
-    rules = (
-        Rule (LinkExtractor(allow=('review/page-[0-9]+\.htm')),  callback='parse_item', follow= True),
-    )
+    config_urls = [
+        {
+            "url" : "http://genk.vn/review/page-[0-9]+.htm",
+            "max_page" : 10
+        }
+    ]
 
     configs = {
         'links' : '//*[@class="list-news-other nob"]/li/h3[1]/a/@href',

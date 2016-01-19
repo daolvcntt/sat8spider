@@ -8,12 +8,17 @@ from AbstractPostSpider import AbstractPostSpider
 
 class IctNewsSpider(AbstractPostSpider):
     allowed_domains = ["ictnews.vn"]
-    start_urls = [ 'http://ictnews.vn/the-gioi-so/di-dong', 'http://ictnews.vn/the-gioi-so/may-tinh']
 
-    rules = (
-        Rule (LinkExtractor(allow=('http://ictnews.vn/the-gioi-so/di-dong/trang-[0-9]+')),  callback='parse_item', follow= True),
-        Rule (LinkExtractor(allow=('http://ictnews.vn/the-gioi-so/may-tinh/trang-[0-9]+')),  callback='parse_item', follow= True),
-    )
+    config_urls = [
+        {
+            "url" : "http://ictnews.vn/the-gioi-so/di-dong/trang-[0-9]+",
+            "max_page" : 10
+        },
+        {
+            "url" : "http://ictnews.vn/the-gioi-so/may-tinh/trang-[0-9]+",
+            "max_page" : 10
+        }
+    ]
 
     configs = {
         'links' : '//*[@id="listArticles"]/div/a[1]/@href',

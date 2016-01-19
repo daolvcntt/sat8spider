@@ -9,20 +9,12 @@ from AbstractPostSpider import AbstractPostSpider
 class VnReviewSpider(AbstractPostSpider):
    	allowed_domains = ["vnreview.vn"]
 
-	start_urls = [
-		'http://vnreview.vn/danh-gia-di-dong',
-		'http://vnreview.vn/danh-gia-di-dong#cur=2',
-		'http://vnreview.vn/danh-gia-di-dong#cur=3',
-		'http://vnreview.vn/danh-gia-di-dong#cur=4',
-		'http://vnreview.vn/danh-gia-di-dong#cur=5',
-		'http://vnreview.vn/danh-gia-di-dong#cur=6',
-		'http://vnreview.vn/danh-gia-di-dong#cur=7',
-		'http://vnreview.vn/danh-gia-di-dong#cur=8',
-		'http://vnreview.vn/danh-gia-di-dong#cur=9',
-		'http://vnreview.vn/danh-gia-di-dong#cur=10'
+	config_urls = [
+		{
+			"url" : "http://vnreview.vn/danh-gia-di-dong#cur=[0-9]+",
+			"max_page" : 20
+		}
 	]
-
-	rules = ()
 
 	configs = {
 		'links' : '//*[@class="assettile"]/h1/a[1]/@href',
@@ -33,6 +25,3 @@ class VnReviewSpider(AbstractPostSpider):
 		'category' : '//*[@class="last-node"]/span/a/font//text()',
 		'type' : 'post'
 	}
-
-	def parse(self, response):
-		return self.parse_item(response)

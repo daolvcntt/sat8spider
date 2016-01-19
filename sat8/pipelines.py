@@ -24,8 +24,8 @@ class MySQLStorePipeline(object):
 	def process_item(self, item, spider):
 
 		if spider.name == 'blog_spider' or spider.name == 'GenkSpider':
-			query = "SELECT * FROM posts WHERE link = %s"
-			self.cursor.execute(query, (item['link']))
+			query = "SELECT * FROM posts WHERE link = %s OR title = %s"
+			self.cursor.execute(query, (item['link'], item['title']))
 			result = self.cursor.fetchone()
 
 			postId = 0
