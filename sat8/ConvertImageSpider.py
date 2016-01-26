@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# Download toàn bộ ảnh từ phần nội dung post
+# Chú ý: Chỉ chạy 1 lần khi cần thiết
 import scrapy
 import re
 from scrapy.spiders import CrawlSpider, Rule
@@ -38,10 +40,10 @@ class ConvertImageSpider():
             with open(filePath , 'rb') as f_in, gzip.open(filePathGzip, 'wb') as f_out:
                shutil.copyfileobj(f_in, f_out)
 
-            print filePath
+            print url
 
          except IOError, e:
-            print 'Ko lay duoc anh'
+            print e
 
 
    def setText(self, text):
