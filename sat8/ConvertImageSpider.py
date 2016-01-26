@@ -46,6 +46,8 @@ class ConvertImageSpider():
          except IOError, e:
             print e
 
+      query = "UPDATE posts set has_image_content = 1 WHERE id = %s"
+      cursor.execute(query, (post['id']))
 
    def setText(self, text):
       self.text = text
@@ -61,6 +63,7 @@ posts = cursor.fetchall()
 
 for post in posts:
    # print post['title']
-   c = ConvertImageSpider()
-   c.setText(post['content'])
-   c.convertLinks(post)
+   if post['has_image_content'] != 1:
+      c = ConvertImageSpider()
+      c.setText(post['content'])
+      c.convertLinks(post)
