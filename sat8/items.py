@@ -145,6 +145,13 @@ class AnswerItem(Item):
 class ProductItemLoader(ItemLoader):
 	default_output_processor = TakeFirst()
 	price_in = MapCompose(remove_tags, filter_price)
+	name_in = MapCompose(unicode.strip)
+
+class ProductPriceItemLoader(ItemLoader):
+	default_output_processor = TakeFirst()
+	price_in = MapCompose(remove_tags, filter_price)
+	title_in = MapCompose(unicode.strip)
+	name_in = MapCompose(unicode.strip)
 
 class PostItemLoader(ItemLoader):
 	default_output_processor = TakeFirst()
