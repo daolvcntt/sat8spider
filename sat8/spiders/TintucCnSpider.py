@@ -6,17 +6,19 @@ from scrapy.linkextractors import LinkExtractor
 from AbstractPostSpider import AbstractPostSpider
 
 class TintucCnSpider(AbstractPostSpider):
-	name = "blog_spider"
-	allowed_domains = ["tintuccongnghe.net", ]
-	start_urls = [
-		'http://www.tintuccongnghe.net/news/may-tinh',
-		'http://www.tintuccongnghe.net/news/dien-thoai'
-	]
 
-	rules = (
-		Rule (LinkExtractor(allow=('news/may-tinh/page/[0-9]+'), restrict_xpaths=('//div[@class="pagination"]')), callback='parse_item', follow= True),
-		Rule (LinkExtractor(allow=('news/dien-thoai/page/[0-9]+'), restrict_xpaths=('//div[@class="pagination"]')), callback='parse_item', follow= True),
-	)
+	allowed_domains = ["tintuccongnghe.net", ]
+
+	config_urls = [
+		{
+			"url" : "http://www.tintuccongnghe.net/news/may-tinh/page/[0-9]+",
+			"max_page" : 10
+		},
+		{
+			"url" : "http://www.tintuccongnghe.net/news/dien-thoai/page/[0-9]+",
+			"max_page" : 10
+		},
+	]
 
 	configs = {
 		'links' : '//*[@class="entry-title"]/a[1]/@href',

@@ -24,8 +24,8 @@ class MySQLStorePipeline(object):
 	def process_item(self, item, spider):
 
 		if spider.name == 'blog_spider' or spider.name == 'GenkSpider':
-			query = "SELECT * FROM posts WHERE link = %s"
-			self.cursor.execute(query, (item['link']))
+			query = "SELECT * FROM posts WHERE link = %s OR title = %s"
+			self.cursor.execute(query, (item['link'], item['title']))
 			result = self.cursor.fetchone()
 
 			postId = 0
@@ -34,17 +34,18 @@ class MySQLStorePipeline(object):
 				postId = result['id']
 				logging.info("Item already stored in db: %s" % item['link'])
 			else:
-				content = re.sub('<a.*?>.*?</a>', '', item['content']);
+				content = item['content'];
 				sql = "INSERT INTO posts (title, content, type, category, teaser, avatar, link, category_id, product_id, user_id, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 				self.cursor.execute(sql, (item['title'].encode('utf-8'), content, item['post_type'] ,item['category'].encode('utf-8') ,item['teaser'].encode('utf-8'), item['avatar'], item['link'], item['category_id'], item['product_id'], item['user_id'], item['created_at'], item['updated_at']))
 				self.conn.commit()
 
 				# Insert to elasticsearch
 				postId = self.cursor.lastrowid
+				logging.info("Item stored in db: %s" % item['link'])
 
 			item["id"] = postId
 			self.post.insertOrUpdate(postId, item.toJson())
-			logging.info("Item stored in db: %s" % item['link'])
+
 
 		elif spider.name == 'product_spider':
 			query = "SELECT * FROM products WHERE hash_name = %s"

@@ -14,6 +14,7 @@ class IsSmartPhoneSpider(AbstractPriceSpider):
 
     rules = (
         Rule (LinkExtractor(allow=('http://www.ismartphone.vn/dien-thoai-page-[0-9]+.html'), restrict_xpaths=('//div[@class="pagination"]')), callback='parse_item', follow= True),
+        Rule (LinkExtractor(allow=('http://www.ismartphone.vn/may-tinh-bang.html')), callback='parse_item', follow= True),
     )
 
     configs = {
