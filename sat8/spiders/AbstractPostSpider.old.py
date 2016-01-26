@@ -14,34 +14,12 @@ class AbstractPostSpider(CrawlSpider):
     allowed_domains = []
     start_urls = []
 
-    config_urls = [
-        # {
-        #     "url" : "http://news.zing.vn/cong-nghe/dien-thoai/trang[0-9]+.html",
-        #     "max_page" : 10
-        # }
-    ]
+    rules = ()
 
-    configs = {
-        # "links" : '//*[@class="cate_content"]/article/header/h1/a/@href',
-        # 'title' : '//*[@class="the-article-header"]/h1//text()',
-        # 'teaser' : '//*[@class="the-article-summary"]//text()',
-        # 'avatar' : '//*[@class="the-article-body"]//img[1]/@src',
-        # 'content' : '//*[@class="the-article-body"]',
-        # 'category' : '//*[contains(@class, "parent") and contains(@class, "current") and not(contains(@class, "homepage"))]/a[1]//text()',
-        # 'type' : 'post'
-    }
+    # def parse(self, response):
+    #     return self.parse_item(response)
 
-    def __init__(self):
-        # Add start_urls
-        config_urls = self.config_urls
-        for url in config_urls:
-            if url["max_page"] > 0:
-                for i in range(1, url["max_page"]):
-                    self.start_urls.append(url["url"].replace('[0-9]+', str(i)))
-            else:
-                self.start_urls.append(url["url"])
-
-    def parse(self, response):
+    def parse_item(self, response):
         sel = Selector(response)
 
         blog_links = sel.xpath(self.configs['links'])
@@ -81,8 +59,8 @@ class AbstractPostSpider(CrawlSpider):
         yield(item)
 
 
-    # def parse_start_url(self, response):
-    #     print '------------------------------', "\n"
-    #     print response.url
-    #     yield scrapy.Request(response.url, callback=self.parse_item)
-    #     print '------------------------------', "\n\n"
+    def parse_start_url(self, response):
+        print '------------------------------', "\n"
+        print response.url
+        yield scrapy.Request(response.url, callback=self.parse_item)
+        print '------------------------------', "\n\n"

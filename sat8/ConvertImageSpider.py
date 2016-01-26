@@ -12,6 +12,10 @@ import urllib
 from scrapy.conf import settings
 import hashlib
 
+import gzip
+import shutil
+import os
+
 conn = settings['MYSQL_CONN']
 cursor = conn.cursor()
 
@@ -26,7 +30,19 @@ class ConvertImageSpider():
       for pl in image_links:
          url = pl.extract();
          imageName = hashlib.sha1(url).hexdigest() + '.jpg'
-         urllib.urlretrieve(url, settings['IMAGES_STORE'] + '/posts/' + imageName)
+         try:
+            filePath = settings['IMAGES_STORE'] + '/posts/' + imageName
+            filePathGzip = filePath + '.gz';
+            urllib.urlretrieve(url, filePath)
+
+            with open(filePath , 'rb') as f_in, gzip.open(filePathGzip, 'wb') as f_out:
+               shutil.copyfileobj(f_in, f_out)
+
+            print filePath
+
+         except IOError, e:
+            print 'Ko lay duoc anh'
+
 
    def setText(self, text):
       self.text = text

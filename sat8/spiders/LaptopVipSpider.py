@@ -16,6 +16,8 @@ class LaptopVipSpider(AbstractPriceSpider):
 
     rules = (
         Rule (LinkExtractor(allow=('https://www.laptopvip.vn/hang-san-xuat-page\-[0-9]+.html'), restrict_xpaths=('//div[@class="ty-pagination__bottom"]')), callback='parse_item', follow= True),
+        Rule(LinkExtractor(allow=('https://www.laptopvip.vn/dien-thoai.html')), callback="parse_item", follow=True),
+        Rule(LinkExtractor(allow=('https://www.laptopvip.vn/hang-san-xuat-vi.html')), callback="parse_item", follow=True)
     )
 
     configs = {
