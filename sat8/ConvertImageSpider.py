@@ -41,13 +41,12 @@ class ConvertImageSpider():
                with open(filePath , 'rb') as f_in, gzip.open(filePathGzip, 'wb') as f_out:
                   shutil.copyfileobj(f_in, f_out)
 
-               print url
-
          except IOError, e:
             print e
 
       query = "UPDATE posts set has_image_content = 1 WHERE id = %s"
       cursor.execute(query, (post['id']))
+      conn.commit()
 
    def setText(self, text):
       self.text = text
@@ -56,14 +55,13 @@ class ConvertImageSpider():
       return self.text
 
 
-query = "SELECT * FROM posts"
+query = "SELECT * FROM posts WHERE has_image_content != 1 ORDER BY updated_at DESC LIMIT 0,1000"
 cursor.execute(query)
 
 posts = cursor.fetchall()
 
 for post in posts:
-   # print post['title']
-   if post['has_image_content'] != 1:
-      c = ConvertImageSpider()
-      c.setText(post['content'])
-      c.convertLinks(post)
+
+   c = ConvertImageSpider()
+   c.setText(post['content'])
+   c.convertLinks(post)
