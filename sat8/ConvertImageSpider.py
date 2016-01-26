@@ -35,12 +35,13 @@ class ConvertImageSpider():
          try:
             filePath = settings['IMAGES_STORE'] + '/posts/' + imageName
             filePathGzip = filePath + '.gz';
-            urllib.urlretrieve(url, filePath)
+            if os.path.isfile(filePath) == False or os.path.isfile(filePathGzip) == False:
+               urllib.urlretrieve(url, filePath)
 
-            with open(filePath , 'rb') as f_in, gzip.open(filePathGzip, 'wb') as f_out:
-               shutil.copyfileobj(f_in, f_out)
+               with open(filePath , 'rb') as f_in, gzip.open(filePathGzip, 'wb') as f_out:
+                  shutil.copyfileobj(f_in, f_out)
 
-            print url
+               print url
 
          except IOError, e:
             print e
