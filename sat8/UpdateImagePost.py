@@ -13,7 +13,9 @@ import env
 
 def getImageFromContent(content):
     matches = re.search('src="([^"]+)"', content)
-    return matches.group(1)
+    if matches != None :
+        return matches.group(1)
+    return None
 
 conn = settings['MYSQL_CONN']
 cursor = conn.cursor()
