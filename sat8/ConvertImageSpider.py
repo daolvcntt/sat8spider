@@ -21,6 +21,8 @@ import os
 conn = settings['MYSQL_CONN']
 cursor = conn.cursor()
 
+# urllib.urlretrieve('http://res.vtc.vn/media/vtcnews/2014/07/17/di_dong1.jpg', settings['IMAGES_STORE'] + '/posts/a.jpg');
+
 
 class ConvertImageSpider():
 
@@ -40,6 +42,8 @@ class ConvertImageSpider():
 
                with open(filePath , 'rb') as f_in, gzip.open(filePathGzip, 'wb') as f_out:
                   shutil.copyfileobj(f_in, f_out)
+
+            print url
 
          except IOError, e:
             print e
