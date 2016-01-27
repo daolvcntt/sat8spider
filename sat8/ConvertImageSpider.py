@@ -59,7 +59,7 @@ class ConvertImageSpider():
       return self.text
 
 
-query = "SELECT * FROM posts WHERE has_image_content != 1 ORDER BY updated_at DESC LIMIT 2000,1000"
+query = "SELECT * FROM posts WHERE has_image_content != 1 ORDER BY updated_at DESC LIMIT 3000,1000"
 cursor.execute(query)
 
 posts = cursor.fetchall()
