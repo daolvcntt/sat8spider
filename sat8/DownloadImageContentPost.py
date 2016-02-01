@@ -24,7 +24,7 @@ cursor = conn.cursor()
 # urllib.urlretrieve('http://res.vtc.vn/media/vtcnews/2014/07/17/di_dong1.jpg', settings['IMAGES_STORE'] + '/posts/a.jpg');
 
 
-class ConvertImageSpider():
+class DownloadImageContentPost():
 
    text = ''
 
@@ -66,6 +66,6 @@ posts = cursor.fetchall()
 
 for post in posts:
 
-   c = ConvertImageSpider()
+   c = DownloadImageContentPost()
    c.setText(post['content'])
    c.convertLinks(post)
