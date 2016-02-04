@@ -11,14 +11,14 @@ from urlparse import urlparse
 from time import gmtime, strftime
 import urllib
 
-from scrapy.conf import settings
+import settings
 import hashlib
 
 import gzip
 import shutil
 import os
 
-conn = settings['MYSQL_CONN']
+conn = settings.MYSQL_CONN
 cursor = conn.cursor()
 
 # urllib.urlretrieve('http://res.vtc.vn/media/vtcnews/2014/07/17/di_dong1.jpg', settings['IMAGES_STORE'] + '/posts/a.jpg');
@@ -35,7 +35,7 @@ class DownloadImageContentPost():
          url = pl.extract();
          imageName = hashlib.sha1(url).hexdigest() + '.jpg'
          try:
-            filePath = settings['IMAGES_STORE'] + '/posts/' + imageName
+            filePath = settings.IMAGES_STORE + '/posts/' + imageName
             filePathGzip = filePath + '.gz';
             if os.path.isfile(filePath) == False or os.path.isfile(filePathGzip) == False:
                urllib.urlretrieve(url, filePath)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Cập nhật lại ảnh đại diện của post
 # để chuyển dần sang dùng google bucket
-from scrapy.conf import settings
+import settings
 import os.path
 import re
 import hashlib
@@ -17,7 +17,7 @@ from Functions import getImageFromContent
 from Functions import makeGzFile
 
 
-conn = settings['MYSQL_CONN']
+conn = settings.MYSQL_CONN
 cursor = conn.cursor()
 
 queryPost = "SELECT * FROM posts WHERE has_image = 0 ORDER BY updated_at DESC LIMIT 2000"
@@ -28,7 +28,7 @@ posts = cursor.fetchall()
 countPostUpdated = 0
 
 
-imageThumbs = settings["IMAGES_THUMBS"]
+imageThumbs = settings.IMAGES_THUMBS
 
 for post in posts:
 
@@ -39,13 +39,13 @@ for post in posts:
         postImage = getImageFromContent(post["content"])
         if postImage != None:
             imageName = hashlib.sha1(postImage).hexdigest() + '.jpg'
-            pathSaveImage = settings['IMAGES_STORE'] + '/full/' + imageName
+            pathSaveImage = settings.IMAGES_STORE + '/full/' + imageName
 
             # Nếu không có ảnh full thì mới download và resize ảnh
             # có rồi thì cập nhật luôn
             if os.path.isfile(pathSaveImage) == False:
-                pathSaveImageSmall = settings['IMAGES_STORE'] + '/thumbs/small/' + imageName
-                pathSaveImageBig   = settings['IMAGES_STORE'] + '/thumbs/big/' + imageName
+                pathSaveImageSmall = settings.IMAGES_STORE + '/thumbs/small/' + imageName
+                pathSaveImageBig   = settings.IMAGES_STORE + '/thumbs/big/' + imageName
 
                 try:
                     # Download
