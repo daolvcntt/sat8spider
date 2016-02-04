@@ -18,6 +18,8 @@ import gzip
 import shutil
 import os
 
+from Functions import makeGzFile
+
 conn = settings.MYSQL_CONN
 cursor = conn.cursor()
 
@@ -40,8 +42,8 @@ class DownloadImageContentPost():
             if os.path.isfile(filePath) == False or os.path.isfile(filePathGzip) == False:
                urllib.urlretrieve(url, filePath)
 
-               with open(filePath , 'rb') as f_in, gzip.open(filePathGzip, 'wb') as f_out:
-                  shutil.copyfileobj(f_in, f_out)
+               # Make gz file
+               makeGzFile(filePath)
 
             print url
 
