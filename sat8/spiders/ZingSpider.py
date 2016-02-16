@@ -13,7 +13,7 @@ class ZingSpider(AbstractPostSpider):
     config_urls = [
         {
             "url" : "http://news.zing.vn/cong-nghe/dien-thoai/trang[0-9]+.html",
-            "max_page" : 10
+            "max_page" : 1
         }
     ]
 

@@ -12,11 +12,11 @@ class IctNewsSpider(AbstractPostSpider):
     config_urls = [
         {
             "url" : "http://ictnews.vn/the-gioi-so/di-dong/trang-[0-9]+",
-            "max_page" : 10
+            "max_page" : 1
         },
         {
             "url" : "http://ictnews.vn/the-gioi-so/may-tinh/trang-[0-9]+",
-            "max_page" : 10
+            "max_page" : 1
         }
     ]
 
