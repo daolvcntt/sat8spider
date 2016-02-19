@@ -12,11 +12,11 @@ class TintucCnSpider(AbstractPostSpider):
 	config_urls = [
 		{
 			"url" : "http://www.tintuccongnghe.net/news/may-tinh/page/[0-9]+",
-			"max_page" : 1
+			"max_page" : 2
 		},
 		{
 			"url" : "http://www.tintuccongnghe.net/news/dien-thoai/page/[0-9]+",
-			"max_page" : 1
+			"max_page" : 2
 		},
 	]
 
