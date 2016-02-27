@@ -80,7 +80,7 @@ class HoiDapSpider(CrawlSpider):
 
         for answer in answers:
             user = answer.xpath('.//div[@class="fl info_user_left"][1]/p[1]/a[1]/text()').extract()
-            ans = answer.xpath('//div[@class="text_comment"]').extract()
+            ans = answer.xpath('.//div[@class="text_comment"]').extract()
 
             answerItemLoader = AnswerItemLoader(item = AnswerItem(), response = response)
             answerItemLoader.add_value('question_id', questionId)
