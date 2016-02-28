@@ -121,11 +121,11 @@ class HoiDapSpider(CrawlSpider):
         print '------------------------------', "\n"
         self.conn = settings['MYSQL_CONN']
         self.cursor = self.conn.cursor()
-        self.cursor.execute("SELECT id,keyword FROM products WHERE keyword != '' OR keyword != NULL ORDER BY created_at DESC")
+        self.cursor.execute("SELECT DISTINCT id,keyword,rate_keyword FROM products WHERE rate_keyword != '' OR rate_keyword != NULL ORDER BY created_at DESC")
         products = self.cursor.fetchall()
 
         for product in products:
-            url = 'http://vatgia.com/hoidap/quicksearch.php?keyword=%s' %product['keyword']
+            url = 'http://vatgia.com/hoidap/quicksearch.php?keyword=%s' %product['rate_keyword']
             # self.start_urls.append(url)
             request = scrapy.Request(url, callback = self.parse_item)
             request.meta['productId'] = product['id']
