@@ -52,6 +52,7 @@ class ProductPriceItem(Item):
 	link = Field()
 	created_at = Field()
 	updated_at = Field()
+	crawled_at = Field()
 
 	def toJson(self):
 		return {
@@ -62,6 +63,7 @@ class ProductPriceItem(Item):
 			"link" : self.get("link", ""),
 			"created_at" : self.get("created_at", strftime("%Y-%m-%d %H:%M:%S")),
 			"updated_at" : self.get("updated_at", strftime("%Y-%m-%d %H:%M:%S")),
+			"crawled_at" : self.get("crawled_at", strftime("%Y-%m-%d %H:%M:%S")),
 		}
 
 class BlogItem(Item):
