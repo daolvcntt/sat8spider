@@ -12,7 +12,7 @@ class DiDongHanQuocSpider(AbstractPriceSpider):
     ]
 
     rules = (
-        Rule (LinkExtractor(allow=('http://www.didonghanquoc.com/dien-thoai?page=[0-9]+'), restrict_xpaths=('//div[@class="pagination"]')), callback='parse_item', follow= True),
+        Rule (LinkExtractor(allow=('http://www.didonghanquoc.com/dien-thoai\?page=[0-9]+'), restrict_xpaths=('//div[@class="pagination"]')), callback='parse_item', follow= True),
     )
 
     configs = {
