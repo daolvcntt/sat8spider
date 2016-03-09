@@ -13,7 +13,7 @@ class SohoaVnExpress_DoiSongSo_Spider(AbstractPostSpider):
     config_urls = [
         {
             "url" : "http://sohoa.vnexpress.net/tin-tuc/doi-song-so/page/[0-9]+.html",
-            "max_page" : 5
+            "max_page" : 3
         }
     ]
 
@@ -24,5 +24,6 @@ class SohoaVnExpress_DoiSongSo_Spider(AbstractPostSpider):
         'avatar' : '//*[@id="article_content" or @class="fck_detail width_common"]//img[1 or 2 or 3 or 4]/@src',
         'content' : '//*[@id="article_content" or @class="fck_detail width_common"]',
         'category_value' : 'Đời sống số',
-        'type' : 'post'
+        'type' : 'post',
+        'category_id' : 3
     }

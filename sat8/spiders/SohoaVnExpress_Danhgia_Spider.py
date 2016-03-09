@@ -6,24 +6,24 @@ from scrapy.linkextractors import LinkExtractor
 
 from AbstractPostSpider import AbstractPostSpider
 
-class SohoaVnExpress_AnhVideo_Spider(AbstractPostSpider):
+class SohoaVnExpress_Danhgia_Spider(AbstractPostSpider):
     name = "blog_spider"
     allowed_domains = ["sohoa.vnexpress.net", ]
 
     config_urls = [
         {
-            "url" : "http://sohoa.vnexpress.net/tin-tuc/anh-video",
+            "url" : "http://sohoa.vnexpress.net/danh-gia",
             "max_page" : 3
         }
     ]
 
     configs = {
-        "links" : '//*[@class="icon_thumb_videophoto icon_photo"]/@href',
+        "links" : '//*[@class="list_news"]//h2[@class="title_news"]/a[1]/@href',
         'title' : '//*[@class="title_news"]/h1//text()',
         'teaser' : '//*[@class="short_intro txt_666"]//text()',
-        'avatar' : '//*[@id="article_content"]//img[1 or 2 or 3 or 4]/@src',
-        'content' : '//*[@id="article_content"]',
-        'category_value' : 'Ảnh-Video',
-        'type' : 'post',
-        'category_id' : 7
+        'avatar' : '//*[@id="detail_danhgia"]//img[1 or 2 or 3 or 4]/@src',
+        'content' : '//*[@class="content_danhgia_chitiet"]',
+        'category_value' : 'Đánh giá',
+        'category_id' : 2,
+        'type' : 'review'
     }

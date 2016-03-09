@@ -56,14 +56,20 @@ class AbstractPostSpider(CrawlSpider):
         il.add_xpath('title', self.configs['title'])
         il.add_xpath('teaser', self.configs['teaser'])
         il.add_xpath('avatar', self.configs['avatar'])
+
+        il.add_value('category_id', 1)
+
         if 'category' in self.configs:
             il.add_xpath('category', self.configs['category']);
         else:
             if 'category_value' in self.configs:
                 il.add_value('category', self.configs['category_value'].decode('utf-8'))
 
+            if 'category_id' in self.configs:
+                il.add_value('category_id', self.configs['category_id'])
+
         il.add_xpath('content', self.configs['content'])
-        il.add_value('category_id', 1)
+
         il.add_value('product_id', 0)
         il.add_value('user_id', 1)
 
