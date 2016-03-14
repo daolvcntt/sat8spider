@@ -148,6 +148,7 @@ class ProductItemLoader(ItemLoader):
 	default_output_processor = TakeFirst()
 	price_in = MapCompose(remove_tags, filter_price)
 	name_in = MapCompose(unicode.strip)
+	brand_in = MapCompose(unicode.strip)
 
 class ProductPriceItemLoader(ItemLoader):
 	default_output_processor = TakeFirst()

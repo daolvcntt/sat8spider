@@ -14,6 +14,14 @@ class SohoaVnExpress_Danhgia_Spider(AbstractPostSpider):
         {
             "url" : "http://sohoa.vnexpress.net/danh-gia",
             "max_page" : 3
+        },
+        {
+            "url" : "http://sohoa.vnexpress.net/danh-gia/dien-thoai",
+            "max_page" : 2
+        },
+        {
+            "url" : "http://sohoa.vnexpress.net/danh-gia/laptop",
+            "max_page" : 2
         }
     ]
 
