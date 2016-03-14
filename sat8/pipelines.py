@@ -95,6 +95,10 @@ class MySQLStorePipeline(object):
 					priceId = self.cursor.lastrowid
 
 				item["id"] = priceId
+
+				# print item.toJson()
+
+
 				# Insert to elasticsearch
 				self.price.insertOrUpdate(priceId, item.toJson())
 

@@ -62,8 +62,8 @@ class ProductPriceItem(Item):
 			"source" : self.get("source", ""),
 			"link" : self.get("link", ""),
 			"created_at" : self.get("created_at", strftime("%Y-%m-%d %H:%M:%S")),
-			"updated_at" : self.get("updated_at", strftime("%Y-%m-%d %H:%M:%S")),
-			"crawled_at" : self.get("crawled_at", strftime("%Y-%m-%d %H:%M:%S")),
+			"updated_at" : self.get("updated_at", strftime("%Y-%m-%d %H:%M:%S"))
+			# "crawled_at" : self.get("crawled_at", strftime("%Y-%m-%d %H:%M:%S")),
 		}
 
 class BlogItem(Item):
