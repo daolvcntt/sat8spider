@@ -26,7 +26,7 @@ class NamaMacbookSpider(CrawlSpider):
     def parse(self, response):
         sel = Selector(response)
 
-        product_links = sel.xpath('//*[@class="df_PrLst"]//a[1]/@href');
+        product_links = sel.xpath('//*[@class="df_PrLst"]//a/@href');
 
         for pl in product_links:
             url = response.urljoin(pl.extract());
