@@ -10,5 +10,6 @@ scrapy runspider sat8/spiders/DienMayThienHoaSpider.py
 scrapy runspider sat8/spiders/DienMayXanhSpider.py
 scrapy runspider sat8/spiders/DienThoaiDiDongSpider.py
 scrapy runspider sat8/spiders/DienThoaiSaiGonSpider.py
+scrapy runspider sat8/spiders/Dienmay247spider.py
 scrapy runspider sat8/spiders/DigiPhoneSpider.py
 scrapy runspider sat8/spiders/DmartSpider.py
