@@ -6,7 +6,7 @@ from scrapy.linkextractors import LinkExtractor
 from AbstractPriceSpider import AbstractPriceSpider
 
 class IsSmartPhoneSpider(AbstractPriceSpider):
-    allowed_domains = ['www.ismartphone.vn', 'www.ismartphone.vn']
+    allowed_domains = ['www.ismartphone.vn']
     start_urls = [
         'http://www.ismartphone.vn/dien-thoai.html',
         'http://www.ismartphone.vn/may-tinh-bang.html'
@@ -14,7 +14,7 @@ class IsSmartPhoneSpider(AbstractPriceSpider):
 
     rules = (
         Rule (LinkExtractor(allow=('http://www.ismartphone.vn/dien-thoai-page-[0-9]+.html'), restrict_xpaths=('//div[@class="pagination"]')), callback='parse_item', follow= True),
-        Rule (LinkExtractor(allow=('http://www.ismartphone.vn/may-tinh-bang.html')), callback='parse_item', follow= True),
+        # Rule (LinkExtractor(allow=('http://www.ismartphone.vn/may-tinh-bang.html')), callback='parse_item', follow= True),
     )
 
     configs = {
