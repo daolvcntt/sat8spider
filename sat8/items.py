@@ -159,7 +159,7 @@ class RaovatItem(Item):
 
 	def toJson(self):
 		return {
-			"id" : self.get('id', 0),
+			"id" : self.get('id'),
 			"title" : self.get('title', ""),
 			"teaser" : self.get('teaser', ""),
 			"link" : self.get('link', ""),
