@@ -76,6 +76,7 @@ class RaovatSpider(CrawlSpider):
             logging.info("Item stored in db: %s" % raovatItem['link'])
             raovatId = self.cursor.lastrowid
 
+        raovatItem["id"] = raovatId
         # Insert elasticsearch
         esRaovat = EsRaovat()
         esRaovat.insertOrUpdate(raovatId, raovatItem.toJson())
