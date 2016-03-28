@@ -144,6 +144,32 @@ class AnswerItem(Item):
 	created_at = Field()
 	updated_at = Field()
 
+
+class RaovatItem(Item):
+	id = Field()
+	title = Field()
+	teaser = Field()
+	link = Field()
+	hash_link = Field()
+	is_crawl = Field()
+	price = Field()
+	user_name = Field()
+	created_at = Field()
+	updated_at = Field()
+
+	def toJson(self):
+		return {
+			"id" : self.get('id', 0),
+			"title" : self.get('title', ""),
+			"teaser" : self.get('teaser', ""),
+			"link" : self.get('link', ""),
+			'hash_link' : self.get('hash_link', ""),
+			"is_crawl" : self.get('is_crawl', ""),
+			"price" : self.get('is_price', ""),
+			"user_name" : self.get('user_name', '')
+		}
+
+
 class ProductItemLoader(ItemLoader):
 	default_output_processor = TakeFirst()
 	price_in = MapCompose(remove_tags, filter_price)
@@ -168,3 +194,11 @@ class AnswerItemLoader(ItemLoader):
 	default_output_processor = TakeFirst()
 	user_in = MapCompose(unicode.strip)
 	answer_in = MapCompose(unicode.strip)
+
+
+class RaovatItemLoader(ItemLoader):
+	default_output_processor = TakeFirst()
+	title_in = MapCompose(unicode.strip)
+	teaser_in = MapCompose(unicode.strip)
+	user_name_in = MapCompose(unicode.strip)
+	price_in = MapCompose(remove_tags, filter_price)

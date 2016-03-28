@@ -30,7 +30,7 @@ class NgocHaSpider(AbstractPriceSpider):
 
     configs = {
         'product_links' : '//*[@class="cssName"]/a/@href',
-        'source' : 'wngocha.com.vn',
+        'source' : 'ngocha.com.vn',
         'title' : '//*[@class="product-name"]//text()',
         'price' : '//*[@class="product-price"]/text()'
     }
