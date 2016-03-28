@@ -58,6 +58,9 @@ class RaovatSpider(CrawlSpider):
         if 'price' not in raovatItem:
             raovatItem['price'] = 0
 
+        if 'teaser' not in raovatItem:
+            raovatItem['teaser'] = ''
+
         query = "SELECT id,link FROM classifields WHERE hash_link = %s"
         self.cursor.execute(query, (raovatItem['hash_link']))
         result = self.cursor.fetchone()
@@ -87,17 +90,17 @@ class RaovatSpider(CrawlSpider):
         self.cursor.execute("SELECT DISTINCT id,keyword,rate_keyword FROM products WHERE rate_keyword != '' OR rate_keyword != NULL ORDER BY updated_at DESC")
         products = self.cursor.fetchall()
 
-        url = 'http://vatgia.com/raovat/quicksearch.php?keyword=Sony+Xperia+Z3'
-        request = scrapy.Request(url, callback = self.parse_item)
-        request.meta['productId'] = 0
-        yield request
+        # url = 'http://vatgia.com/raovat/quicksearch.php?keyword=Sony+Xperia+Z3'
+        # request = scrapy.Request(url, callback = self.parse_item)
+        # request.meta['productId'] = 0
+        # yield request
 
-        # for product in products:
-        #     url = 'http://vatgia.com/raovat/quicksearch.php?keyword=%s' %product['rate_keyword']
-        #     # self.start_urls.append(url)
-        #     request = scrapy.Request(url, callback = self.parse_item)
-        #     request.meta['productId'] = product['id']
-        #     yield request
+        for product in products:
+            url = 'http://vatgia.com/raovat/quicksearch.php?keyword=%s' %product['rate_keyword']
+            # self.start_urls.append(url)
+            request = scrapy.Request(url, callback = self.parse_item)
+            request.meta['productId'] = product['id']
+            yield request
 
         # yield scrapy.Request(response.url, callback=self.parse_item)
         print '------------------------------', "\n\n"
