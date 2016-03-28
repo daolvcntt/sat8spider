@@ -43,7 +43,7 @@ class RaovatSpider(CrawlSpider):
         raovatItemLoader.add_xpath('link', './/a[@class="tooltip"]/@href')
         raovatItemLoader.add_xpath('teaser', './/div[@class="detail_small"]/div[@class="teaser"]//text()')
         raovatItemLoader.add_value('is_crawl', 1)
-        raovatItemLoader.add_xpath('user_name', './/span[@class="raovat_user"]/a/text()')
+        raovatItemLoader.add_xpath('user_name', './/span[@class="raovat_user"]/a[@class="tooltip_user text_link"]/text()')
         raovatItemLoader.add_xpath('price', './/div[@class="more"]/div[@class="price"]//text()')
         raovatItemLoader.add_value('created_at', strftime("%Y-%m-%d %H:%M:%S"))
         raovatItemLoader.add_value('updated_at', strftime("%Y-%m-%d %H:%M:%S"))
@@ -51,6 +51,12 @@ class RaovatSpider(CrawlSpider):
         raovatItem = raovatItemLoader.load_item()
         raovatItem['link'] = 'http://vatgia.com' + raovatItem['link'];
         raovatItem['hash_link'] = hashlib.md5(raovatItem['link']).hexdigest()
+
+        if 'user_name' not in raovatItem:
+            raovatItem['user_name'] = ''
+
+        if 'price' not in raovatItem:
+            raovatItem['price'] = 0
 
         query = "SELECT id,link FROM classifields WHERE hash_link = %s"
         self.cursor.execute(query, (raovatItem['hash_link']))
@@ -71,6 +77,8 @@ class RaovatSpider(CrawlSpider):
         esRaovat = EsRaovat()
         esRaovat.insertOrUpdate(raovatId, raovatItem.toJson())
 
+        # yield raovatItem
+
 
     def start_requests(self):
         print '------------------------------', "\n"
@@ -79,12 +87,17 @@ class RaovatSpider(CrawlSpider):
         self.cursor.execute("SELECT DISTINCT id,keyword,rate_keyword FROM products WHERE rate_keyword != '' OR rate_keyword != NULL ORDER BY updated_at DESC")
         products = self.cursor.fetchall()
 
-        for product in products:
-            url = 'http://vatgia.com/raovat/quicksearch.php?keyword=%s' %product['rate_keyword']
-            # self.start_urls.append(url)
-            request = scrapy.Request(url, callback = self.parse_item)
-            request.meta['productId'] = product['id']
-            yield request
+        url = 'http://vatgia.com/raovat/quicksearch.php?keyword=Sony+Xperia+Z3'
+        request = scrapy.Request(url, callback = self.parse_item)
+        request.meta['productId'] = 0
+        yield request
+
+        # for product in products:
+        #     url = 'http://vatgia.com/raovat/quicksearch.php?keyword=%s' %product['rate_keyword']
+        #     # self.start_urls.append(url)
+        #     request = scrapy.Request(url, callback = self.parse_item)
+        #     request.meta['productId'] = product['id']
+        #     yield request
 
         # yield scrapy.Request(response.url, callback=self.parse_item)
         print '------------------------------', "\n\n"

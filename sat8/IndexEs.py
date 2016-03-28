@@ -9,6 +9,8 @@ from sat8.Products.ProductPriceES import ProductPriceES
 
 from sat8.Products.ProductVideoES import ProductVideoES
 
+from sat8.Classifields.EsRaovat import EsRaovat
+
 from time import gmtime, strftime
 
 conn = settings['MYSQL_CONN']
@@ -59,3 +61,12 @@ for video in videos:
     videoEs.insertOrUpdate(video['id'], video)
 
 
+query = "SELECT * FROM classifields"
+cursor.execute(query)
+classifields = cursor.fetchall()
+
+for classifield in classifields:
+    es = EsRaovat()
+    classifield['created_at'] = classifield['created_at'].strftime("%Y-%m-%d %H:%M:%S")
+    classifield['updated_at'] = classifield['updated_at'].strftime("%Y-%m-%d %H:%M:%S")
+    es.insertOrUpdate(classifield['id'], classifield)
