@@ -34,9 +34,10 @@ class RaovatSpider(CrawlSpider):
         sel = Selector(response)
         product_links = sel.xpath('//*[@class="raovat_listing"]/li[@class="info"]');
         for pl in product_links:
-            yield self.parse_raovat(pl)
+            yield self.parse_raovat(pl, response)
 
-    def parse_raovat(self, selector):
+    def parse_raovat(self, selector, response):
+        productId = response.meta['productId']
         raovatItemLoader = RaovatItemLoader(item = RaovatItem(), selector = selector)
         raovatItemLoader.add_xpath('title', './/a[@class="tooltip"]//text()')
         raovatItemLoader.add_xpath('link', './/a[@class="tooltip"]/@href')
@@ -60,8 +61,8 @@ class RaovatSpider(CrawlSpider):
             raovatId = result['id']
             logging.info("Item already stored in db: %s" % raovatItem['link'])
         else:
-            sql = "INSERT INTO classifields (title, teaser, user_name, is_crawl, price, link, hash_link, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            self.cursor.execute(sql, (raovatItem['title'], raovatItem['teaser'],raovatItem['user_name'], raovatItem['is_crawl'] ,raovatItem['price'], raovatItem['link'], raovatItem['hash_link'] ,raovatItem['created_at'], raovatItem['updated_at']))
+            sql = "INSERT INTO classifields (product_id, title, teaser, user_name, is_crawl, price, link, hash_link, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            self.cursor.execute(sql, (productId, raovatItem['title'], raovatItem['teaser'],raovatItem['user_name'], raovatItem['is_crawl'] ,raovatItem['price'], raovatItem['link'], raovatItem['hash_link'] ,raovatItem['created_at'], raovatItem['updated_at']))
             self.conn.commit()
             logging.info("Item stored in db: %s" % raovatItem['link'])
             raovatId = self.cursor.lastrowid
