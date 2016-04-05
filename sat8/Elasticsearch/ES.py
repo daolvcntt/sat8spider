@@ -45,7 +45,7 @@ class ES():
 	def update(self, id, document):
 		index = self.getIndex()
 		doc_type = self.getDocType()
-		return self.es.update(index = index, doc_type = doc_type, id = id, body = {"doc" : document})
+		return self.es.update(index=index, doc_type=doc_type, id=id, body={"doc" : document})
 
 	# Lấy tài liệu
 	def get(self, doc_type, id):

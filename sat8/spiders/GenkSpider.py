@@ -16,7 +16,7 @@ class GenkSpider(AbstractPostSpider):
     config_urls = [
         {
             "url" : "http://genk.vn/may-tinh-bang/page-[0-9]+.chn",
-            "max_page" : 10
+            "max_page" : 1
         },
     ]
 

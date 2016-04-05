@@ -17,7 +17,7 @@ class BachKhoaShopSpider(AbstractPriceSpider):
 	rules = (
 		Rule (LinkExtractor(allow=('http://www.bachkhoashop.com/dtdd.html\?page=[0-9]+&sort=sort_order&order=ASC'), restrict_xpaths=('//p[@class="pagination"]')), callback='parse_item', follow= True),
 		Rule (LinkExtractor(allow=('http://www.bachkhoashop.com/may-tinh-bang.html\?page=[0-9]+&sort=sort_order&order=ASC'), restrict_xpaths=('//p[@class="pagination"]')), callback='parse_item', follow= True),
-		Rule (LinkExtractor(allow=('http://www.bachkhoashop.com/laptop.html\?page=[0-9]+&sort=sort_order&order=ASC'), restrict_xpaths=('//p[@class="pagination"]')), callback='parse_item', follow= True),
+		Rule (LinkExtractor(allow=('http://www.bachkhoashop.com/laptop.html\?page=[0-9]+'), restrict_xpaths=('//p[@class="pagination"]')), callback='parse_item', follow= True),
 	)
 
 	# def parse(self, response):

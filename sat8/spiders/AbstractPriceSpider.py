@@ -52,10 +52,8 @@ class AbstractPriceSpider(CrawlSpider):
         product['price']      = price
         product['created_at'] = strftime("%Y-%m-%d %H:%M:%S")
         product['updated_at'] = strftime("%Y-%m-%d %H:%M:%S")
+        product['crawled_at'] = strftime("%Y-%m-%d %H:%M:%S")
         # product['brand']      = (pil.get_value(product['title'])).split(" ")[0]
-
-        # print product
-        # return
 
         yield(product)
 

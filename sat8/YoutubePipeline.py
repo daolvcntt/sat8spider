@@ -100,11 +100,11 @@ class YoutubePipeline(object):
          })
 
    def getVideosByProducts(self):
-      self.cursor.execute("SELECT keyword FROM products WHERE keyword != '' OR keyword != NULL")
+      self.cursor.execute("SELECT DISTINCT video_keyword FROM products WHERE price > 0 AND video_keyword != '' OR video_keyword != NULL")
       products = self.cursor.fetchall()
 
       for product in products:
-         self.getVideo(product['keyword'])
+         self.getVideo(product['video_keyword'])
 
 # youtube = YoutubePipline()
 # youtube.getVideo('iphone')

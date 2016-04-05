@@ -78,22 +78,27 @@ class MySQLStorePipeline(object):
 				priceId = 0
 
 				if result:
-					updateSql = "UPDATE product_prices SET price = %s, updated_at = %s WHERE link = %s"
-					self.cursor.execute(updateSql, (item['price'], item['updated_at'], item['link'].encode('utf-8')))
+					updateSql = "UPDATE product_prices SET price = %s, updated_at = %s, crawled_at = %s WHERE link = %s"
+
+					self.cursor.execute(updateSql, (item['price'], item['updated_at'], item['crawled_at'], item['link'].encode('utf-8')))
 					self.conn.commit()
 					logging.info("Item already updated in db: %s" % item['link'])
 
 					priceId = result['id']
 
 				else:
-					sql = "INSERT INTO product_prices (title, price, source, link, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s)"
-					self.cursor.execute(sql, (item['title'].encode('utf-8'), item['price'], item['source'].encode('utf-8'), item['link'].encode('utf-8'), item['created_at'], item['updated_at']))
+					sql = "INSERT INTO product_prices (title, price, source, link, created_at, updated_at, crawled_at) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+					self.cursor.execute(sql, (item['title'].encode('utf-8'), item['price'], item['source'].encode('utf-8'), item['link'].encode('utf-8'), item['created_at'], item['updated_at'], item['crawled_at']))
 					self.conn.commit()
 					logging.info("Item stored in db: %s" % item['link'])
 
 					priceId = self.cursor.lastrowid
 
 				item["id"] = priceId
+
+				# print item.toJson()
+
+
 				# Insert to elasticsearch
 				self.price.insertOrUpdate(priceId, item.toJson())
 

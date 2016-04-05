@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# Download toàn bộ ảnh từ phần nội dung post
+# Chú ý: Chỉ chạy 1 lần khi cần thiết
 import scrapy
 import re
 from scrapy.spiders import CrawlSpider, Rule
@@ -9,18 +11,22 @@ from urlparse import urlparse
 from time import gmtime, strftime
 import urllib
 
-from scrapy.conf import settings
+import settings
 import hashlib
 
 import gzip
 import shutil
 import os
 
-conn = settings['MYSQL_CONN']
+from Functions import makeGzFile
+
+conn = settings.MYSQL_CONN
 cursor = conn.cursor()
 
+# urllib.urlretrieve('http://res.vtc.vn/media/vtcnews/2014/07/17/di_dong1.jpg', settings['IMAGES_STORE'] + '/posts/a.jpg');
 
-class ConvertImageSpider():
+
+class DownloadImageContentPost():
 
    text = ''
 
@@ -31,18 +37,22 @@ class ConvertImageSpider():
          url = pl.extract();
          imageName = hashlib.sha1(url).hexdigest() + '.jpg'
          try:
-            filePath = settings['IMAGES_STORE'] + '/posts/' + imageName
+            filePath = settings.IMAGES_STORE + '/posts/' + imageName
             filePathGzip = filePath + '.gz';
-            urllib.urlretrieve(url, filePath)
+            if os.path.isfile(filePath) == False or os.path.isfile(filePathGzip) == False:
+               urllib.urlretrieve(url, filePath)
 
-            with open(filePath , 'rb') as f_in, gzip.open(filePathGzip, 'wb') as f_out:
-               shutil.copyfileobj(f_in, f_out)
+               # Make gz file
+               makeGzFile(filePath)
 
-            print filePath
+            print url
 
          except IOError, e:
-            print 'Ko lay duoc anh'
+            print e
 
+      query = "UPDATE posts set has_image_content = 1 WHERE id = %s"
+      cursor.execute(query, (post['id']))
+      conn.commit()
 
    def setText(self, text):
       self.text = text
@@ -51,13 +61,13 @@ class ConvertImageSpider():
       return self.text
 
 
-query = "SELECT * FROM posts"
+query = "SELECT * FROM posts WHERE has_image_content != 1 ORDER BY updated_at DESC"
 cursor.execute(query)
 
 posts = cursor.fetchall()
 
 for post in posts:
-   # print post['title']
-   c = ConvertImageSpider()
+
+   c = DownloadImageContentPost()
    c.setText(post['content'])
    c.convertLinks(post)

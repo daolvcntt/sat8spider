@@ -11,6 +11,7 @@ BOT_NAME = 'sat8'
 
 REACTOR_THREADPOOL_MAXSIZE = 20
 CONCURRENT_REQUESTS        = 100
+CONCURRENT_REQUESTS_PER_DOMAIN = 100
 RETRY_ENABLED              = True
 DOWNLOAD_TIMEOUT           = 300
 COOKIES_ENABLED            = False
@@ -21,8 +22,9 @@ SPIDER_MODULES = ['sat8.spiders']
 NEWSPIDER_MODULE = 'sat8.spiders'
 ITEM_PIPELINES = {
 	'sat8.pipelines.MySQLStorePipeline' : 100,
-	# 'sat8.MyImagesPipeline.MyImagesPipeline' : 102,
-	'sat8.ConverImagePipeline.ConverImagePipeline' : 102,
+	# 'scrapy.pipelines.images.ImagesPipeline': 102
+	'sat8.MyImagesPipeline.MyImagesPipeline' : 102,
+	#'sat8.ConverImagePipeline.ConverImagePipeline' : 102,
 	# 'sat8.YoutubePipeline.YoutubePipeline' : 101,
 }
 
@@ -51,8 +53,8 @@ PRODUCT_PRICE_RULES = {
 
 # Image download settings
 IMAGES_STORE = env.IMAGES_STORE
-IMAGES_MIN_HEIGHT = 110
-IMAGES_MIN_WIDTH = 110
+IMAGES_MIN_HEIGHT = 90
+IMAGES_MIN_WIDTH = 90
 IMAGES_THUMBS = {
 	'small': (120, 120),
 	'big': (270, 270),
