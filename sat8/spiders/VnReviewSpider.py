@@ -12,7 +12,7 @@ class VnReviewSpider(AbstractPostSpider):
 	config_urls = [
 		{
 			"url" : "http://vnreview.vn/danh-gia-di-dong#cur=[0-9]+",
-			"max_page" : 20
+			"max_page" : 2
 		}
 	]
 

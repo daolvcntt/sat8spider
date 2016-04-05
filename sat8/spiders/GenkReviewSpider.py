@@ -13,7 +13,7 @@ class GenkReviewSpider(AbstractPostSpider):
     config_urls = [
         {
             "url" : "http://genk.vn/review/page-[0-9]+.htm",
-            "max_page" : 10
+            "max_page" : 2
         }
     ]
 

@@ -18,32 +18,10 @@ class MyImagesPipeline(ImagesPipeline):
 
 	def item_completed(self, results, item, info):
 		image_paths = [x['path'].replace("full/", "") for ok, x in results if ok]
+
 		if not image_paths:
 			raise DropItem("Item contains no images")
 
 		item['image_paths'] = image_paths;
-
-		if item['typ'] == 'product' :
-
-			connection = pymysql.connect(host='localhost',user=settings.MYSQL_USER, password=settings.MYSQL_PASSWORD,db=settings.MYSQL_DB,charset='utf8',cursorclass=pymysql.cursors.DictCursor)
-			try:
-				with connection.cursor() as cursor:
-					# Create a new record
-					created_at = time.strftime("%Y-%m-%d %H:%M:%S")
-					updated_at = time.strftime("%Y-%m-%d %H:%M:%S")
-
-					for image in image_paths:
-						sql = "INSERT INTO product_images (product_title, image, created_at, updated_at) VALUES (%s, %s, %s, %s)"
-						cursor.execute(sql, (item['name'].encode('utf-8'), image, created_at, updated_at))
-
-				# connection is not autocommit by default. So you must commit to save
-				# your changes.
-				connection.commit()
-
-			finally:
-				logging.info("Shit connect")
-
-				connection.close()
-
 
 		return item
