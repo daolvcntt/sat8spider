@@ -17,7 +17,7 @@ class AnKhangSpider(AbstractPriceSpider):
     )
 
     configs = {
-        'product_links' : '//*[@class="p_container"]//a[@class="p_name"]/@href',
+        'product_links' : '//*[@class="product_list home page_inside"]//div[@class="p_container"]//a[@class="p_name"]/@href',
         'source' : 'www.ankhang.vn',
         'title' : '//*[@id="overview"]/h1/text()',
         'price' : '//*[@id="price_detail"]/div[@class="img_price_full"]/text()'

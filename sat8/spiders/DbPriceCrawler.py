@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+# Xpath được lấy tự động từ database
+# Mỗi ngày lấy 15000 links
+# @author Justin <cong.itsoft@gmail.com>
+# @date 2016-04-05
 import scrapy
 import re
 import hashlib
@@ -10,8 +14,7 @@ from urlparse import urlparse
 from time import gmtime, strftime
 from scrapy.conf import settings
 
-conn = settings['MYSQL_CONN']
-cursor = conn.cursor()
+
 
 class DbPriceSpider(CrawlSpider):
     name = "product_link"
@@ -22,24 +25,33 @@ class DbPriceSpider(CrawlSpider):
     def parse_item(self, response):
         sel = Selector(response)
         site = response.meta['site']
+        linkItem = response.meta['link_item']
 
         product_links = sel.xpath(site['xpath_link_detail'])
         for pl in product_links:
             url = response.urljoin(pl.extract());
             request = scrapy.Request(url, callback = self.parse_detail_content)
             request.meta['site'] = site
+            request.meta['link_item'] = linkItem
             yield request
 
-    def parse_detail_content(self, response):
+    # Return product to crawl
+    def get_product(self, response):
         link = response.url
         url_parts = urlparse(link)
         site = response.meta['site']
+        linkItem = response.meta['link_item']
 
         pil = ProductPriceItemLoader(item = ProductPriceItem(), response = response)
         pil.add_xpath('title', site['xpath_name'])
         pil.add_xpath('price', site['xpath_price'])
         pil.add_value('source', site['name'])
+        pil.add_value('source_id', linkItem['site_id'])
+        pil.add_value('brand_id', linkItem['brand_id'])
         pil.add_value('link', link)
+        pil.add_value('is_laptop', linkItem['is_laptop'])
+        pil.add_value('is_phone', linkItem['is_phone'])
+        pil.add_value('is_tablet', linkItem['is_tablet'])
 
         product = pil.load_item()
 
@@ -54,26 +66,38 @@ class DbPriceSpider(CrawlSpider):
         product['price']      = price
         product['created_at'] = strftime("%Y-%m-%d %H:%M:%S")
         product['updated_at'] = strftime("%Y-%m-%d %H:%M:%S")
+        product['crawled_at'] = strftime("%Y-%m-%d %H:%M:%S")
 
+        return product
 
-        yield(product)
+    # Process crawl product
+    def parse_detail_content(self, response):
+        yield self.get_product(response)
 
 
     def start_requests(self):
-        query = "SELECT * FROM sites JOIN site_metas ON sites.id = site_metas.site_id"
+        conn = settings['MYSQL_CONN']
+        cursor = conn.cursor()
+        query = "SELECT * FROM sites JOIN site_metas ON sites.id = site_metas.site_id LIMIT 10"
         cursor.execute(query)
         sites = cursor.fetchall()
 
+        crawlLinks = []
+
         for site in sites:
-            queryLink = "SELECT * FROM site_links WHERE site_id = %s"
+            queryLink = "SELECT * FROM site_links WHERE site_id = %s ORDER BY id DESC"
             cursor.execute(queryLink, (site["id"]))
             links = cursor.fetchall()
 
             for link in links:
                 if link["max_page"] > 0:
-                    for i in range(1, link["max_page"]):
+                    for i in range(1, link["max_page"]+1):
                         startLink = link["link"].replace('[0-9]+', str(i))
+                        crawlLinks.append(startLink)
 
-                        request = scrapy.Request(startLink, callback = self.parse_item)
-                        request.meta['site'] = site
-                        yield request
+
+        for lik in crawlLinks:
+            request = scrapy.Request(lik, callback = self.parse_item)
+            request.meta['site'] = site
+            request.meta['link_item'] = link
+            yield request
