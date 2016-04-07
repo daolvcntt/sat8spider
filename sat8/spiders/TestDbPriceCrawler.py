@@ -14,7 +14,7 @@ class TestDbPriceCrawler(DbPriceSpider):
     def start_requests(self):
         conn = settings['MYSQL_CONN']
         cursor = conn.cursor()
-        query = "SELECT * FROM sites JOIN site_metas ON sites.id = site_metas.site_id WHERE sites.env_test = 1"
+        query = "SELECT * FROM sites JOIN site_metas ON sites.id = site_metas.site_id WHERE sites.env_testing = 1"
         cursor.execute(query)
         sites = cursor.fetchall()
 
