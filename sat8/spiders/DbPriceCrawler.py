@@ -27,7 +27,8 @@ class DbPriceSpider(CrawlSpider):
         site = response.meta['site']
         linkItem = response.meta['link_item']
 
-        product_links = sel.xpath(site['xpath_link_detail'])
+        product_links = sel.xpath(linkItem['xpath_detail_url'])
+
         for pl in product_links:
             url = response.urljoin(pl.extract());
             request = scrapy.Request(url, callback = self.parse_detail_content)
@@ -38,13 +39,14 @@ class DbPriceSpider(CrawlSpider):
     # Return product to crawl
     def get_product(self, response):
         link = response.url
+
         url_parts = urlparse(link)
         site = response.meta['site']
         linkItem = response.meta['link_item']
 
         pil = ProductPriceItemLoader(item = ProductPriceItem(), response = response)
-        pil.add_xpath('title', site['xpath_name'])
-        pil.add_xpath('price', site['xpath_price'])
+        pil.add_xpath('title', linkItem['xpath_name'])
+        pil.add_xpath('price', linkItem['xpath_price'])
         pil.add_value('source', site['name'])
         pil.add_value('source_id', linkItem['site_id'])
         pil.add_value('brand_id', linkItem['brand_id'])
