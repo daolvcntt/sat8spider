@@ -5,6 +5,7 @@
 
 import scrapy
 from DbPriceCrawler import DbPriceSpider
+from scrapy.conf import settings
 
 class TestDbPriceCrawler(DbPriceSpider):
 
