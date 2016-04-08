@@ -30,6 +30,10 @@ class TestDbPriceCrawler(DbPriceSpider):
 
         siteIds = ','.join(str(id) for id in siteIds )
 
+        if len(siteIds) <= 0:
+            print 'Không có site nào được đặt cronjob, vui lòng đặt cronjob cho từng site trong Admin'
+            return
+
         query = "SELECT * FROM sites JOIN site_metas ON sites.id = site_metas.site_id WHERE sites.env_testing = 1 AND sites.id IN("+ siteIds +")"
         cursor.execute(query)
         sites = cursor.fetchall()
