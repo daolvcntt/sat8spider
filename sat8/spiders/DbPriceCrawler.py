@@ -103,15 +103,13 @@ class DbPriceSpider(CrawlSpider):
         siteIds = ','.join(str(id) for id in siteIds )
 
         if len(siteIds) <= 0:
-            print 'Không có site nào được đặt cronjob, vui lòng đặt cronjob cho từng site trong Admin'
-            return
+            raise ValueError('Không có site nào được đặt cronjob, vui lòng đặt cronjob cho từng site trong Admin')
 
         query = "SELECT * FROM sites JOIN site_metas ON sites.id = site_metas.site_id WHERE sites.id IN("+ siteIds +")"
 
         # Nếu env = testing thì thêm điều kiện testing
         if self.env == 'testing':
             query = query + " AND sites.env_testing = 1"
-
 
         cursor.execute(query)
         sites = cursor.fetchall()
@@ -122,24 +120,28 @@ class DbPriceSpider(CrawlSpider):
         conn = self.conn
         cursor = self.cursor
 
-        sites = self.get_avaiable_sites()
+        try:
+            sites = self.get_avaiable_sites()
 
-        crawlLinks = []
+            crawlLinks = []
 
-        for site in sites:
-            queryLink = "SELECT * FROM site_links WHERE site_id = %s ORDER BY id DESC"
-            cursor.execute(queryLink, (site["id"]))
-            links = cursor.fetchall()
+            for site in sites:
+                queryLink = "SELECT * FROM site_links WHERE site_id = %s ORDER BY id DESC"
+                cursor.execute(queryLink, (site["id"]))
+                links = cursor.fetchall()
 
-            for link in links:
-                if link["max_page"] > 0:
-                    for i in range(1, link["max_page"]+1):
-                        startLink = link["link"].replace('[0-9]+', str(i))
-                        crawlLinks.append(startLink)
+                for link in links:
+                    if link["max_page"] > 0:
+                        for i in range(1, link["max_page"]+1):
+                            startLink = link["link"].replace('[0-9]+', str(i))
+                            crawlLinks.append(startLink)
 
 
-        for lik in crawlLinks:
-            request = scrapy.Request(lik, callback = self.parse_item)
-            request.meta['site'] = site
-            request.meta['link_item'] = link
-            yield request
+            for lik in crawlLinks:
+                request = scrapy.Request(lik, callback = self.parse_item)
+                request.meta['site'] = site
+                request.meta['link_item'] = link
+                yield request
+
+        except ValueError as e:
+            print e
