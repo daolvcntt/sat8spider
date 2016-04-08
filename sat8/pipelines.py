@@ -78,9 +78,9 @@ class MySQLStorePipeline(object):
 				priceId = 0
 
 				if result:
-					updateSql = "UPDATE product_prices SET price = %s, updated_at = %s, crawled_at = %s WHERE link = %s"
+					updateSql = "UPDATE product_prices SET price = %s, source_id = %s, brand_id = %s, is_phone=%s, is_tablet=%s, is_laptop=%s, updated_at = %s, crawled_at = %s WHERE link = %s"
 
-					self.cursor.execute(updateSql, (item['price'], item['updated_at'], item['crawled_at'], item['link'].encode('utf-8')))
+					self.cursor.execute(updateSql, (item['price'], item['source_id'], item['brand_id'], item['is_phone'], item['is_tablet'], item['is_laptop'], item['updated_at'], item['crawled_at'], item['link'].encode('utf-8')))
 					self.conn.commit()
 					logging.info("Item already updated in db: %s" % item['link'])
 
