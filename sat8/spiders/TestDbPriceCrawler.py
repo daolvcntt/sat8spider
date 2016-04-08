@@ -15,7 +15,21 @@ class TestDbPriceCrawler(DbPriceSpider):
     def start_requests(self):
         conn = settings['MYSQL_CONN']
         cursor = conn.cursor()
-        query = "SELECT * FROM sites JOIN site_metas ON sites.id = site_metas.site_id WHERE sites.env_testing = 1"
+
+         # Ngày trong tuần
+        weekday = datetime.datetime.today().weekday()
+
+        # Lấy các site sẽ chạy ngày hôm nay
+        siteIds = []
+        query = "SELECT site_id FROM site_cronjob WHERE day = %s"
+        cursor.execute(query, (weekday))
+        rows = cursor.fetchall()
+        for row in rows:
+            siteIds.append(row['site_id'])
+
+        siteIds = ','.join(str(id) for id in siteIds )
+
+        query = "SELECT * FROM sites JOIN site_metas ON sites.id = site_metas.site_id WHERE sites.env_testing = 1 AND sites.id IN("+ siteIds +")"
         cursor.execute(query)
         sites = cursor.fetchall()
 
