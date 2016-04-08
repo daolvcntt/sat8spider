@@ -23,6 +23,12 @@ class DbPriceSpider(CrawlSpider):
     start_urls = []
     rules = ()
 
+    env = 'production'
+
+    def __init__(self):
+        self.conn = settings['MYSQL_CONN']
+        self.cursor = self.conn.cursor()
+
     def parse_item(self, response):
         sel = Selector(response)
         site = response.meta['site']
@@ -78,9 +84,10 @@ class DbPriceSpider(CrawlSpider):
         yield self.get_product(response)
 
 
-    def start_requests(self):
-        conn = settings['MYSQL_CONN']
-        cursor = conn.cursor()
+    # Get sites for crawler
+    def get_avaiable_sites(self):
+        conn = self.conn
+        cursor = self.cursor
 
         # Ngày trong tuần
         weekday = datetime.datetime.today().weekday()
@@ -95,9 +102,27 @@ class DbPriceSpider(CrawlSpider):
 
         siteIds = ','.join(str(id) for id in siteIds )
 
+        if len(siteIds) <= 0:
+            print 'Không có site nào được đặt cronjob, vui lòng đặt cronjob cho từng site trong Admin'
+            return
+
         query = "SELECT * FROM sites JOIN site_metas ON sites.id = site_metas.site_id WHERE sites.id IN("+ siteIds +")"
+
+        # Nếu env = testing thì thêm điều kiện testing
+        if self.env == 'testing':
+            query = query + " AND sites.env_testing = 1"
+
+
         cursor.execute(query)
         sites = cursor.fetchall()
+
+        return sites;
+
+    def start_requests(self):
+        conn = self.conn
+        cursor = self.cursor
+
+        sites = self.get_avaiable_sites()
 
         crawlLinks = []
 
