@@ -4,6 +4,7 @@
 # @date 2016-04-07
 
 import scrapy
+import datetime
 from DbPriceCrawler import DbPriceSpider
 from scrapy.conf import settings
 
