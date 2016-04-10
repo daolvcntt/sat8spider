@@ -103,7 +103,10 @@ class DbPriceSpider(CrawlSpider):
         siteIds = ','.join(str(id) for id in siteIds )
 
         if len(siteIds) <= 0:
-            raise ValueError('Không có site nào được đặt cronjob, vui lòng đặt cronjob cho từng site trong Admin')
+            errMsg = str("----------------------------------------------------------------------------------------------\n")
+            errMsg = errMsg + 'Ngày hôm nay chưa có site nào được đặt cronjob, vui lòng đặt cronjob cho từng site trong Admin'
+            errMsg = errMsg + "\n----------------------------------------------------------------------------------------------\n";
+            raise ValueError(errMsg)
 
         query = "SELECT * FROM sites JOIN site_metas ON sites.id = site_metas.site_id WHERE sites.id IN("+ siteIds +")"
 
