@@ -137,14 +137,11 @@ class DbPriceSpider(CrawlSpider):
                     if link["max_page"] > 0:
                         for i in range(1, link["max_page"]+1):
                             startLink = link["link"].replace('[0-9]+', str(i))
-                            crawlLinks.append(startLink)
 
-
-            for lik in crawlLinks:
-                request = scrapy.Request(lik, callback = self.parse_item)
-                request.meta['site'] = site
-                request.meta['link_item'] = link
-                yield request
+                            request = scrapy.Request(startLink, callback = self.parse_item)
+                            request.meta['site'] = site
+                            request.meta['link_item'] = link
+                            yield request
 
         except ValueError as e:
             print e
