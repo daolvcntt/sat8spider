@@ -34,7 +34,7 @@ class DbPriceSpider(CrawlSpider):
         site = response.meta['site']
         linkItem = response.meta['link_item']
 
-        product_links = sel.xpath(linkItem['xpath_detail_url'])
+        product_links = sel.xpath(linkItem['xpath_link_detail'])
 
         for pl in product_links:
             url = response.urljoin(pl.extract());
@@ -129,7 +129,7 @@ class DbPriceSpider(CrawlSpider):
             crawlLinks = []
 
             for site in sites:
-                queryLink = "SELECT * FROM site_links WHERE site_id = %s ORDER BY id DESC"
+                queryLink = "SELECT xpath_link_detail, site_metas.xpath_name, site_metas.xpath_price, max_page, link, site_links.site_id, brand_id, is_phone, is_tablet, is_laptop FROM site_links JOIN site_metas ON xpath_id = site_metas.id WHERE site_links.site_id = %s ORDER BY site_links.id DESC"
                 cursor.execute(queryLink, (site["id"]))
                 links = cursor.fetchall()
 
