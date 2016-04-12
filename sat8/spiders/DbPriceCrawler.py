@@ -41,6 +41,7 @@ class DbPriceSpider(CrawlSpider):
             request = scrapy.Request(url, callback = self.parse_detail_content)
             request.meta['site'] = site
             request.meta['link_item'] = linkItem
+            request.meta['dont_redirect'] = True
             yield request
 
     # Return product to crawl
