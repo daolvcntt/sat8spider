@@ -34,13 +34,14 @@ class DbPriceSpider(CrawlSpider):
         site = response.meta['site']
         linkItem = response.meta['link_item']
 
-        product_links = sel.xpath(linkItem['xpath_detail_url'])
+        product_links = sel.xpath(linkItem['xpath_link_detail'])
 
         for pl in product_links:
             url = response.urljoin(pl.extract());
             request = scrapy.Request(url, callback = self.parse_detail_content)
             request.meta['site'] = site
             request.meta['link_item'] = linkItem
+            request.meta['dont_redirect'] = True
             yield request
 
     # Return product to crawl
@@ -114,6 +115,10 @@ class DbPriceSpider(CrawlSpider):
         if self.env == 'testing':
             query = query + " AND sites.env_testing = 1"
 
+        # Nếu muốn chạy ngay thì chạy
+        if self.env == 'quick':
+            query = query + " AND sites.env_quick = 1";
+
         cursor.execute(query)
         sites = cursor.fetchall()
 
@@ -129,7 +134,7 @@ class DbPriceSpider(CrawlSpider):
             crawlLinks = []
 
             for site in sites:
-                queryLink = "SELECT * FROM site_links WHERE site_id = %s ORDER BY id DESC"
+                queryLink = "SELECT xpath_link_detail, site_metas.xpath_name, site_metas.xpath_price, max_page, link, site_links.site_id, brand_id, is_phone, is_tablet, is_laptop FROM site_links JOIN site_metas ON xpath_id = site_metas.id WHERE site_links.site_id = %s ORDER BY site_links.id DESC"
                 cursor.execute(queryLink, (site["id"]))
                 links = cursor.fetchall()
 
