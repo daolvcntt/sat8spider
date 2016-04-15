@@ -115,6 +115,10 @@ class DbPriceSpider(CrawlSpider):
         if self.env == 'testing':
             query = query + " AND sites.env_testing = 1"
 
+        # Nếu muốn chạy ngay thì chạy
+        if self.env == 'quick':
+            query = query + " AND sites.env_quick = 1";
+
         cursor.execute(query)
         sites = cursor.fetchall()
 
