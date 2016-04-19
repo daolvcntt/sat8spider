@@ -101,7 +101,7 @@ class DbPriceSpider(CrawlSpider):
 
         # Lấy các site sẽ chạy ngày hôm nay
         siteIds = []
-        query = "SELECT site_id FROM site_cronjob WHERE day = %s"
+        query = "SELECT site_id FROM site_cronjob WHERE allow_crawl = 1 AND day = %s"
         cursor.execute(query, (weekday))
         rows = cursor.fetchall()
         for row in rows:
