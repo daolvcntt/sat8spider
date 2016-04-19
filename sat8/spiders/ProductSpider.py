@@ -28,7 +28,7 @@ class ProductSpider(CrawlSpider):
 
     def parse_detail_content(self, response):
         pil = ProductItemLoader(item = ProductItem(), response = response)
-        pil.add_xpath('name', '//*[@id="product_addtocart_form"]/div[2]/div[1]/div[1]/h1//text()')
+        pil.add_xpath('name', '//*[@class="product-big-right"]/div[@class="product-name"]/h1/text()')
         pil.add_xpath('image', '//*[@id="image"]/@src')
         pil.add_css('spec', '.content-thongso > ul')
         pil.add_xpath('images', '//*[@class="more-views"]/ul[1]/li/a/@href')
