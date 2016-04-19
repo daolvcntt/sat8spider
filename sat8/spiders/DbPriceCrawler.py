@@ -101,7 +101,7 @@ class DbPriceSpider(CrawlSpider):
 
         # Lấy các site sẽ chạy ngày hôm nay
         siteIds = []
-        query = "SELECT site_id FROM site_cronjob WHERE allow_crawl = 1 AND day = %s"
+        query = "SELECT site_id FROM site_cronjob WHERE day = %s"
         cursor.execute(query, (weekday))
         rows = cursor.fetchall()
         for row in rows:
@@ -115,7 +115,7 @@ class DbPriceSpider(CrawlSpider):
             errMsg = errMsg + "\n----------------------------------------------------------------------------------------------\n";
             raise ValueError(errMsg)
 
-        query = "SELECT * FROM sites JOIN site_metas ON sites.id = site_metas.site_id WHERE sites.id IN("+ siteIds +")"
+        query = "SELECT * FROM sites JOIN site_metas ON sites.id = site_metas.site_id WHERE allow_crawl = 1 AND sites.id IN("+ siteIds +")"
 
         # Nếu env = testing thì thêm điều kiện testing
         if self.env == 'testing':
