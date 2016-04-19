@@ -33,6 +33,11 @@ class AbstractPriceSpider(CrawlSpider):
         pil.add_xpath('title', self.configs['title'])
         pil.add_xpath('price', self.configs['price'])
         pil.add_value('source', self.configs['source'])
+        pil.add_value('source_id', self.configs['source_id'])
+        pil.add_value('brand_id', 0)
+        pil.add_value('is_phone', 0)
+        pil.add_value('is_tablet', 0)
+        pil.add_value('is_laptop', 0)
         pil.add_value('link', link)
 
         product = pil.load_item()
