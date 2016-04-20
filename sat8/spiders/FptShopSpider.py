@@ -49,8 +49,10 @@ class FptShopSpider(AbstractPriceSpider):
         'product_links' : '//*[@class="p-item-bound"]/a[@class="p-link-prod"]/@href',
         'source' : 'fptshop.com.vn',
         'title' : '//*[@class="box-name"]//h1[@class="detail-name"]//text() | //*[@class="fshop-dt-proname"]/text()',
-        'price' : '//*[@class="detail-price-status clearfix"]//div[@class="detail-current-price"]//text() | //*[@class="fshop-dt-price"]//text()'
+        'price' : '//*[@class="detail-price-status clearfix"]//div[@class="detail-current-price"]//text() | //*[@class="fshop-dt-price"]//text()',
+        'source_id' : 39
     }
+
 
     def parse(self, response):
         jsonresponse = json.loads(response.body_as_unicode())
@@ -60,3 +62,4 @@ class FptShopSpider(AbstractPriceSpider):
         for pl in product_links:
             url = response.urljoin(pl.extract());
             yield scrapy.Request(url, callback = self.parse_detail_content)
+
