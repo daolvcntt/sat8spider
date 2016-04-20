@@ -49,7 +49,7 @@ class FptShopSpider(AbstractPriceSpider):
         'product_links' : '//*[@class="p-item-bound"]/a[@class="p-link-prod"]/@href',
         'source' : 'fptshop.com.vn',
         'title' : '//*[@class="box-name"]//h1[@class="detail-name"]//text() | //*[@class="fshop-dt-proname"]/text()',
-        'price' : '//*[@class="detail-price-status clearfix"]//div[@class="detail-current-price"]//text() | //*[@class="fshop-dt-price"]//text()',
+        'price' : '//*[@class="detail-price-status "]//div[@class="detail-current-price"]/strong//text() | //*[@class="fshop-dt-price"]//text()',
         'source_id' : 39
     }
 
