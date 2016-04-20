@@ -13,35 +13,57 @@ import json,urllib
 
 class HungmobileSpider(CrawlSpider):
     name = "product_link"
-    allowed_domains = []
+    allowed_domains = ['hungmobile.vn']
 
     start_urls = [
-
+        'http://hungmobile.vn/Services/Loaddulieu.aspx/LoadDataCat'
     ]
 
     rules = ()
 
+    def parse(self, response):
 
-    def parse_item(self, response):
+        view_state = response.xpath('//*[@id="__VIEWSTATE"]/@value').extract_first()
+        view_state_generator = response.xpath('//*[@id="__VIEWSTATEGENERATOR"]/@value').extract_first()
 
-        print response.body_as_unicode()
+        data = {
+            "cid": "03",
+            "gia": "",
+            "manhinh": "0",
+            "ncount": "10",
+            "order": "",
+            "tt": "all",
+            '__VIEWSTATE' : view_state,
+            '__VIEWSTATEGENERATOR' : view_state_generator
+        }
 
-        jsonresponse = json.loads(response.body_as_unicode())
+        headers = {
+            "X-Requested-With" : "XMLHttpRequest",
+            "Content-Type": "application/json; charset=utf-8",
+        }
 
-        print jsonresponse
-        return
+        method = 'POST'
 
-        sel = Selector(text=jsonresponse['d']['Content'])
+        formData = data
 
-        product_links = sel.xpath('//*[@class="product "]/a[1]/@href')
+        # formData[url['param_page']] = i * url['jump_step']
 
-        for pl in product_links:
-            url = response.urljoin(pl.extract())
-            request = scrapy.Request(url, callback = self.parse_detail_content)
-            yield request
+        request = scrapy.FormRequest(url='http://hungmobile.vn/Services/Loaddulieu.aspx/LoadDataCat', method=method, formdata=formData, callback=self.parse_detail_content)
+        yield request
+
+
+
+
 
     def parse_detail_content(self, response):
+
+
         link = response.url
+
+        sel = Selector(response)
+
+        print sel
+        return
 
         pil = ProductItemLoader(item = ProductPriceItem(), response = response)
         pil.add_xpath('title', '//*[@class="righttext col-md-7 col-sm-7 col-xs-12"]/h1/text()')
@@ -73,42 +95,40 @@ class HungmobileSpider(CrawlSpider):
         print product
 
 
-    def start_requests(self):
-        urls = [
-            {
-                'href' : 'http://hungmobile.vn/Services/Loaddulieu.aspx/LoadDataCat',
-                'data' : {
-                    "cid": "03",
-                    "gia": "",
-                    "manhinh": "0",
-                    "ncount": "10",
-                    "order": "",
-                    "tt": "all"
-                },
-                'max_page' : "1",
-                'jump_step' : "10",
-                'param_page' : 'ncount'
-            }
-        ]
+    # def start_requests(self):
+    #     urls = [
+    #         {
+    #             'href' : 'http://hungmobile.vn/Services/Loaddulieu.aspx/LoadDataCat',
+    #             'data' : {
+    #                 "cid": "03",
+    #                 "gia": "",
+    #                 "manhinh": "0",
+    #                 "ncount": "10",
+    #                 "order": "",
+    #                 "tt": "all",
+    #             },
+    #             'max_page' : "1",
+    #             'jump_step' : "10",
+    #             'param_page' : 'ncount'
+    #         }
+    #     ]
 
-        for url in urls:
-            for i in range(1, int(url['max_page'])+1):
+    #     for url in urls:
+    #         for i in range(1, int(url['max_page'])+1):
 
-                headers = {
-                    "X-Requested-With" : "XMLHttpRequest",
-                    "Content-Type": "application/json; charset=utf-8",
-                    "__VIEWSTATE" : "/wEPDwULLTE2MTY2ODcyMjlkZIJC6fe+7GQzaRkqAMbN+qzTjGKC",
-                    "__VIEWSTATEGENERATOR" : "8FFA2AA6"
-                }
+    #             headers = {
+    #                 "X-Requested-With" : "XMLHttpRequest",
+    #                 "Content-Type": "application/json; charset=utf-8"
+    #             }
 
-                method = 'POST'
+    #             method = 'POST'
 
-                formData = url['data']
+    #             formData = url['data']
 
-                # formData[url['param_page']] = i * url['jump_step']
+    #             # formData[url['param_page']] = i * url['jump_step']
 
-                request = scrapy.FormRequest(url=url['href'], method=method, formdata=formData, callback=self.parse_item)
-                yield request
+    #             request = scrapy.FormRequest(url=url['href'], method=method, formdata=formData, callback=self.parse_item)
+    #             yield request
 
 
 
