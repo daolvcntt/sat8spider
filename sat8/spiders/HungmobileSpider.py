@@ -11,7 +11,7 @@ from time import gmtime, strftime
 
 import json,urllib
 
-class ThegioithietbisoSpider(CrawlSpider):
+class HungmobileSpider(CrawlSpider):
     name = "product_link"
     allowed_domains = []
 
@@ -24,11 +24,16 @@ class ThegioithietbisoSpider(CrawlSpider):
 
     def parse_item(self, response):
 
+        print response.body_as_unicode()
+
         jsonresponse = json.loads(response.body_as_unicode())
 
-        sel = Selector(text=jsonresponse['html'])
+        print jsonresponse
+        return
 
-        product_links = sel.xpath('//*[@class="product_image"]/a[1]/@href')
+        sel = Selector(text=jsonresponse['d']['Content'])
+
+        product_links = sel.xpath('//*[@class="product "]/a[1]/@href')
 
         for pl in product_links:
             url = response.urljoin(pl.extract())
@@ -39,10 +44,10 @@ class ThegioithietbisoSpider(CrawlSpider):
         link = response.url
 
         pil = ProductItemLoader(item = ProductPriceItem(), response = response)
-        pil.add_xpath('title', '//*[@class="detail_info fl"]/h2[@class="product_name"]/text()')
-        pil.add_xpath('price', '//*[@class="content_attribute "]//p[@class="price"]//text()')
-        pil.add_value('source', 'thegioithietbiso.vn')
-        pil.add_value('source_id', 87);
+        pil.add_xpath('title', '//*[@class="righttext col-md-7 col-sm-7 col-xs-12"]/h1/text()')
+        pil.add_xpath('price', '//*[@class="price-news"]//text()')
+        pil.add_value('source', 'hungmobile.vn')
+        pil.add_value('source_id', 88);
         pil.add_value('brand_id', 0);
         pil.add_value('is_phone', 0);
         pil.add_value('is_laptop', 0);
@@ -65,23 +70,24 @@ class ThegioithietbisoSpider(CrawlSpider):
         product['crawled_at'] = strftime("%Y-%m-%d %H:%M:%S")
         # product['brand']      = (pil.get_value(product['title'])).split(" ")[0]
 
-        yield product
+        print product
 
 
     def start_requests(self):
         urls = [
             {
-                'href' : 'http://thegioithietbiso.vn/ajax/ajax_load_more_product.php',
+                'href' : 'http://hungmobile.vn/Services/Loaddulieu.aspx/LoadDataCat',
                 'data' : {
-                    'id_cat': "2",
-                    'type': "",
-                    'page': "1",
-                    'count': "73",
-                    'page_size': "30"
+                    "cid": "03",
+                    "gia": "",
+                    "manhinh": "0",
+                    "ncount": "10",
+                    "order": "",
+                    "tt": "all"
                 },
-                'max_page' : "2",
-                'jump_step' : "1",
-                'param_page' : 'page'
+                'max_page' : "1",
+                'jump_step' : "10",
+                'param_page' : 'ncount'
             }
         ]
 
@@ -90,14 +96,16 @@ class ThegioithietbisoSpider(CrawlSpider):
 
                 headers = {
                     "X-Requested-With" : "XMLHttpRequest",
-                    "Content-Type" : "application/x-www-form-urlencoded; charset=UTF-8"
+                    "Content-Type": "application/json; charset=utf-8",
+                    "__VIEWSTATE" : "/wEPDwULLTE2MTY2ODcyMjlkZIJC6fe+7GQzaRkqAMbN+qzTjGKC",
+                    "__VIEWSTATEGENERATOR" : "8FFA2AA6"
                 }
 
                 method = 'POST'
 
                 formData = url['data']
 
-                formData[url['param_page']] = i * url['jump_step']
+                # formData[url['param_page']] = i * url['jump_step']
 
                 request = scrapy.FormRequest(url=url['href'], method=method, formdata=formData, callback=self.parse_item)
                 yield request
