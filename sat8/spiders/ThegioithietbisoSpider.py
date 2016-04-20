@@ -13,7 +13,7 @@ import json,urllib
 
 class ThegioithietbisoSpider(CrawlSpider):
     name = "product_link"
-    allowed_domains = ['www.iservice.vn']
+    allowed_domains = []
 
     start_urls = [
 
@@ -26,24 +26,23 @@ class ThegioithietbisoSpider(CrawlSpider):
 
         jsonresponse = json.loads(response.body_as_unicode())
 
-        product_links = jsonresponse['products']
+        sel = Selector(text=jsonresponse['html'])
+
+        product_links = sel.xpath('//*[@class="product_image"]/a[1]/@href')
 
         for pl in product_links:
-            url = pl['href']
+            url = response.urljoin(pl.extract())
             request = scrapy.Request(url, callback = self.parse_detail_content)
-            request.meta['product'] = pl
             yield request
 
     def parse_detail_content(self, response):
         link = response.url
 
-        productMeta = response.meta['product']
-
         pil = ProductItemLoader(item = ProductPriceItem(), response = response)
-        pil.add_value('title', productMeta['name'])
-        pil.add_value('price', productMeta['price'])
-        pil.add_value('source', 'www.iservice.vn')
-        pil.add_value('source_id', 105);
+        pil.add_xpath('title', '//*[@class="detail_info fl"]/h2[@class="product_name"]/text()')
+        pil.add_xpath('price', '//*[@class="content_attribute "]//p[@class="price"]//text()')
+        pil.add_value('source', 'thegioithietbiso.vn')
+        pil.add_value('source_id', 87);
         pil.add_value('brand_id', 0);
         pil.add_value('is_phone', 0);
         pil.add_value('is_laptop', 0);
@@ -66,7 +65,7 @@ class ThegioithietbisoSpider(CrawlSpider):
         product['crawled_at'] = strftime("%Y-%m-%d %H:%M:%S")
         # product['brand']      = (pil.get_value(product['title'])).split(" ")[0]
 
-        yield(product)
+        print product
 
 
     def start_requests(self):
@@ -79,22 +78,32 @@ class ThegioithietbisoSpider(CrawlSpider):
                     'page': "1",
                     'count': "73",
                     'page_size': "30"
-                }
-            },
-            {
-                'href' : 'http://thegioithietbiso.vn/ajax/ajax_load_more_product.php',
-                'data' : {
-                    'id_cat': "4",
-                    'type': "",
-                    'page': "1",
-                    'page_size': "30"
-                }
-            },
+                },
+                'max_page' : "2",
+                'jump_step' : "1",
+                'param_page' : 'page'
+            }
         ]
 
-
         for url in urls:
-            for i in range(1, url['page']+1):
-                requestUrl = url['href'].replace('[0-9]+', str(i))
-                request = scrapy.Request(requestUrl, callback=self.parse_item)
+            for i in range(1, int(url['max_page'])+1):
+
+                headers = {
+                    "X-Requested-With" : "XMLHttpRequest",
+                    "Content-Type" : "application/x-www-form-urlencoded; charset=UTF-8"
+                }
+
+                method = 'POST'
+
+                formData = url['data']
+
+                formData[url['param_page']] = i * url['jump_step']
+
+                request = scrapy.FormRequest(url=url['href'], method=method, formdata=formData, callback=self.parse_item)
                 yield request
+
+
+
+
+
+
