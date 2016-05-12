@@ -59,8 +59,8 @@ class MySQLStorePipeline(object):
 
 				logging.info("Item already stored in db: %s" % item['name'])
 			else:
-				sql = "INSERT INTO products (name, price, hash_name, brand, image, images, link, spec, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-				self.cursor.execute(sql, (item['name'].encode('utf-8'), item['price'], item['hash_name'].encode('utf-8'), item['brand'].encode('utf-8'), item['image'].encode('utf-8'), item['images'] ,item['link'], item['spec'], item['created_at'], item['updated_at']))
+				sql = "INSERT INTO products (name, price, hash_name, brand_id, image, images, is_smartphone, is_laptop, is_tablet, link, spec, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+				self.cursor.execute(sql, (item['name'].encode('utf-8'), item['price'], item['hash_name'].encode('utf-8'), item['brand_id'], item['image'].encode('utf-8'), item['images'] , item['is_mobile'], item['is_tablet'], item['is_laptop'] ,item['link'], item['spec'], item['created_at'], item['updated_at']))
 				self.conn.commit()
 				logging.info("Item stored in db: %s" % item['link'])
 

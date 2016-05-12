@@ -3,4 +3,5 @@ sat8/env.py
 sat8/spiders/*.pyc
 sat8/*.pyc
 sat8/*/*.pyc
+*.pyc
 venv

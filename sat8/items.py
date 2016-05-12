@@ -21,10 +21,15 @@ class ProductItem(Item):
 	image_urls = Field()
 	spec = Field()
 	link = Field()
+	brand_id = Field()
+	source_id = Field()
 	created_at = Field()
 	updated_at = Field()
 	image_paths = Field()
 	typ = Field()
+	is_laptop = Field()
+	is_tablet = Field()
+	is_mobile = Field()
 
 	def toJson(self):
 		return {
@@ -32,6 +37,7 @@ class ProductItem(Item):
 			"name" : self.get("name", ""),
 			"price" : self.get("price", 0),
 			"hash_name" : self.get("hash_name", ""),
+			"source_id" : self.get("source_id", 0),
 			"brand" : self.get("brand", ""),
 			"image" : self.get("image", ""),
 			"images" : self.get("images", ""),
