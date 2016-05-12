@@ -171,23 +171,58 @@ class ProductSpiderV2(CrawlSpider):
 
         product = pil.load_item()
 
-        image_urls.append(pil.get_value(product['image']))
+        parseUrlImage = urlparse(product['image'])
 
+        if parseUrlImage.scheme == '':
+            product['image'] = urljoin('http://' + parseUrlImage.netloc, parseUrlImage.path)
 
+        image_urls.append(product['image'])
+
+        # echo(image_urls)
+        # return
         # Price
         price = pil.get_value(product.get('price', "0").encode('utf-8'))
         price = re.sub('\D', '', price)
 
-        product['name'] = product['name'].strip(' \t\n\r')
-        product['name'] = product['name'].strip()
-        product['image']      = hashlib.sha1(pil.get_value(product['image'])).hexdigest() + '.jpg'
+        product['name']       = product['name'].strip(' \t\n\r')
+        product['name']       = product['name'].strip()
+        product['image']      = hashlib.sha1(product['image']).hexdigest() + '.jpg'
         product['images']     = ',' . join(dataImage)
+        product['image_urls'] = image_urls
         product['hash_name']  = hashlib.md5(pil.get_value(product['name']).encode('utf-8')).hexdigest()
         product['price']      = price
         product['created_at'] = strftime("%Y-%m-%d %H:%M:%S")
         product['updated_at'] = strftime("%Y-%m-%d %H:%M:%S")
 
         return product
+
+
+    # Get sites for crawler
+    def get_avaiable_sites(self):
+        conn = self.conn
+        cursor = self.cursor
+
+        query = "SELECT sites.* FROM sites WHERE allow_crawl = 1"
+
+        # Nếu env = testing thì thêm điều kiện testing
+        if self.env == 'testing':
+            query = query + " AND sites.env_testing = 1"
+
+        # Nếu muốn chạy ngay thì chạy
+        if self.env == 'quick':
+            query = query + " AND sites.env_quick = 1";
+
+        cursor.execute(query)
+        sites = cursor.fetchall()
+
+        if not sites:
+            errMsg = str("----------------------------------------------------------------------------------------------\n")
+            errMsg = errMsg + 'No site allow crawl or testing'
+            errMsg = errMsg + "\n----------------------------------------------------------------------------------------------\n";
+            raise ValueError(errMsg)
+
+        return sites;
+
 
     # Process crawl product
     def parse_detail_content(self, response):
@@ -202,7 +237,14 @@ class ProductSpiderV2(CrawlSpider):
 
         try:
 
-            queryLink = "SELECT product_xlinks.*, product_xpaths.name as meta_xpath_name, product_xpaths.price as meta_xpath_price, product_xpaths.image, product_xpaths.images, product_xpaths.link_item, product_xpaths.spec as meta_xpath_spec FROM product_xlinks JOIN product_xpaths ON xpath_id = product_xpaths.id  ORDER BY product_xlinks.id DESC"
+            sites = self.get_avaiable_sites()
+            siteIdsList = ''
+            for site in sites:
+                siteIdsList = siteIdsList + str(site['id']) + ','
+
+            siteIdsList = siteIdsList[:-1];
+
+            queryLink = "SELECT product_xlinks.*, product_xpaths.name as meta_xpath_name, product_xpaths.price as meta_xpath_price, product_xpaths.image, product_xpaths.images, product_xpaths.link_item, product_xpaths.spec as meta_xpath_spec FROM product_xlinks JOIN product_xpaths ON xpath_id = product_xpaths.id WHERE product_xlinks.site_id IN ("+ siteIdsList +") ORDER BY product_xlinks.id DESC"
             cursor.execute(queryLink)
             links = cursor.fetchall()
 
