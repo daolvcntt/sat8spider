@@ -249,8 +249,9 @@ class DbCrawlPriceV2Spider(CrawlSpider):
                             if cookies != '' and formdata != None:
                                 cookies = parseJson4Params(cookies)
 
+
                             # Tăng biến phân trang
-                            if link['param_page'] in formdata and isinstance(formdata, dict):
+                            if link['param_page'] != '' and link['param_page'] != None and link['param_page'] in formdata and isinstance(formdata, dict):
                                 formdata[link['param_page']] = str(i * link['step_page'])
 
                             request = scrapy.FormRequest(url=startLink, callback=self.parse_item, formdata=formdata, method=method, headers=headers, cookies=cookies)
