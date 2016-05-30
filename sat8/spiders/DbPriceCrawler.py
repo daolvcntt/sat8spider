@@ -149,7 +149,7 @@ class DbPriceSpider(CrawlSpider):
                         for i in range(1, link["max_page"]+1):
                             startLink = link["link"].replace('[0-9]+', str(i))
 
-                            request = scrapy.Request(startLink, callback = self.parse_item, method=site['request_method'], headers={"X-Requested-With": "XMLHttpRequest"})
+                            request = scrapy.Request(startLink, callback = self.parse_item, method=site['request_method'])
                             request.meta['site'] = site
                             request.meta['link_item'] = link
                             yield request
