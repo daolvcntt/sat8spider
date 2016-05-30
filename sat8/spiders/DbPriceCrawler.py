@@ -140,7 +140,7 @@ class DbPriceSpider(CrawlSpider):
             crawlLinks = []
 
             for site in sites:
-                queryLink = "SELECT request_method, xpath_link_detail, site_metas.xpath_name, site_metas.xpath_price, max_page, link, site_links.site_id, brand_id, is_phone, is_tablet, is_laptop FROM site_links JOIN site_metas ON xpath_id = site_metas.id WHERE site_links.site_id = %s ORDER BY site_links.id DESC"
+                queryLink = "SELECT site_links.request_method, xpath_link_detail, site_metas.xpath_name, site_metas.xpath_price, max_page, link, site_links.site_id, brand_id, is_phone, is_tablet, is_laptop FROM site_links JOIN site_metas ON xpath_id = site_metas.id WHERE site_links.site_id = %s ORDER BY site_links.id DESC"
                 cursor.execute(queryLink, (site["id"]))
                 links = cursor.fetchall()
 
