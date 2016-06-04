@@ -160,6 +160,7 @@ class RaovatItem(Item):
 	id = Field()
 	title = Field()
 	teaser = Field()
+	content = Field()
 	link = Field()
 	hash_link = Field()
 	is_crawl = Field()
@@ -167,17 +168,22 @@ class RaovatItem(Item):
 	user_name = Field()
 	created_at = Field()
 	updated_at = Field()
+	image = Field()
+	info = Field()
 
 	def toJson(self):
 		return {
 			"id" : self.get('id'),
 			"title" : self.get('title', ""),
 			"teaser" : self.get('teaser', ""),
+			"content" : self.get('content', ""),
 			"link" : self.get('link', ""),
 			'hash_link' : self.get('hash_link', ""),
 			"is_crawl" : self.get('is_crawl', ""),
 			"price" : self.get('is_price', ""),
-			"user_name" : self.get('user_name', '')
+			"user_name" : self.get('user_name', ''),
+			"image" : self.get('image', ""),
+			"info" : self.get('info', "")
 		}
 
 
