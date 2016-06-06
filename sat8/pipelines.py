@@ -10,6 +10,8 @@ from sat8.Posts.PostES import PostES
 from sat8.Products.ProductES import ProductES
 from sat8.Products.ProductPriceES import ProductPriceES
 
+from time import strftime
+
 # Class kết nối mysql
 class MySQLStorePipeline(object):
 	def __init__(self):
@@ -102,5 +104,14 @@ class MySQLStorePipeline(object):
 				# Insert to elasticsearch
 				self.price.insertOrUpdate(priceId, item.toJson())
 
+				# Update price history
+				self.savePriceHistories(item)
+
 		return item
+
+	def savePriceHistories(self, item):
+		day = strftime("%Y-%m-%d")
+		sql = "INSERT INTO price_histories (price_id, price, day) VALUES (%s, %s, %s)"
+		self.cursor.execute(sql, (item['id'], item['price'], day))
+		self.conn.commit()
 
