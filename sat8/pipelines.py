@@ -12,6 +12,8 @@ from sat8.Products.ProductPriceES import ProductPriceES
 
 from time import strftime
 
+from sat8.Helpers.Functions import *
+
 # Class kết nối mysql
 class MySQLStorePipeline(object):
 	def __init__(self):
@@ -34,6 +36,10 @@ class MySQLStorePipeline(object):
 
 			if result:
 				postId = result['id']
+				sql = "UPDATE posts SET avatar = %s, content = %s, static_time = %s"
+				self.cursor.execute(sql, (item['avatar'], item['content'], timestamp()))
+				self.conn.commit()
+
 				logging.info("Item already stored in db: %s" % item['link'])
 			else:
 				content = item['content'];

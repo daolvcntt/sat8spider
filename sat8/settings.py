@@ -13,7 +13,7 @@ REACTOR_THREADPOOL_MAXSIZE = 20
 CONCURRENT_REQUESTS        = 100
 CONCURRENT_REQUESTS_PER_DOMAIN = 100
 RETRY_ENABLED              = True
-DOWNLOAD_TIMEOUT           = 300
+DOWNLOAD_TIMEOUT           = 500
 COOKIES_ENABLED            = True
 
 USER_AGENT = 'Googlebot/2.1 (+http://www.google.com/bot.html)'

@@ -2,6 +2,7 @@ from mimetypes import MimeTypes
 import urllib2
 import re
 import hashlib
+import time
 
 def list_get(array, key, default = ''):
 	if key in array :
@@ -48,3 +49,6 @@ def replace_image(content, newPath):
         content = re.sub(image, newPath +  hashlib.sha1(image).hexdigest() + '.jpg', content)
 
     return content
+
+def timestamp():
+    return time.time()
