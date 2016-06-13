@@ -36,8 +36,8 @@ class MySQLStorePipeline(object):
 
 			if result:
 				postId = result['id']
-				sql = "UPDATE posts SET avatar = %s, content = %s, static_time = %s"
-				self.cursor.execute(sql, (item['avatar'], item['content'], timestamp()))
+				sql = "UPDATE posts SET avatar = %s, content = %s, static_time = %s WHERE id = %s"
+				self.cursor.execute(sql, (item['avatar'], item['content'], timestamp(), postId))
 				self.conn.commit()
 
 				logging.info("Item already stored in db: %s" % item['link'])
