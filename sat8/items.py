@@ -169,6 +169,7 @@ class RaovatItem(Item):
 	created_at = Field()
 	updated_at = Field()
 	image = Field()
+	image_urls = Field()
 	info = Field()
 
 	def toJson(self):

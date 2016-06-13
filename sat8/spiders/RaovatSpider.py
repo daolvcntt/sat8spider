@@ -13,12 +13,21 @@ from time import gmtime, strftime
 from scrapy.linkextractors import LinkExtractor
 from urlparse import urlparse
 
+from sat8.Helpers.Google_Bucket import *
+from sat8.Helpers.Functions import *
+
 import urllib
 import logging
+import os
+import re
 
 
 class RaovatSpider(CrawlSpider):
     name = "raovat_spider"
+
+    bucket = 'static.giaca.org'
+
+    pathSaveImage = 'http://static.giaca.org/uploads/full/'
 
     allowed_domains = ['vatgia.com']
 
@@ -74,6 +83,40 @@ class RaovatSpider(CrawlSpider):
 
         raovatItem['teaser'] = raovatItem['teaser'][0:250]
 
+        # Download image
+        selector = Selector(response)
+        images = selector.xpath('//*[@id="main_description"]//img/@src')
+        for image in images:
+            imgLink = response.urljoin(image.extract())
+
+            imageName = hashlib.sha1(imgLink).hexdigest() + '.jpg'
+            pathSaveImage = settings['IMAGES_STORE'] + '/full/' + imageName
+
+            # Download to tmp file
+            urllib.urlretrieve(imgLink, pathSaveImage)
+
+            if(pathSaveImage):
+                # Upload to bucket
+                google_bucket_upload_object(self.bucket, pathSaveImage, 'uploads/full/' + imageName)
+
+                # Remove tmp file
+                os.remove(pathSaveImage)
+
+        # Download avatar
+        avatar = hashlib.sha1(raovatItem['image']).hexdigest() + '.jpg'
+        pathSaveImage = settings['IMAGES_STORE'] + '/full/' + avatar
+        # Download to tmp file
+        urllib.urlretrieve(imgLink, pathSaveImage)
+        # Upload bucket
+        google_bucket_upload_object(self.bucket, pathSaveImage, 'uploads/full/' + avatar)
+        # Remove tmp file
+        os.remove(pathSaveImage)
+
+        # Replace something
+        raovatItem['content'] = replace_link(raovatItem['content'])
+        raovatItem['content'] = replace_image(raovatItem['content'], self.pathSaveImage)
+        raovatItem['image'] = self.pathSaveImage + avatar
+
         query = "SELECT id,link FROM classifields WHERE hash_link = %s"
         self.cursor.execute(query, (raovatItem['hash_link']))
         result = self.cursor.fetchone()
@@ -104,7 +147,7 @@ class RaovatSpider(CrawlSpider):
         print '------------------------------', "\n"
         self.conn = settings['MYSQL_CONN']
         self.cursor = self.conn.cursor()
-        self.cursor.execute("SELECT DISTINCT id,keyword,rate_keyword FROM products WHERE rate_keyword != '' OR rate_keyword != NULL ORDER BY updated_at DESC")
+        self.cursor.execute("SELECT DISTINCT id,keyword,rate_keyword FROM products WHERE rate_keyword != '' OR rate_keyword != NULL ORDER BY updated_at DESC LIMIT 5")
         products = self.cursor.fetchall()
 
         # url = 'http://vatgia.com/raovat/quicksearch.php?keyword=Sony+Xperia+Z3'
