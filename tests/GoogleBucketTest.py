@@ -1,7 +1,14 @@
 import unittest
 import sys
+import scrapy
 
-sys.path.insert(0, "/home/justin/public_html/sat8spider/sat8/Helpers")
+import socket
+hostname = socket.gethostname()
+
+if hostname == 'justin-HP-ProBook-450-G0':
+    sys.path.insert(0, "/home/justin/public_html/sat8spider/sat8/Helpers")
+else:
+    sys.path.insert(0, "/var/www/html/sat8spider/sat8/Helpers")
 
 from Functions import *
 from Google_Bucket import *

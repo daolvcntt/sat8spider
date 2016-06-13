@@ -1,6 +1,12 @@
 import sys
 
-sys.path.insert(0, "/home/justin/public_html/sat8spider")
+import socket
+hostname = socket.gethostname()
+
+if hostname == 'justin-HP-ProBook-450-G0':
+    sys.path.insert(0, "/home/justin/public_html/sat8spider")
+else:
+    sys.path.insert(0, "/var/www/html/sat8spider")
 
 from sat8.Functions import *
 from sat8.Helpers.Functions import *
