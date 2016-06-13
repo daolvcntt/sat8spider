@@ -195,7 +195,7 @@ class DbCrawlPriceV2Spider(CrawlSpider):
 
         # Lấy các site sẽ chạy ngày hôm nay
 
-        query = "SELECT sites.* FROM sites JOIN site_cronjob ON sites.id = site_cronjob.site_id WHERE day = %s AND allow_crawl = 1"
+        query = "SELECT sites.* FROM sites JOIN site_cronjob ON sites.id = site_cronjob.site_id WHERE day = %s AND allow_crawl = 1 AND parent_id = 0"
 
         # Nếu env = testing thì thêm điều kiện testing
         if self.env == 'testing':
