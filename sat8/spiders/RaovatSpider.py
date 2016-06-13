@@ -106,7 +106,7 @@ class RaovatSpider(CrawlSpider):
         avatar = hashlib.sha1(raovatItem['image']).hexdigest() + '.jpg'
         pathSaveImage = settings['IMAGES_STORE'] + '/full/' + avatar
         # Download to tmp file
-        urllib.urlretrieve(imgLink, pathSaveImage)
+        urllib.urlretrieve(raovatItem['image'], pathSaveImage)
         # Upload bucket
         google_bucket_upload_object(self.bucket, pathSaveImage, 'uploads/full/' + avatar)
         # Remove tmp file
