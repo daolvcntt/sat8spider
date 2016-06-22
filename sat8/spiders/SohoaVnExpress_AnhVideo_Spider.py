@@ -13,7 +13,7 @@ class SohoaVnExpress_AnhVideo_Spider(AbstractPostSpider):
     config_urls = [
         {
             "url" : "http://sohoa.vnexpress.net/tin-tuc/anh-video",
-            "max_page" : 3
+            "max_page" : 5
         }
     ]
 

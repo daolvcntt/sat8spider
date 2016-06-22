@@ -13,7 +13,7 @@ class SohoaVnExpress_SanPham_Spider(AbstractPostSpider):
     config_urls = [
         {
             "url" : "http://sohoa.vnexpress.net/tin-tuc/san-pham/page/[0-9]+.html",
-            "max_page" : 3
+            "max_page" : 5
         }
     ]
 

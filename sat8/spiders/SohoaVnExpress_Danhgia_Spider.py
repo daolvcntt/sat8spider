@@ -13,15 +13,15 @@ class SohoaVnExpress_Danhgia_Spider(AbstractPostSpider):
     config_urls = [
         {
             "url" : "http://sohoa.vnexpress.net/danh-gia",
-            "max_page" : 3
+            "max_page" : 5
         },
         {
             "url" : "http://sohoa.vnexpress.net/danh-gia/dien-thoai",
-            "max_page" : 2
+            "max_page" : 5
         },
         {
             "url" : "http://sohoa.vnexpress.net/danh-gia/laptop",
-            "max_page" : 2
+            "max_page" : 5
         }
     ]
 
