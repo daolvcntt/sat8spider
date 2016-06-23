@@ -125,14 +125,14 @@ class AbstractPostSpider(CrawlSpider):
         urllib.urlretrieve(avatar, pathSaveImage)
 
         # Resize image
-        im = Image.open(pathSaveImage)
+        im = Image.open(pathSaveImage).convert('RGB')
 
         imageThumbs = settings['IMAGES_THUMBS']
 
         im.thumbnail(imageThumbs["small"])
         im.save(pathSaveImageSmall, 'JPEG')
 
-        im = Image.open(pathSaveImage)
+        im = Image.open(pathSaveImage).convert('RGB')
         im.thumbnail(imageThumbs["big"])
         im.save(pathSaveImageBig, 'JPEG')
 
