@@ -29,7 +29,7 @@ class SohoaVnExpress_Danhgia_Spider(AbstractPostSpider):
         "links" : '//*[@class="list_news"]//h2[@class="title_news"]/a[1]/@href',
         'title' : '//*[@class="title_news"]/h1//text()',
         'teaser' : '//*[@class="short_intro txt_666"]//text()',
-        'avatar' : '//*[@id="detail_danhgia"]//img[1 or 2 or 3 or 4]/@src',
+        'avatar' : '//*[@class="width_common space_bottom_20"]//img[1 or 2 or 3 or 4]/@src',
         'content' : '//*[@class="content_danhgia_chitiet"]',
         'category_value' : 'Đánh giá',
         'category_id' : 2,
