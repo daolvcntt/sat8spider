@@ -39,9 +39,9 @@ class YoutubePipeline(object):
       # query term.
 
       try:
-         keyword = "đánh giá " + keyword.encode('utf-8') + " việt nam"
+         keyword = "đánh giá + " + keyword.encode('utf-8')
       finally:
-         keyword = "đánh giá " + keyword + " việt nam"
+         keyword = "đánh giá + " + keyword
 
       search_response = youtube.search().list(
          q=keyword,
@@ -49,8 +49,9 @@ class YoutubePipeline(object):
          # location=options.location,
          # locationRadius=options.location_radius,
          part="id,snippet",
-         maxResults=50,
+         maxResults=100,
          regionCode='VN',
+         relevanceLanguage='vi',
          order='relevance'
       ).execute()
 
@@ -75,8 +76,7 @@ class YoutubePipeline(object):
 
          if result:
             videoId = result['id']
-            print "Video already stored in db: %s" % title
-            logging.info("Video already stored in db: %s" % title)
+            logging.info("Video has exists: %s" % title)
          else:
             sqlInsert = "INSERT INTO product_videos(video_id, channel_id, channel_name, image, title, teaser, created_at, updated_at) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)"
             self.cursor.execute(sqlInsert, (youtubeId, channelId, channelName, image, title, description, created_at, updated_at))
@@ -100,7 +100,7 @@ class YoutubePipeline(object):
          })
 
    def getVideosByProducts(self):
-      self.cursor.execute("SELECT DISTINCT video_keyword FROM products WHERE price > 0 AND video_keyword != '' OR video_keyword != NULL")
+      self.cursor.execute("SELECT DISTINCT video_keyword FROM products WHERE price > 0 AND video_keyword != '' OR video_keyword != NULL LIMIT 5")
       products = self.cursor.fetchall()
 
       for product in products:
