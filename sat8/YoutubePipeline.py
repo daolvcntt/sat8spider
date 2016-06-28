@@ -49,7 +49,7 @@ class YoutubePipeline(object):
          # location=options.location,
          # locationRadius=options.location_radius,
          part="id,snippet",
-         maxResults=100,
+         maxResults=50,
          regionCode='VN',
          relevanceLanguage='vi',
          order='relevance'
