@@ -11,6 +11,8 @@ else:
 from sat8.Functions import *
 from sat8.Helpers.Functions import *
 
+from scrapy.conf import settings
+
 import hashlib
 import unittest
 import datetime
@@ -60,6 +62,32 @@ class FunctionTest(unittest.TestCase):
         actual = replace_image(content, 'http://static.giaca.org/uploads/full/')
 
         self.assertEqual(expected, actual)
+
+    def test_getExtension(self):
+        expected = 'jpeg';
+        actual = getExtension('http://google.com/sexy.jpg');
+
+        self.assertEqual(expected, actual);
+
+    def test_downloadImageFromUrl(self):
+        imgLink = 'https://cdn.tgdd.vn/Products/Images/42/73704/iphone-6s-plus-64gb-400-400x450.png';
+        ext = getExtension(imgLink);
+        imageName = hashlib.sha1(imgLink).hexdigest() + '.' + ext;
+
+        pathSaveImage = settings['IMAGES_STORE'] + '/full/' + imageName
+        pathSaveImageSmall = settings['IMAGES_STORE'] + '/thumbs/small/' + imageName
+        pathSaveImageBig   = settings['IMAGES_STORE'] + '/thumbs/big/' + imageName
+
+        expected = {
+            "full" : pathSaveImage,
+            "big" : pathSaveImageBig,
+            "small" : pathSaveImageSmall
+        }
+
+        actual = downloadImageFromUrl(imgLink, 1)
+
+        self.assertEqual(expected, actual)
+
 
 if __name__ == '__main__':
     unittest.main()

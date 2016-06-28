@@ -19,6 +19,7 @@ class ProductItem(Item):
 	image = Field()
 	images = Field()
 	image_urls = Field()
+	image_links = Field()
 	spec = Field()
 	link = Field()
 	brand_id = Field()

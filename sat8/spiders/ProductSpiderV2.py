@@ -17,6 +17,7 @@ from sat8.Functions import echo
 import json,urllib
 from urlparse import urljoin
 
+from sat8.Helpers.Functions import *
 
 class ProductSpiderV2(CrawlSpider):
     name = "product_spider"
@@ -178,6 +179,10 @@ class ProductSpiderV2(CrawlSpider):
 
         image_urls.append(product['image'])
 
+        # Download and resize image
+        # for img in image_urls:
+        #     downloadImageFromUrl(img)
+
         # echo(image_urls)
         # return
         # Price
@@ -188,7 +193,7 @@ class ProductSpiderV2(CrawlSpider):
         product['name']       = product['name'].strip()
         product['image']      = hashlib.sha1(product['image']).hexdigest() + '.jpg'
         product['images']     = ',' . join(dataImage)
-        product['image_urls'] = image_urls
+        product['image_links'] = image_urls
         product['hash_name']  = hashlib.md5(pil.get_value(product['name']).encode('utf-8')).hexdigest()
         product['price']      = price
         product['created_at'] = strftime("%Y-%m-%d %H:%M:%S")

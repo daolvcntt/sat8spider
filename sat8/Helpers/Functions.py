@@ -3,6 +3,10 @@ import urllib2
 import re
 import hashlib
 import time
+from scrapy.conf import settings
+from PIL import Image
+import urllib
+import os
 
 def list_get(array, key, default = ''):
 	if key in array :
@@ -52,3 +56,42 @@ def replace_image(content, newPath):
 
 def timestamp():
     return time.time()
+
+def getExtension(url):
+    arrayUrl = url.split('.')
+    ext = arrayUrl[len(arrayUrl)-1]
+    ext = ext.lower();
+    if ext == 'jpg':
+        ext = 'jpeg';
+
+    return ext;
+
+def downloadImageFromUrl(url, createThumbs = 1):
+    ext = getExtension(url);
+    imageName = hashlib.sha1(url).hexdigest() + '.' + ext;
+
+    pathSaveImage = settings['IMAGES_STORE'] + '/full/' + imageName
+    pathSaveImageSmall = settings['IMAGES_STORE'] + '/thumbs/small/' + imageName
+    pathSaveImageBig   = settings['IMAGES_STORE'] + '/thumbs/big/' + imageName
+
+    if os.path.isfile(pathSaveImage) == False:
+        urllib.urlretrieve(url, pathSaveImage)
+
+    # Resize image
+    imageThumbs = settings['IMAGES_THUMBS']
+
+    if os.path.isfile(pathSaveImageSmall) == False:
+        im = Image.open(pathSaveImage)
+        im.thumbnail(imageThumbs["small"])
+        im.save(pathSaveImageSmall, ext);
+
+    if os.path.isfile(pathSaveImageBig) == False:
+        im = Image.open(pathSaveImage)
+        im.thumbnail(imageThumbs["big"])
+        im.save(pathSaveImageBig, ext);
+
+    return {
+        "full" : pathSaveImage,
+        "big" : pathSaveImageBig,
+        "small" : pathSaveImageSmall
+    }
