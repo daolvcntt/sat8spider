@@ -80,7 +80,7 @@ class AbstractPostSpider(CrawlSpider):
                 il.add_value('category', self.configs['category_value'].decode('utf-8'))
 
             if 'category_id' in self.configs:
-                il.add_value('category_id', self.configs['category_id'])
+                il.replace_value('category_id', self.configs['category_id'])
 
         il.add_xpath('content', self.configs['content'])
 
