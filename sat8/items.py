@@ -31,6 +31,7 @@ class ProductItem(Item):
 	is_laptop = Field()
 	is_tablet = Field()
 	is_mobile = Field()
+	is_camera = Field()
 
 	def toJson(self):
 		return {
@@ -171,6 +172,7 @@ class RaovatItem(Item):
 	updated_at = Field()
 	image = Field()
 	image_urls = Field()
+	image_links = Field()
 	info = Field()
 
 	def toJson(self):

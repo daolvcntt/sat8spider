@@ -22,14 +22,14 @@ import os
 import re
 
 
-class RaovatSpider(CrawlSpider):
+class ChototSpider(CrawlSpider):
     name = "raovat_spider"
 
     bucket = 'static.giaca.org'
 
     pathSaveImage = 'http://static.giaca.org/uploads/full/'
 
-    allowed_domains = ['vatgia.com']
+    allowed_domains = ['chotot.com']
 
     questionId = 0
     productId = 0;
@@ -42,7 +42,7 @@ class RaovatSpider(CrawlSpider):
     def parse_item(self, response):
 
         sel = Selector(response)
-        product_links = sel.xpath('//*[@class="raovat_listing"]/li[@class="info"]//a[@class="tooltip"][1]/@href');
+        product_links = sel.xpath('//*[@class="listing-rows"]//div[@class="thumbs_subject"]//a[@class="ad-subject"][1]/@href');
         for pl in product_links:
             url = response.urljoin(pl.extract());
             request = scrapy.Request(url, callback=self.parse_raovat)
@@ -53,15 +53,15 @@ class RaovatSpider(CrawlSpider):
     def parse_raovat(self, response):
         productId = response.meta['productId']
         raovatItemLoader = RaovatItemLoader(item = RaovatItem(), response = response)
-        raovatItemLoader.add_xpath('title', '//*[@class="infomation_raovat fr"]/h1//text()')
+        raovatItemLoader.add_xpath('title', '//*[@class="adview_subject"]/h2//text()')
         raovatItemLoader.add_value('link', response.url)
         raovatItemLoader.add_value('is_crawl', 1)
-        raovatItemLoader.add_xpath('user_name', '//*[@class="userPostInfor fl"]/p/b//text()')
-        raovatItemLoader.add_xpath('price', '//*[@class="detail_price"]/div/span/text()')
-        raovatItemLoader.add_xpath('teaser', '//*[@id="main_description"]//text()')
-        raovatItemLoader.add_xpath('content', '//*[@id="main_description"]')
-        raovatItemLoader.add_xpath('info', '//*[@class="raovat_list_info"]')
-        raovatItemLoader.add_xpath('image', '//*[@class="img-raovat"]//img[1]/@src')
+        raovatItemLoader.add_xpath('user_name', '//*[@class="advertised_user"]/text()')
+        raovatItemLoader.add_xpath('price', '//*[@class="price"]//span[@itemprop="price"]/text()')
+        raovatItemLoader.add_xpath('teaser', 'string(//*[@class="view_content"])')
+        raovatItemLoader.add_xpath('content', '//*[@class="view_content"]')
+        raovatItemLoader.add_xpath('info', '//*[@class="adparams_div"]')
+        raovatItemLoader.add_xpath('image', '//*[@id="display_image"]//img[1]/@src')
         raovatItemLoader.add_value('created_at', strftime("%Y-%m-%d %H:%M:%S"))
         raovatItemLoader.add_value('updated_at', strftime("%Y-%m-%d %H:%M:%S"))
 
@@ -97,9 +97,9 @@ class RaovatSpider(CrawlSpider):
         avatar = sha1FileName(raovatItem['image'])
 
         # Replace something
-        raovatItem['content']     = replace_link(raovatItem['content'])
-        raovatItem['content']     = replace_image(raovatItem['content'], self.pathSaveImage)
-        raovatItem['image']       = self.pathSaveImage + avatar
+        raovatItem['content'] = replace_link(raovatItem['content'])
+        raovatItem['content'] = replace_image(raovatItem['content'], self.pathSaveImage)
+        raovatItem['image'] = self.pathSaveImage + avatar
         raovatItem['image_links'] = image_links
 
         query = "SELECT id,link FROM classifields WHERE hash_link = %s"
@@ -125,7 +125,7 @@ class RaovatSpider(CrawlSpider):
         esRaovat = EsRaovat()
         esRaovat.insertOrUpdate(raovatId, raovatItem.toJson())
 
-        # yield raovatItem
+        yield raovatItem
 
 
     def start_requests(self):
@@ -141,7 +141,7 @@ class RaovatSpider(CrawlSpider):
         # yield request
 
         for product in products:
-            url = 'http://vatgia.com/raovat/quicksearch.php?keyword=%s' %product['rate_keyword']
+            url = 'https://www.chotot.com/ha-noi/mua-ban/%s' %product['rate_keyword']
             # self.start_urls.append(url)
             request = scrapy.Request(url, callback = self.parse_item)
             request.meta['productId'] = product['id']

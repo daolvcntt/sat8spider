@@ -127,7 +127,7 @@ class ProductSpiderV2(CrawlSpider):
         product['name'] = product['name'].strip(' \t\n\r')
         product['name'] = product['name'].strip()
 
-        product['image']      = hashlib.sha1(pil.get_value(product['image'])).hexdigest() + '.jpg'
+        product['image']      = hashlib.sha1(pil.get_value(product['image'])).hexdigest() + '.' + getExtension(product['image'])
 
         product['price']      = price
         product['hash_name']  = hashlib.md5(pil.get_value(product['name']).encode('utf-8')).hexdigest()
@@ -155,6 +155,7 @@ class ProductSpiderV2(CrawlSpider):
         pil.add_value('is_laptop', linkItem['is_laptop'])
         pil.add_value('is_mobile', linkItem['is_mobile'])
         pil.add_value('is_tablet', linkItem['is_tablet'])
+        pil.add_value('is_camera', linkItem['is_camera'])
 
         # Ảnh chi tiết sản phẩm
         sel = Selector(response)
@@ -167,7 +168,7 @@ class ProductSpiderV2(CrawlSpider):
             imgLink = response.urljoin(img.extract())
             image_urls.append(imgLink)
 
-            imgLinkHash = hashlib.sha1(imgLink).hexdigest() + '.jpg'
+            imgLinkHash = hashlib.sha1(imgLink).hexdigest() + '.' + getExtension(imgLink)
             dataImage.append(imgLinkHash)
 
         product = pil.load_item()
@@ -191,7 +192,7 @@ class ProductSpiderV2(CrawlSpider):
 
         product['name']       = product['name'].strip(' \t\n\r')
         product['name']       = product['name'].strip()
-        product['image']      = hashlib.sha1(product['image']).hexdigest() + '.jpg'
+        product['image']      = hashlib.sha1(product['image']).hexdigest() + '.' + getExtension(product['image'])
         product['images']     = ',' . join(dataImage)
         product['image_links'] = image_urls
         product['hash_name']  = hashlib.md5(pil.get_value(product['name']).encode('utf-8')).hexdigest()

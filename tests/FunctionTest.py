@@ -88,6 +88,20 @@ class FunctionTest(unittest.TestCase):
 
         self.assertEqual(expected, actual)
 
+    def test_sha1(self):
+        string = 'luongvancong'
+        expected = hashlib.sha1(string.encode('utf-8')).hexdigest()
+        actual = sha1(string)
+
+        self.assertEqual(expected, actual)
+
+    def test_sha1FileName(self):
+        fileName = 'sexy.jpg'
+        expected = sha1(fileName) + '.' + getExtension(fileName)
+        actual = sha1FileName(fileName)
+
+        self.assertEqual(expected, actual)
+
 
 if __name__ == '__main__':
     unittest.main()

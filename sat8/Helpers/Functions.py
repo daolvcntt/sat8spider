@@ -95,3 +95,10 @@ def downloadImageFromUrl(url, createThumbs = 1):
         "big" : pathSaveImageBig,
         "small" : pathSaveImageSmall
     }
+
+
+def sha1(string):
+    return hashlib.sha1(string.encode('utf-8')).hexdigest()
+
+def sha1FileName(fileName):
+    return sha1(fileName) + '.' + getExtension(fileName)
