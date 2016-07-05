@@ -1,5 +1,6 @@
 import socket
 import sys
+from time import gmtime, strftime
 
 hostname = socket.gethostname()
 
@@ -11,6 +12,9 @@ else:
 import unittest
 from sat8.Databases.DB import DB
 
+created_at = strftime("%Y-%m-%d 00:00:00")
+created_at_str = str(created_at)
+
 class DbTest(unittest.TestCase):
 
     def setUp(self):
@@ -18,7 +22,8 @@ class DbTest(unittest.TestCase):
 
         self.dataInsert = {
             "age" : 20,
-            "name" : 'Cong'
+            "name" : 'Cong',
+            "created_at" : created_at
         }
 
         self.dataUpdate = {
@@ -28,7 +33,7 @@ class DbTest(unittest.TestCase):
 
     def test_01_getInsertQuery(self):
         data = self.dataInsert
-        expected = "INSERT INTO persons(age,name) VALUES('20','Cong')"
+        expected = "INSERT INTO persons(created_at,age,name) VALUES('"+ created_at_str +"','20','Cong')"
         actual = self.db.getInsertQuery('persons', data)
 
         self.assertEquals(expected, actual)
@@ -72,10 +77,21 @@ class DbTest(unittest.TestCase):
         actual = self.db.getDeleteQuery('tests', {"id" : 1})
         self.assertEquals(expected, actual)
 
-    def test_08_delete(self):
+    def test_08_selectRawFetchOne(self):
+        expected = 1;
+        actual = self.db.selectRawFetchOne("SELECT * FROM tests WHERE id = 1")
+        self.assertEquals(expected, actual['id'])
+
+    def test_09_selectRawFetchAll(self):
+        expected = list
+        actual = self.db.selectRawFetchAll("SELECT * FROM tests WHERE id > 0")
+        self.assertIsInstance(actual, expected)
+
+    def test_10_delete(self):
         expected = 1
         actual = self.db.delete('tests', {"id" : 1})
         self.assertEquals(expected, actual)
+
 
 if __name__ == '__main__':
     unittest.main()

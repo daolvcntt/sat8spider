@@ -12,7 +12,9 @@ class DB():
 
 		for i in data:
 			queryStr += i + ","
-			queryValue += "'" + str(data[i]) + "'" + ","
+			print i + str(type(data[i]))
+			value = str(data[i])
+			queryValue += "'" + value + "'" + ","
 
 
 		queryValue = queryValue[:-1] + ")"
@@ -98,5 +100,13 @@ class DB():
 		self.conn.commit()
 
 		return self.cursor.rowcount
+
+	def selectRawFetchOne(self, query):
+		self.cursor.execute(query)
+		return self.cursor.fetchone()
+
+	def selectRawFetchAll(self, query):
+		self.cursor.execute(query)
+		return self.cursor.fetchall()
 
 

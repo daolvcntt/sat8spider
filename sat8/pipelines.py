@@ -10,6 +10,8 @@ from sat8.Posts.PostES import PostES
 from sat8.Products.ProductES import ProductES
 from sat8.Products.ProductPriceES import ProductPriceES
 
+from sat8.Products.DbProduct import DbProduct
+
 from time import strftime
 
 from sat8.Helpers.Functions import *
@@ -24,6 +26,7 @@ class MySQLStorePipeline(object):
 		self.post = PostES()
 		self.product = ProductES()
 		self.price = ProductPriceES()
+		self.dbProduct = DbProduct()
 
 	def process_item(self, item, spider):
 

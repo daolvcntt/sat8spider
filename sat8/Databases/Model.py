@@ -47,3 +47,9 @@ class Model():
 
 	def all(self):
 		return self.db.all(self.getTable())
+
+	def selectRawFetchOne(self, query):
+		return self.db.selectRawFetchOne(query)
+
+	def selectRawFetchAll(self, query):
+		return self.db.selectRawFetchAll(query)
