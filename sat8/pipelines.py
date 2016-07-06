@@ -31,12 +31,22 @@ class MySQLStorePipeline(object):
 	def process_item(self, item, spider):
 
 		if spider.name == 'blog_spider' or spider.name == 'GenkSpider':
-			query = "SELECT * FROM posts WHERE link = %s OR title = %s"
-			self.cursor.execute(query, (item['link'], item['title']))
+			# Check link exits
+			query = "SELECT hash_link FROM post_hash_links WHERE link = %s"
+			self.cursor.execute(query, (md5(item['link'])))
+			result = self.cursor.fetchone()
+
+			# Update craw links
+			sql = "REPLACE INTO post_hash_links(hash_link) VALUES(%s)"
+			self.cursor.execute(sql, (md5(item['link'])))
+			self.conn.commit()
+
+			# Select post
+			query = "SELECT id,title FROM posts WHERE link = %s"
+			self.cursor.execute(query, (item['link']))
 			result = self.cursor.fetchone()
 
 			postId = 0
-
 			if result:
 				postId = result['id']
 				sql = "UPDATE posts SET avatar = %s, content = %s, static_time = %s WHERE id = %s"

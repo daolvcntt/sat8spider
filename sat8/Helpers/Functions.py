@@ -102,3 +102,6 @@ def sha1(string):
 
 def sha1FileName(fileName):
     return sha1(fileName) + '.' + getExtension(fileName)
+
+def md5(string):
+    return hashlib.md5(string).hexdigest()

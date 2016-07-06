@@ -22,6 +22,10 @@ class SohoaVnExpress_Danhgia_Spider(AbstractPostSpider):
         {
             "url" : "http://sohoa.vnexpress.net/danh-gia/laptop/page/[0-9]+.html",
             "max_page" : 5
+        },
+        {
+            "url" : "http://sohoa.vnexpress.net/danh-gia/may-anh/page/[0-9]+.html",
+            "max_page": 5
         }
     ]
 
