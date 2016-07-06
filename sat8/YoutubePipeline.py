@@ -39,9 +39,9 @@ class YoutubePipeline(object):
       # query term.
 
       try:
-         keyword = "đánh giá " + keyword.encode('utf-8') + " việt nam"
+         keyword = "đánh giá + " + keyword.encode('utf-8')
       finally:
-         keyword = "đánh giá " + keyword + " việt nam"
+         keyword = "đánh giá + " + keyword
 
       search_response = youtube.search().list(
          q=keyword,
@@ -51,6 +51,7 @@ class YoutubePipeline(object):
          part="id,snippet",
          maxResults=50,
          regionCode='VN',
+         relevanceLanguage='vi',
          order='relevance'
       ).execute()
 
@@ -75,8 +76,7 @@ class YoutubePipeline(object):
 
          if result:
             videoId = result['id']
-            print "Video already stored in db: %s" % title
-            logging.info("Video already stored in db: %s" % title)
+            logging.info("Video has exists: %s" % title)
          else:
             sqlInsert = "INSERT INTO product_videos(video_id, channel_id, channel_name, image, title, teaser, created_at, updated_at) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)"
             self.cursor.execute(sqlInsert, (youtubeId, channelId, channelName, image, title, description, created_at, updated_at))

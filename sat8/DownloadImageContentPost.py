@@ -20,6 +20,11 @@ import os
 
 from Functions import makeGzFile
 
+from Helpers.Functions import *
+from Helpers.Google_Bucket import *
+
+bucket = 'static.giaca.org'
+
 conn = settings.MYSQL_CONN
 cursor = conn.cursor()
 
@@ -44,6 +49,11 @@ class DownloadImageContentPost():
 
                # Make gz file
                makeGzFile(filePath)
+
+               gzFilePath = filePath + '.gz'
+
+               google_bucket_upload_object(bucket, filePath, 'uploads/posts/' + imageName)
+               google_bucket_upload_object(bucket, gzFilePath, 'uploads/posts/' + imageName + '.gz')
 
             print url
 

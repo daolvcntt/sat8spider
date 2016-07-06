@@ -1,5 +1,5 @@
-from Databases.DB import DB
-from Databases.Model import Model
+from sat8.Databases.DB import DB
+from sat8.Databases.Model import Model
 
 class DbProduct(Model):
 

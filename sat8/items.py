@@ -19,12 +19,19 @@ class ProductItem(Item):
 	image = Field()
 	images = Field()
 	image_urls = Field()
+	image_links = Field()
 	spec = Field()
 	link = Field()
+	brand_id = Field()
+	source_id = Field()
 	created_at = Field()
 	updated_at = Field()
 	image_paths = Field()
 	typ = Field()
+	is_laptop = Field()
+	is_tablet = Field()
+	is_mobile = Field()
+	is_camera = Field()
 
 	def toJson(self):
 		return {
@@ -32,6 +39,7 @@ class ProductItem(Item):
 			"name" : self.get("name", ""),
 			"price" : self.get("price", 0),
 			"hash_name" : self.get("hash_name", ""),
+			"source_id" : self.get("source_id", 0),
 			"brand" : self.get("brand", ""),
 			"image" : self.get("image", ""),
 			"images" : self.get("images", ""),
@@ -154,6 +162,7 @@ class RaovatItem(Item):
 	id = Field()
 	title = Field()
 	teaser = Field()
+	content = Field()
 	link = Field()
 	hash_link = Field()
 	is_crawl = Field()
@@ -161,17 +170,24 @@ class RaovatItem(Item):
 	user_name = Field()
 	created_at = Field()
 	updated_at = Field()
+	image = Field()
+	image_urls = Field()
+	image_links = Field()
+	info = Field()
 
 	def toJson(self):
 		return {
 			"id" : self.get('id'),
 			"title" : self.get('title', ""),
 			"teaser" : self.get('teaser', ""),
+			"content" : self.get('content', ""),
 			"link" : self.get('link', ""),
 			'hash_link' : self.get('hash_link', ""),
 			"is_crawl" : self.get('is_crawl', ""),
 			"price" : self.get('is_price', ""),
-			"user_name" : self.get('user_name', '')
+			"user_name" : self.get('user_name', ''),
+			"image" : self.get('image', ""),
+			"info" : self.get('info', "")
 		}
 
 

@@ -115,7 +115,7 @@ class DbPriceSpider(CrawlSpider):
             errMsg = errMsg + "\n----------------------------------------------------------------------------------------------\n";
             raise ValueError(errMsg)
 
-        query = "SELECT * FROM sites JOIN site_metas ON sites.id = site_metas.site_id WHERE sites.id IN("+ siteIds +")"
+        query = "SELECT * FROM sites JOIN site_metas ON sites.id = site_metas.site_id WHERE allow_crawl = 1 AND sites.id IN("+ siteIds +")"
 
         # Nếu env = testing thì thêm điều kiện testing
         if self.env == 'testing':
@@ -140,7 +140,7 @@ class DbPriceSpider(CrawlSpider):
             crawlLinks = []
 
             for site in sites:
-                queryLink = "SELECT request_method, xpath_link_detail, site_metas.xpath_name, site_metas.xpath_price, max_page, link, site_links.site_id, brand_id, is_phone, is_tablet, is_laptop FROM site_links JOIN site_metas ON xpath_id = site_metas.id WHERE site_links.site_id = %s ORDER BY site_links.id DESC"
+                queryLink = "SELECT site_links.request_method, xpath_link_detail, site_metas.xpath_name, site_metas.xpath_price, max_page, link, site_links.site_id, brand_id, is_phone, is_tablet, is_laptop FROM site_links JOIN site_metas ON xpath_id = site_metas.id WHERE site_links.site_id = %s ORDER BY site_links.id DESC"
                 cursor.execute(queryLink, (site["id"]))
                 links = cursor.fetchall()
 
@@ -149,7 +149,7 @@ class DbPriceSpider(CrawlSpider):
                         for i in range(1, link["max_page"]+1):
                             startLink = link["link"].replace('[0-9]+', str(i))
 
-                            request = scrapy.Request(startLink, callback = self.parse_item, method=site['request_method'], headers={"X-Requested-With": "XMLHttpRequest"})
+                            request = scrapy.Request(startLink, callback = self.parse_item, method=site['request_method'])
                             request.meta['site'] = site
                             request.meta['link_item'] = link
                             yield request

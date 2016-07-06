@@ -1,10 +1,22 @@
 import sat8.settings
 from sat8.Databases.DB import DB
 
-class Model(DB):
+class Model():
 
 	table = ''
 	primaryKey = ''
+
+	attributes = {}
+
+	def __init__(self, attributes = {}):
+		self.db = DB()
+
+	def fill(self, attributes):
+		self.attributes = attributes
+		return self
+
+	def getAttributes(self):
+		return self.attributes
 
 	def setTable(self, table):
 		self.table = table
@@ -19,15 +31,25 @@ class Model(DB):
 		return self.primaryKey
 
 	def getById(self, id, fields = '*'):
-		query = "SELECT %s" %fields +  " FROM " + self.getTable() + " WHERE "  + self.getPrimaryKey() +  "=%d" %id
-		self.cursor.execute(query)
-		return self.cursor.fetchone()
+		return self.db.first(self.getTable(), self.getPrimaryKey(), id, fields)
 
 	def delete(self, id):
-		query = "DELETE FROM " + self.getTable() + " WHERE " + self.getPrimaryKey() + "=%d" %id
-		self.cursor.execute(query)
-		self.conn.commit()
-		return self.cursor.rowcount
+		return self.db.delete(self.getTable(), {self.getPrimaryKey() : id});
 
 	def insert(self, data):
-		return DB.insert(self, self.getTable(), data)
+		return self.db.insert(self.getTable(), data)
+
+	def update(self, data, where):
+		return self.db.update(self.getTable(), data, where)
+
+	def truncate(self):
+		return self.db.truncate(self.getTable())
+
+	def all(self):
+		return self.db.all(self.getTable())
+
+	def selectRawFetchOne(self, query):
+		return self.db.selectRawFetchOne(query)
+
+	def selectRawFetchAll(self, query):
+		return self.db.selectRawFetchAll(query)

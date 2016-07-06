@@ -13,8 +13,8 @@ REACTOR_THREADPOOL_MAXSIZE = 20
 CONCURRENT_REQUESTS        = 100
 CONCURRENT_REQUESTS_PER_DOMAIN = 100
 RETRY_ENABLED              = True
-DOWNLOAD_TIMEOUT           = 300
-COOKIES_ENABLED            = False
+DOWNLOAD_TIMEOUT           = 500
+COOKIES_ENABLED            = True
 
 USER_AGENT = 'Googlebot/2.1 (+http://www.google.com/bot.html)'
 
@@ -23,9 +23,10 @@ NEWSPIDER_MODULE = 'sat8.spiders'
 ITEM_PIPELINES = {
 	'sat8.pipelines.MySQLStorePipeline' : 100,
 	# 'scrapy.pipelines.images.ImagesPipeline': 102
-	'sat8.MyImagesPipeline.MyImagesPipeline' : 102,
+	# 'sat8.MyImagesPipeline.MyImagesPipeline' : 102,
 	#'sat8.ConverImagePipeline.ConverImagePipeline' : 102,
 	# 'sat8.YoutubePipeline.YoutubePipeline' : 101,
+	'sat8.DownloadImagePipeline.DownloadImagePipeline' : 101
 }
 
 
@@ -88,3 +89,6 @@ except pymysql.Error, e:
 # 	format='%(levelname)s: %(message)s',
 # 	level=logging.INFO
 # )
+
+LOG_FILE = env.LOG_FILE
+LOG_LEVEL = 'ERROR'
