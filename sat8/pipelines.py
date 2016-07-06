@@ -32,7 +32,7 @@ class MySQLStorePipeline(object):
 
 		if spider.name == 'blog_spider' or spider.name == 'GenkSpider':
 			# Check link exits
-			query = "SELECT hash_link FROM post_hash_links WHERE link = %s"
+			query = "SELECT hash_link FROM post_hash_links WHERE hash_link = %s"
 			self.cursor.execute(query, (md5(item['link'])))
 			result = self.cursor.fetchone()
 
