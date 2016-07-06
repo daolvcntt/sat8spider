@@ -55,14 +55,16 @@ class MySQLStorePipeline(object):
 
 				logging.info("Item already stored in db: %s" % item['link'])
 			else:
-				content = item['content'];
-				sql = "INSERT INTO posts (title, content, type, category, teaser, avatar, link, category_id, product_id, user_id, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-				self.cursor.execute(sql, (item['title'].encode('utf-8'), content, item['post_type'] ,item['category'].encode('utf-8') ,item['teaser'].encode('utf-8'), item['avatar'], item['link'], item['category_id'], item['product_id'], item['user_id'], item['created_at'], item['updated_at']))
-				self.conn.commit()
+				# Neu co avatar thi moi insert
+				if item['avatar'] != '':
+					content = item['content'];
+					sql = "INSERT INTO posts (title, content, type, category, teaser, avatar, link, category_id, product_id, user_id, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+					self.cursor.execute(sql, (item['title'].encode('utf-8'), content, item['post_type'] ,item['category'].encode('utf-8') ,item['teaser'].encode('utf-8'), item['avatar'], item['link'], item['category_id'], item['product_id'], item['user_id'], item['created_at'], item['updated_at']))
+					self.conn.commit()
 
-				# Insert to elasticsearch
-				postId = self.cursor.lastrowid
-				logging.info("Item stored in db: %s" % item['link'])
+					# Insert to elasticsearch
+					postId = self.cursor.lastrowid
+					logging.info("Item stored in db: %s" % item['link'])
 
 			item["id"] = postId
 			self.post.insertOrUpdate(postId, item.toJson())

@@ -89,3 +89,6 @@ except pymysql.Error, e:
 # 	format='%(levelname)s: %(message)s',
 # 	level=logging.INFO
 # )
+
+LOG_FILE = env.LOG_FILE
+LOG_LEVEL = 'ERROR'

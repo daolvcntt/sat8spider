@@ -100,6 +100,8 @@ class AbstractPostSpider(CrawlSpider):
             item['avatar'] = hashlib.sha1(avatar).hexdigest() + '.jpg'
 
             self.processing_avatar_image(avatar)
+        else:
+            item['avatar'] = ''
 
         if 'content' in item:
             self.processing_content_image(response)

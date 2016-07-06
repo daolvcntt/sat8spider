@@ -21,8 +21,8 @@ class SohoaVnExpress_DoiSongSo_Spider(AbstractPostSpider):
         "links" : '//*[@class="title_news"]//a[1]/@href',
         'title' : '//*[@class="title_news"]/h1//text()',
         'teaser' : '//*[@class="short_intro txt_666"]//text()',
-        'avatar' : '//*[@id="article_content" or @class="fck_detail width_common"]//img[1 or 2 or 3 or 4]/@src',
-        'content' : '//*[@id="article_content" or @class="fck_detail width_common"]',
+        'avatar' : '//*[@id="article_content" or contains(@class,"fck_detail width_common")]//img[1 or 2 or 3 or 4]/@src',
+        'content' : '//*[@id="article_content" or contains(@class,"fck_detail width_common")]',
         'category_value' : 'Đời sống số',
         'type' : 'post',
         'category_id' : 3
