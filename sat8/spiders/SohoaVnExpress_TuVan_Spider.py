@@ -13,7 +13,7 @@ class SohoaVnExpress_TuVan_Spider(AbstractPostSpider):
     config_urls = [
         {
             "url" : "http://sohoa.vnexpress.net/tin-tuc/cong-dong/page/[0-9]+.html",
-            "max_page" : 3
+            "max_page" : 5
         }
     ]
 
@@ -22,7 +22,7 @@ class SohoaVnExpress_TuVan_Spider(AbstractPostSpider):
         'title' : '//*[@class="title_news"]/h1//text()',
         'teaser' : '//*[@class="short_intro txt_666"]//text()',
         'avatar' : '//*[@id="article_content" or @class="fck_detail width_common"]//img[1 or 2 or 3 or 4]/@src',
-        'content' : '//*[@id="article_content" or @class="fck_detail width_common"]',
+        'content' : '//*[@id="article_content" or contains(@class,"fck_detail width_common")]',
         'category_value' : 'Tư vấn',
         'type' : 'post',
         'category_id' : 5

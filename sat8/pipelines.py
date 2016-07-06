@@ -10,6 +10,12 @@ from sat8.Posts.PostES import PostES
 from sat8.Products.ProductES import ProductES
 from sat8.Products.ProductPriceES import ProductPriceES
 
+from sat8.Products.DbProduct import DbProduct
+
+from time import strftime
+
+from sat8.Helpers.Functions import *
+
 # Class kết nối mysql
 class MySQLStorePipeline(object):
 	def __init__(self):
@@ -20,28 +26,45 @@ class MySQLStorePipeline(object):
 		self.post = PostES()
 		self.product = ProductES()
 		self.price = ProductPriceES()
+		self.dbProduct = DbProduct()
 
 	def process_item(self, item, spider):
 
 		if spider.name == 'blog_spider' or spider.name == 'GenkSpider':
-			query = "SELECT * FROM posts WHERE link = %s OR title = %s"
-			self.cursor.execute(query, (item['link'], item['title']))
+			# Check link exits
+			query = "SELECT hash_link FROM post_hash_links WHERE hash_link = %s"
+			self.cursor.execute(query, (md5(item['link'])))
+			result = self.cursor.fetchone()
+
+			# Update craw links
+			sql = "REPLACE INTO post_hash_links(hash_link) VALUES(%s)"
+			self.cursor.execute(sql, (md5(item['link'])))
+			self.conn.commit()
+
+			# Select post
+			query = "SELECT id,title FROM posts WHERE link = %s"
+			self.cursor.execute(query, (item['link']))
 			result = self.cursor.fetchone()
 
 			postId = 0
-
 			if result:
 				postId = result['id']
-				logging.info("Item already stored in db: %s" % item['link'])
-			else:
-				content = item['content'];
-				sql = "INSERT INTO posts (title, content, type, category, teaser, avatar, link, category_id, product_id, user_id, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-				self.cursor.execute(sql, (item['title'].encode('utf-8'), content, item['post_type'] ,item['category'].encode('utf-8') ,item['teaser'].encode('utf-8'), item['avatar'], item['link'], item['category_id'], item['product_id'], item['user_id'], item['created_at'], item['updated_at']))
+				sql = "UPDATE posts SET avatar = %s, content = %s, static_time = %s WHERE id = %s"
+				self.cursor.execute(sql, (item['avatar'], item['content'], timestamp(), postId))
 				self.conn.commit()
 
-				# Insert to elasticsearch
-				postId = self.cursor.lastrowid
-				logging.info("Item stored in db: %s" % item['link'])
+				logging.info("Item already stored in db: %s" % item['link'])
+			else:
+				# Neu co avatar thi moi insert
+				if item['avatar'] != '':
+					content = item['content'];
+					sql = "INSERT INTO posts (title, content, type, category, teaser, avatar, link, category_id, product_id, user_id, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+					self.cursor.execute(sql, (item['title'].encode('utf-8'), content, item['post_type'] ,item['category'].encode('utf-8') ,item['teaser'].encode('utf-8'), item['avatar'], item['link'], item['category_id'], item['product_id'], item['user_id'], item['created_at'], item['updated_at']))
+					self.conn.commit()
+
+					# Insert to elasticsearch
+					postId = self.cursor.lastrowid
+					logging.info("Item stored in db: %s" % item['link'])
 
 			item["id"] = postId
 			self.post.insertOrUpdate(postId, item.toJson())
@@ -54,22 +77,28 @@ class MySQLStorePipeline(object):
 
 			productId = 0;
 
-			if result:
-				productId = result['id']
+			if item['price'] > 0 :
 
-				logging.info("Item already stored in db: %s" % item['name'])
-			else:
-				sql = "INSERT INTO products (name, price, hash_name, brand, image, images, link, spec, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-				self.cursor.execute(sql, (item['name'].encode('utf-8'), item['price'], item['hash_name'].encode('utf-8'), item['brand'].encode('utf-8'), item['image'].encode('utf-8'), item['images'] ,item['link'], item['spec'], item['created_at'], item['updated_at']))
-				self.conn.commit()
-				logging.info("Item stored in db: %s" % item['link'])
+				if result:
+					productId = result['id']
 
-				productId = self.cursor.lastrowid
+					sql = "UPDATE products SET price = %s, updated_at = %s WHERE id = %s"
+					self.cursor.execute(sql, (item['price'], item['updated_at'], productId))
+					self.conn.commit()
 
-			item["id"] = productId
-			self.product.insertOrUpdate(productId, item.toJson())
+					logging.info("Item already stored in db: %s" % item['name'])
+				else:
+					sql = "INSERT INTO products (name, price, hash_name, brand_id, image, images, is_smartphone, is_laptop, is_tablet, is_camera, link, spec, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+					self.cursor.execute(sql, (item['name'].encode('utf-8'), item['price'], item['hash_name'].encode('utf-8'), item['brand_id'], item['image'].encode('utf-8'), item['images'] , item['is_mobile'], item['is_laptop'], item['is_tablet'], item['is_camera'] ,item['link'], item['spec'], item['created_at'], item['updated_at']))
+					self.conn.commit()
+					logging.info("Item stored in db: %s" % item['link'])
 
-		else:
+					productId = self.cursor.lastrowid
+
+				item["id"] = productId
+				self.product.insertOrUpdate(productId, item.toJson())
+
+		elif spider.name == 'product_link':
 			if item['price'] > 0:
 				query = "SELECT * FROM product_prices WHERE link = %s"
 				self.cursor.execute(query, (item['link'].encode('utf-8')))
@@ -102,5 +131,14 @@ class MySQLStorePipeline(object):
 				# Insert to elasticsearch
 				self.price.insertOrUpdate(priceId, item.toJson())
 
+				# Update price history
+				self.savePriceHistories(item)
+
 		return item
+
+	def savePriceHistories(self, item):
+		day = strftime("%Y-%m-%d")
+		sql = "INSERT INTO price_histories (price_id, price, day) VALUES (%s, %s, %s)"
+		self.cursor.execute(sql, (item['id'], item['price'], day))
+		self.conn.commit()
 

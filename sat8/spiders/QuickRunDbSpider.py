@@ -9,7 +9,7 @@ import datetime
 from DbPriceCrawler import DbPriceSpider
 from scrapy.conf import settings
 
-class TestDbPriceCrawler(DbPriceSpider):
+class QuickRunDbPriceCrawler(DbPriceSpider):
 
     env = 'quick'
 

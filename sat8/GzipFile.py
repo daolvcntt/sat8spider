@@ -9,7 +9,8 @@ arrayDir = [
     env.IMAGES_STORE + '/thumbs/big/',
     env.IMAGES_STORE + '/posts/',
     env.IMAGES_STORE + '/settings/',
-    env.IMAGES_STORE + '/banners/'
+    env.IMAGES_STORE + '/banners/',
+    env.IMAGES_STORE + '/sites/'
 ]
 
 arrayExts = ['.png', '.jpg', '.jpeg', '.bmp', '.gif', '.css', '.js']
