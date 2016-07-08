@@ -82,8 +82,8 @@ class MySQLStorePipeline(object):
 				if result:
 					productId = result['id']
 
-					sql = "UPDATE products SET price = %s, min_price = %s, updated_at = %s WHERE id = %s"
-					self.cursor.execute(sql, (item['price'], item['min_price'], item['updated_at'], productId))
+					sql = "UPDATE products SET price = %s, min_price = %s, image = %s, images = %s, updated_at = %s WHERE id = %s"
+					self.cursor.execute(sql, (item['price'], item['min_price'], item['image'], item['images'], item['updated_at'], productId))
 					self.conn.commit()
 
 					logging.info("Item already stored in db: %s" % item['name'])
