@@ -82,14 +82,14 @@ class MySQLStorePipeline(object):
 				if result:
 					productId = result['id']
 
-					sql = "UPDATE products SET price = %s, updated_at = %s WHERE id = %s"
-					self.cursor.execute(sql, (item['price'], item['updated_at'], productId))
+					sql = "UPDATE products SET price = %s, min_price = %s, updated_at = %s WHERE id = %s"
+					self.cursor.execute(sql, (item['price'], item['min_price'], item['updated_at'], productId))
 					self.conn.commit()
 
 					logging.info("Item already stored in db: %s" % item['name'])
 				else:
-					sql = "INSERT INTO products (name, price, hash_name, brand_id, image, images, is_smartphone, is_laptop, is_tablet, is_camera, link, spec, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-					self.cursor.execute(sql, (item['name'].encode('utf-8'), item['price'], item['hash_name'].encode('utf-8'), item['brand_id'], item['image'].encode('utf-8'), item['images'] , item['is_mobile'], item['is_laptop'], item['is_tablet'], item['is_camera'] ,item['link'], item['spec'], item['created_at'], item['updated_at']))
+					sql = "INSERT INTO products (name, price, min_price, hash_name, brand_id, image, images, is_smartphone, is_laptop, is_tablet, is_camera, link, spec, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+					self.cursor.execute(sql, (item['name'].encode('utf-8'), item['price'], item['min_price'] ,item['hash_name'].encode('utf-8'), item['brand_id'], item['image'].encode('utf-8'), item['images'] , item['is_mobile'], item['is_laptop'], item['is_tablet'], item['is_camera'] ,item['link'], item['spec'], item['created_at'], item['updated_at']))
 					self.conn.commit()
 					logging.info("Item stored in db: %s" % item['link'])
 

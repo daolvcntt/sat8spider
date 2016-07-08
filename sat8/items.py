@@ -14,6 +14,7 @@ class ProductItem(Item):
 	id = Field()
 	name = Field()
 	price = Field()
+	min_price = Field()
 	hash_name = Field()
 	brand = Field()
 	image = Field()

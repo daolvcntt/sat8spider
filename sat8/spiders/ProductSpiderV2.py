@@ -130,6 +130,7 @@ class ProductSpiderV2(CrawlSpider):
         product['image']      = hashlib.sha1(pil.get_value(product['image'])).hexdigest() + '.' + getExtension(product['image'])
 
         product['price']      = price
+        product['min_price']  = price
         product['hash_name']  = hashlib.md5(pil.get_value(product['name']).encode('utf-8')).hexdigest()
         product['created_at'] = strftime("%Y-%m-%d %H:%M:%S")
         product['updated_at'] = strftime("%Y-%m-%d %H:%M:%S")
@@ -197,6 +198,7 @@ class ProductSpiderV2(CrawlSpider):
         product['image_links'] = image_urls
         product['hash_name']  = hashlib.md5(pil.get_value(product['name']).encode('utf-8')).hexdigest()
         product['price']      = price
+        product['min_price']  = price
         product['created_at'] = strftime("%Y-%m-%d %H:%M:%S")
         product['updated_at'] = strftime("%Y-%m-%d %H:%M:%S")
 
