@@ -44,8 +44,6 @@ class ProductSpiderV2(CrawlSpider):
 
         url_parts = urlparse(response.url)
 
-        print linkItem['response_type']
-        return
         # HTML
         if linkItem['response_type'] == self.RESPONSE_HTML:
 
@@ -278,6 +276,9 @@ class ProductSpiderV2(CrawlSpider):
                         if cookies != '' and formdata != None:
                             cookies = parseJson4Params(cookies)
 
+                        # print headers
+                        # return
+
                         # Tăng biến phân trang
                         if link['param_page'] in formdata and isinstance(formdata, dict):
                             formdata[link['param_page']] = str(i * link['step_page'])
@@ -312,7 +313,8 @@ class ProductSpiderV2(CrawlSpider):
 
     # Make request
     def makeRequest(self, url, linkItem):
-        request = scrapy.Request(url, callback = self.parse_detail_content)
+        headers = settings['APP_CONFIG']['default_request_headers']
+        request = scrapy.Request(url, callback = self.parse_detail_content, headers = headers)
         request.meta['link_item'] = linkItem
         request.meta['dont_redirect'] = True
 

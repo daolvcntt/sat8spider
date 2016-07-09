@@ -90,5 +90,20 @@ except pymysql.Error, e:
 # 	level=logging.INFO
 # )
 
-LOG_FILE = env.LOG_FILE
-LOG_LEVEL = 'ERROR'
+# LOG_FILE = env.LOG_FILE
+# LOG_LEVEL = 'ERROR'
+
+def default_request_headers():
+	return {
+		'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+		'Accept-Encoding': 'gzip, deflate, sdch',
+		'Accept-Language': 'en-US,en;q=0.8,vi;q=0.6,zh-CN;q=0.4,zh;q=0.2,nb;q=0.2,ru;q=0.2,cs;q=0.2',
+		'Cache-Control': 'no-cache',
+		'Connection': 'keep-alive'
+	}
+
+DEFAULT_REQUEST_HEADERS = default_request_headers()
+
+APP_CONFIG = {
+	'default_request_headers' : default_request_headers()
+}
