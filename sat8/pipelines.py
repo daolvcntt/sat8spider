@@ -85,7 +85,7 @@ class MySQLStorePipeline(object):
 					# sql = "UPDATE products SET price = %s, min_price = %s, image = %s, images = %s, updated_at = %s WHERE id = %s"
 					# self.cursor.execute(sql, (item['price'], item['min_price'], item['image'], item['images'], item['updated_at'], productId))
 
-					sql = "UPDATE products SET image = %s, images = %s, updated_at = %s WHERE id = %s"
+					sql = "UPDATE products SET updated_at = %s WHERE id = %s"
 					self.cursor.execute(sql, (item['image'], item['images'], item['updated_at'], productId))
 					self.conn.commit()
 
