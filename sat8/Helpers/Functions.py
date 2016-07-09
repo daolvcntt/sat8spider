@@ -75,7 +75,14 @@ def downloadImageFromUrl(url, createThumbs = 1):
     pathSaveImageBig   = settings['IMAGES_STORE'] + '/thumbs/big/' + imageName
 
     if os.path.isfile(pathSaveImage) == False:
-        urllib.urlretrieve(url, pathSaveImage)
+        # urllib.urlretrieve(url, pathSaveImage)
+
+        imgRequest = urllib2.Request(url)
+        imgData = urllib2.urlopen(imgRequest).read()
+
+        f = open(pathSaveImage, 'w')
+        f.write(imgData)
+        f.close()
 
     # Resize image
     imageThumbs = settings['IMAGES_THUMBS']

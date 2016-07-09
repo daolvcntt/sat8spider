@@ -44,8 +44,11 @@ class ProductSpiderV2(CrawlSpider):
 
         url_parts = urlparse(response.url)
 
+        print linkItem['response_type']
+        return
         # HTML
         if linkItem['response_type'] == self.RESPONSE_HTML:
+
             sel = Selector(response)
             product_links = sel.xpath(linkItem['link_item'])
 
@@ -281,6 +284,9 @@ class ProductSpiderV2(CrawlSpider):
 
                         request = scrapy.FormRequest(url=startLink, callback=self.parse_item, formdata=formdata, method=method, headers=headers, cookies=cookies)
                         request.meta['link_item'] = link
+
+                        print startLink
+
                         yield request
 
         except ValueError as e:
