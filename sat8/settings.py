@@ -90,8 +90,8 @@ except pymysql.Error, e:
 # 	level=logging.INFO
 # )
 
-LOG_FILE = env.LOG_FILE
-LOG_LEVEL = 'ERROR'
+# LOG_FILE = env.LOG_FILE
+# LOG_LEVEL = 'ERROR'
 
 def default_request_headers():
 	return {
