@@ -78,11 +78,11 @@ def downloadImageFromUrl(url, createThumbs = 1):
         # urllib.urlretrieve(url, pathSaveImage)
 
         hdr = {
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
             'Cookie':'__cfduid=dfda1912a121b8d1dfe9dc69f2a1e93d41468034870; _ants_utm=%7B%22source%22%3A%22google.com.vn%22%2C%22medium%22%3A%22%22%2C%22campaign%22%3A%22%22%2C%22content%22%3A%22%22%2C%22term%22%3A%22%22%2C%22type%22%3A%22refferrer%22%2C%22time%22%3A1467946927336%7D; au_aid=173313886; au_gt=1460616547; move_address=move_address_hide; frontend=sj1ijvvolfsl50do6vltsuc1p0; _pk_id.578785290.11d9=2275fcb40cbfe515.1468034872.3.1468040768.1468040767.; an_session=zkzkzqzlzizjzgzgzdzizkzgzgzizgzrzrzlzdziznzlzhzqzgzlzjzrzmzdzmzjzdziznzlzrzjznzjzkzlzkzdziznzlzrzjzgzrzizrzrzdzizjzdzhznzdzhzd2f27zdzgzdzlzmzmznzr; dgs=1468031157%3A1%3A0-24; _ants_services=%5B%5D; _ga=GA1.3.1272787306.1468034872; __zlcmid=bXfgYZs2hizO6g',
             'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-            'Accept-Encoding': 'none',
+            'Accept-Encoding': 'gzip, deflate, sdch',
             'Accept-Language': 'en-US,en;q=0.8',
             'Connection': 'keep-alive'
         }
