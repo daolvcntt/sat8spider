@@ -24,6 +24,7 @@ def runIndex():
     indexPosts()
     indexRaovat()
     indexQuestions()
+    indexVideos()
 
 def indexProducts():
     queryProduct = "SELECT * FROM products"

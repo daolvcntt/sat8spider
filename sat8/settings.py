@@ -16,7 +16,7 @@ RETRY_ENABLED              = True
 DOWNLOAD_TIMEOUT           = 500
 COOKIES_ENABLED            = True
 
-USER_AGENT = 'Googlebot/2.1 (+http://www.google.com/bot.html)'
+USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36'
 
 SPIDER_MODULES = ['sat8.spiders']
 NEWSPIDER_MODULE = 'sat8.spiders'
@@ -95,7 +95,7 @@ except pymysql.Error, e:
 
 def default_request_headers():
 	return {
-		'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+		'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36',
 		'Accept-Encoding': 'gzip, deflate, sdch',
 		'Accept-Language': 'en-US,en;q=0.8,vi;q=0.6,zh-CN;q=0.4,zh;q=0.2,nb;q=0.2,ru;q=0.2,cs;q=0.2',
 		'Cache-Control': 'no-cache',
