@@ -1,6 +1,8 @@
 import sys
 
 import socket
+import os
+
 hostname = socket.gethostname()
 
 if hostname == 'justin-HP-ProBook-450-G0':
@@ -70,7 +72,7 @@ class FunctionTest(unittest.TestCase):
         self.assertEqual(expected, actual);
 
     def test_downloadImageFromUrl(self):
-        imgLink = 'https://cdn.tgdd.vn/Products/Images/42/73704/iphone-6s-plus-64gb-400-400x450.png';
+        imgLink = 'http://cellphones.com.vn/media/catalog/product/cache/1/image/180x350/9df78eab33525d08d6e5fb8d27136e95/d/e/desire-820g_-gray.png';
         ext = getExtension(imgLink);
         imageName = hashlib.sha1(imgLink).hexdigest() + '.' + ext;
 
@@ -87,6 +89,9 @@ class FunctionTest(unittest.TestCase):
         actual = downloadImageFromUrl(imgLink, 1)
 
         self.assertEqual(expected, actual)
+        self.assertEqual(os.path.isfile(pathSaveImage), True)
+        self.assertEqual(os.path.isfile(pathSaveImageSmall), True)
+        self.assertEqual(os.path.isfile(pathSaveImageBig), True)
 
     def test_sha1(self):
         string = 'luongvancong'
