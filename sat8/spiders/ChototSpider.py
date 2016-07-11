@@ -142,7 +142,7 @@ class ChototSpider(CrawlSpider):
         print '------------------------------', "\n"
         self.conn = settings['MYSQL_CONN']
         self.cursor = self.conn.cursor()
-        self.cursor.execute("SELECT DISTINCT id,keyword,rate_keyword FROM products WHERE rate_keyword != '' OR rate_keyword != NULL ORDER BY updated_at DESC LIMIT 5")
+        self.cursor.execute("SELECT DISTINCT id,keyword,rate_keyword FROM products WHERE rate_keyword != '' OR rate_keyword != NULL ORDER BY updated_at DESC")
         products = self.cursor.fetchall()
 
         # url = 'http://vatgia.com/raovat/quicksearch.php?keyword=Sony+Xperia+Z3'
@@ -152,6 +152,13 @@ class ChototSpider(CrawlSpider):
 
         for product in products:
             url = 'https://www.chotot.com/ha-noi/mua-ban/%s' %product['rate_keyword']
+            # self.start_urls.append(url)
+            request = scrapy.Request(url, callback = self.parse_item)
+            request.meta['productId'] = product['id']
+            yield request
+
+        for product in products:
+            url = 'https://www.chotot.com/tp-ho-chi-minh/mua-ban/%s' %product['rate_keyword']
             # self.start_urls.append(url)
             request = scrapy.Request(url, callback = self.parse_item)
             request.meta['productId'] = product['id']
