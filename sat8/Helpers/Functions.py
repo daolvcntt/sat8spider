@@ -76,9 +76,8 @@ def downloadImageFromUrl(url, createThumbs = 1):
     pathSaveImageBig   = settings['IMAGES_STORE'] + '/thumbs/big/' + imageName
 
     isFile = os.path.isfile(pathSaveImage)
-    isImage = imghdr.what(pathSaveImage)
 
-    if (isFile == True and isImage == None) or (isFile == False):
+    if (isFile == True and imghdr.what(pathSaveImage) == None) or (isFile == False):
         # urllib.urlretrieve(url, pathSaveImage)
 
         hdr = {
