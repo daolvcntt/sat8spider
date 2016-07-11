@@ -86,7 +86,7 @@ def downloadImageFromUrl(url, createThumbs = 1):
             'Connection': 'keep-alive'
         }
 
-        imgRequest = urllib2.Request(url)
+        imgRequest = urllib2.Request(url, headers=hdr)
         imgData = urllib2.urlopen(imgRequest).read()
 
         f = open(pathSaveImage, 'w')
