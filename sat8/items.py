@@ -175,6 +175,8 @@ class RaovatItem(Item):
 	image_urls = Field()
 	image_links = Field()
 	info = Field()
+	phone = Field()
+	source = Field()
 
 	def toJson(self):
 		return {

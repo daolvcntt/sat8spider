@@ -64,6 +64,8 @@ class ChototSpider(CrawlSpider):
         raovatItemLoader.add_xpath('image', '//*[@id="display_image"]//img[1]/@src')
         raovatItemLoader.add_value('created_at', strftime("%Y-%m-%d %H:%M:%S"))
         raovatItemLoader.add_value('updated_at', strftime("%Y-%m-%d %H:%M:%S"))
+        raovatItemLoader.add_value('source', 'chotot.com')
+        raovatItemLoader.add_xpath('phone', '//*[@id="real-phone"]/@src')
 
         raovatItem = raovatItemLoader.load_item()
         # raovatItem['link'] = 'http://vatgia.com' + raovatItem['link'];
@@ -91,15 +93,23 @@ class ChototSpider(CrawlSpider):
             imgLink = response.urljoin(image.extract())
             image_links.append(imgLink)
 
-        image_links.append(raovatItem['image'])
+        if 'image' in raovatItem:
+            image_links.append(raovatItem['image'])
+            avatar = sha1FileName(raovatItem['image'])
+            raovatItem['image'] = self.pathSaveImage + avatar
+        else:
+            raovatItem['image'] = ''
 
-        # Download avatar
-        avatar = sha1FileName(raovatItem['image'])
+        if 'phone' in raovatItem:
+            image_links.append(raovatItem['phone'])
+            phone = sha1FileName(raovatItem['phone'])
+            raovatItem['phone'] = phone
+        else:
+            raovatItem['phone'] = ''
 
         # Replace something
         raovatItem['content'] = replace_link(raovatItem['content'])
         raovatItem['content'] = replace_image(raovatItem['content'], self.pathSaveImage)
-        raovatItem['image'] = self.pathSaveImage + avatar
         raovatItem['image_links'] = image_links
 
         query = "SELECT id,link FROM classifields WHERE hash_link = %s"
@@ -109,13 +119,13 @@ class ChototSpider(CrawlSpider):
         raovatId = 0;
         if result:
             raovatId = result['id']
-            sql = "UPDATE classifields SET content = %s, image = %s, info = %s, updated_at = %s WHERE id = %s"
-            self.cursor.execute(sql, (raovatItem['content'], raovatItem['image'], raovatItem['info'] , raovatItem['updated_at'] ,raovatId))
+            sql = "UPDATE classifields SET content = %s, image = %s, phone = %s, source = %s, info = %s, updated_at = %s WHERE id = %s"
+            self.cursor.execute(sql, (raovatItem['content'], raovatItem['image'], raovatItem['phone'], raovatItem['source'], raovatItem['info'] , raovatItem['updated_at'] ,raovatId))
             self.conn.commit()
             logging.info("Item already stored in db: %s" % raovatItem['link'])
         else:
-            sql = "INSERT INTO classifields (product_id, title, teaser, content, user_name, image, info, is_crawl, price, link, hash_link, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            self.cursor.execute(sql, (productId, raovatItem['title'], raovatItem['teaser'], raovatItem['content'], raovatItem['user_name'], raovatItem['image'], raovatItem['info'] , raovatItem['is_crawl'] ,raovatItem['price'], raovatItem['link'], raovatItem['hash_link'] ,raovatItem['created_at'], raovatItem['updated_at']))
+            sql = "INSERT INTO classifields (product_id, title, teaser, content, user_name, image, info, is_crawl, price, link, hash_link, phone, source, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            self.cursor.execute(sql, (productId, raovatItem['title'], raovatItem['teaser'], raovatItem['content'], raovatItem['user_name'], raovatItem['image'], raovatItem['info'] , raovatItem['is_crawl'] ,raovatItem['price'], raovatItem['link'], raovatItem['hash_link'] ,raovatItem['phone'], raovatItem['source'], raovatItem['created_at'], raovatItem['updated_at']))
             self.conn.commit()
             logging.info("Item stored in db: %s" % raovatItem['link'])
             raovatId = self.cursor.lastrowid
@@ -132,7 +142,7 @@ class ChototSpider(CrawlSpider):
         print '------------------------------', "\n"
         self.conn = settings['MYSQL_CONN']
         self.cursor = self.conn.cursor()
-        self.cursor.execute("SELECT DISTINCT id,keyword,rate_keyword FROM products WHERE rate_keyword != '' OR rate_keyword != NULL ORDER BY updated_at DESC")
+        self.cursor.execute("SELECT DISTINCT id,keyword,rate_keyword FROM products WHERE rate_keyword != '' OR rate_keyword != NULL ORDER BY updated_at DESC LIMIT 5")
         products = self.cursor.fetchall()
 
         # url = 'http://vatgia.com/raovat/quicksearch.php?keyword=Sony+Xperia+Z3'
