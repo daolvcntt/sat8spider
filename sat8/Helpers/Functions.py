@@ -7,6 +7,7 @@ from scrapy.conf import settings
 from PIL import Image
 import urllib
 import os
+import imghdr
 
 def list_get(array, key, default = ''):
 	if key in array :
@@ -74,7 +75,10 @@ def downloadImageFromUrl(url, createThumbs = 1):
     pathSaveImageSmall = settings['IMAGES_STORE'] + '/thumbs/small/' + imageName
     pathSaveImageBig   = settings['IMAGES_STORE'] + '/thumbs/big/' + imageName
 
-    if os.path.isfile(pathSaveImage) == False:
+    isFile = os.path.isfile(pathSaveImage)
+    isImage = imghdr.what(pathSaveImage)
+
+    if (isFile == True and isImage == None) or (isFile == False):
         # urllib.urlretrieve(url, pathSaveImage)
 
         hdr = {
@@ -96,12 +100,12 @@ def downloadImageFromUrl(url, createThumbs = 1):
     # Resize image
     imageThumbs = settings['IMAGES_THUMBS']
 
-    if os.path.isfile(pathSaveImageSmall) == False:
+    if (os.path.isfile(pathSaveImageSmall) == True and imghdr.what(pathSaveImageSmall) == None) or (os.path.isfile(pathSaveImageSmall) == False):
         im = Image.open(pathSaveImage)
         im.thumbnail(imageThumbs["small"])
         im.save(pathSaveImageSmall, ext);
 
-    if os.path.isfile(pathSaveImageBig) == False:
+    if (os.path.isfile(pathSaveImageBig) == True and imghdr.what(pathSaveImageBig) == None) or (os.path.isfile(pathSaveImageBig) == False):
         im = Image.open(pathSaveImage)
         im.thumbnail(imageThumbs["big"])
         im.save(pathSaveImageBig, ext);
