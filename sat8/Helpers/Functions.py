@@ -69,7 +69,7 @@ def getExtension(url):
 
 def downloadImageFromUrl(url, createThumbs = 1):
     ext = getExtension(url);
-    imageName = hashlib.sha1(url).hexdigest() + '.' + ext;
+    imageName = sha1FileName(url);
 
     pathSaveImage = settings['IMAGES_STORE'] + '/full/' + imageName
     pathSaveImageSmall = settings['IMAGES_STORE'] + '/thumbs/small/' + imageName
