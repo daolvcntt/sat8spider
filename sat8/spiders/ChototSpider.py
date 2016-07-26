@@ -174,7 +174,7 @@ class ChototSpider(CrawlSpider):
         ]
 
         for link in links:
-            for ii in range(1,2):
+            for ii in range(1,6):
                 url = link.replace('{#page#}', str(ii))
                 request = scrapy.Request(url, callback=self.parse_item)
                 yield request
