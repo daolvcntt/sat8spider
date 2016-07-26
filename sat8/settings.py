@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+import socket
 import logging
 import pymysql.cursors
 import env
@@ -89,9 +90,11 @@ except pymysql.Error, e:
 # 	format='%(levelname)s: %(message)s',
 # 	level=logging.INFO
 # )
+hostname = socket.gethostname()
 
-LOG_FILE = env.LOG_FILE
-LOG_LEVEL = 'ERROR'
+if hostname != 'justin-HP-ProBook-450-G0':
+	LOG_FILE = env.LOG_FILE
+	LOG_LEVEL = 'ERROR'
 
 def default_request_headers():
 	return {

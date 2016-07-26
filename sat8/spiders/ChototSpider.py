@@ -34,7 +34,8 @@ class ChototSpider(CrawlSpider):
     questionId = 0
     productId = 0;
 
-    def __init__(self):
+    def __init__(self, env="production"):
+        self.env = env
         self.conn = settings['MYSQL_CONN']
         self.cursor = self.conn.cursor()
 
@@ -46,12 +47,11 @@ class ChototSpider(CrawlSpider):
         for pl in product_links:
             url = response.urljoin(pl.extract());
             request = scrapy.Request(url, callback=self.parse_raovat)
-            request.meta['productId'] = response.meta['productId']
             yield request
 
 
     def parse_raovat(self, response):
-        productId = response.meta['productId']
+        productId = 0
         raovatItemLoader = RaovatItemLoader(item = RaovatItem(), response = response)
         raovatItemLoader.add_xpath('title', '//*[@class="adview_subject"]/h2//text()')
         raovatItemLoader.add_value('link', response.url)
@@ -112,6 +112,10 @@ class ChototSpider(CrawlSpider):
         raovatItem['content'] = replace_image(raovatItem['content'], self.pathSaveImage)
         raovatItem['image_links'] = image_links
 
+        if self.env == 'dev':
+            print raovatItem
+            return
+
         query = "SELECT id,link FROM classifields WHERE hash_link = %s"
         self.cursor.execute(query, (raovatItem['hash_link']))
         result = self.cursor.fetchone()
@@ -140,29 +144,48 @@ class ChototSpider(CrawlSpider):
 
     def start_requests(self):
         print '------------------------------', "\n"
-        self.conn = settings['MYSQL_CONN']
-        self.cursor = self.conn.cursor()
-        self.cursor.execute("SELECT DISTINCT id,keyword,rate_keyword FROM products WHERE rate_keyword != '' OR rate_keyword != NULL ORDER BY updated_at DESC")
-        products = self.cursor.fetchall()
+        # self.conn = settings['MYSQL_CONN']
+        # self.cursor = self.conn.cursor()
+        # self.cursor.execute("SELECT DISTINCT id,keyword,rate_keyword FROM products WHERE rate_keyword != '' OR rate_keyword != NULL ORDER BY updated_at DESC")
+        # products = self.cursor.fetchall()
 
         # url = 'http://vatgia.com/raovat/quicksearch.php?keyword=Sony+Xperia+Z3'
         # request = scrapy.Request(url, callback = self.parse_item)
         # request.meta['productId'] = 0
         # yield request
 
-        for product in products:
-            url = 'https://www.chotot.com/ha-noi/mua-ban/%s' %product['rate_keyword']
-            # self.start_urls.append(url)
-            request = scrapy.Request(url, callback = self.parse_item)
-            request.meta['productId'] = product['id']
-            yield request
+        # for product in products:
+        #     url = 'https://www.chotot.com/ha-noi/mua-ban/%s' %product['rate_keyword']
+        #     # self.start_urls.append(url)
+        #     request = scrapy.Request(url, callback = self.parse_item)
+        #     request.meta['productId'] = product['id']
+        #     yield request
 
-        for product in products:
-            url = 'https://www.chotot.com/tp-ho-chi-minh/mua-ban/%s' %product['rate_keyword']
-            # self.start_urls.append(url)
-            request = scrapy.Request(url, callback = self.parse_item)
-            request.meta['productId'] = product['id']
-            yield request
+        # for product in products:
+        #     url = 'https://www.chotot.com/tp-ho-chi-minh/mua-ban/%s' %product['rate_keyword']
+        #     # self.start_urls.append(url)
+        #     request = scrapy.Request(url, callback = self.parse_item)
+        #     request.meta['productId'] = product['id']
+        #     yield request
+
+        links = [
+            'https://www.chotot.com/ha-noi/mua-ban-dien-thoai-di-dong?o={#page#}',
+            'https://www.chotot.com/ha-noi/mua-ban-may-tinh-bang?o={#page#}'
+        ]
+
+        for link in links:
+            for ii in range(1,2):
+                url = link.replace('{#page#}', str(ii))
+                request = scrapy.Request(url, callback=self.parse_item)
+                yield request
+
+        # for i in range(0,6):
+        #     url = 'https://www.chotot.com/ha-noi/mua-ban-dien-thoai-di-dong?o=' + str(i)
+        #     request = scrapy.Request(url, callback=self.parse_item)
+        #     yield request
+
+        # for i in range(0,6):
+        #     url = 'https://www.chotot.com/ha-noi/mua-ban-may-tinh-bang?o=6'
 
         # yield scrapy.Request(response.url, callback=self.parse_item)
         print '------------------------------', "\n\n"
