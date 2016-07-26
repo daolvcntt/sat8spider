@@ -45,7 +45,8 @@ class AbstractPostSpider(CrawlSpider):
         # 'type' : 'post'
     }
 
-    def __init__(self):
+    def __init__(self, env="production"):
+        self.env = env
         # Add start_urls
         config_urls = self.config_urls
         for url in config_urls:
@@ -111,9 +112,9 @@ class AbstractPostSpider(CrawlSpider):
             item['content'] = replace_image(item['content'], self.pathSaveImage)
 
 
-
-        # print item
-        # return
+        if self.env == 'dev':
+            print item
+            return
 
         yield(item)
 
