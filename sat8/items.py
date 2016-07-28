@@ -194,6 +194,18 @@ class RaovatItem(Item):
 		}
 
 
+class MerchantItem(Item):
+	id = Field()
+	name = Field()
+	logo = Field()
+	logo_hash = Field()
+	alias = Field()
+	star = Field()
+	image_links = Field()
+	product_link = Field()
+	product_name = Field()
+	product_price = Field()
+
 class ProductItemLoader(ItemLoader):
 	default_output_processor = TakeFirst()
 	price_in = MapCompose(remove_tags, filter_price)
@@ -226,3 +238,8 @@ class RaovatItemLoader(ItemLoader):
 	teaser_in = MapCompose(unicode.strip)
 	user_name_in = MapCompose(unicode.strip)
 	price_in = MapCompose(remove_tags, filter_price)
+
+class MerchantItemLoader(ItemLoader):
+	default_output_processor = TakeFirst()
+	name_in = MapCompose(unicode.strip)
+	alis_in = MapCompose(unicode.strip)

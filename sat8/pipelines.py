@@ -138,6 +138,9 @@ class MySQLStorePipeline(object):
 				# Update price history
 				self.savePriceHistories(item)
 
+		elif spider.name == "merchant_spider":
+			print item
+
 		return item
 
 	def savePriceHistories(self, item):
