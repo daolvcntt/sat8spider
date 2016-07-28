@@ -139,7 +139,7 @@ class HoiDapSpider(CrawlSpider):
         ]
 
         for link in links:
-            for i in range(1,2):
+            for i in range(1,6):
                 url = link.replace('{#page#}', str(i))
                 request = scrapy.Request(url, callback=self.parse_item)
                 yield request
