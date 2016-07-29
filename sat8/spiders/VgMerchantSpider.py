@@ -68,7 +68,8 @@ class VgMerchantSpider(CrawlSpider):
             merchant["star"] = len(star)
 
             image_links = []
-            # image_links.append(merchant["logo"])
+
+            image_links.append(merchant["logo"])
 
             merchant["image_links"] = image_links
             merchant["logo_hash"] = sha1FileName(merchant["logo"])
@@ -85,14 +86,21 @@ class VgMerchantSpider(CrawlSpider):
         priceItemLoader = ProductItemLoader(item = ProductItem(), response = response)
         priceItemLoader.add_xpath('name', '//h1[@id="detail_product_name"]/text()')
         priceItemLoader.add_xpath('price', '//div[@id="detail_product_price"]//b[@class="product_price"]/text()')
+        priceItemLoader.add_value('link', response.url)
 
         priceItem = priceItemLoader.load_item()
 
-        yield {
+        item = {
             "merchant" : response.meta['merchant'],
             "price_item" : priceItem,
             "image_links" : response.meta['merchant']["image_links"]
         }
+
+        if self.env == 'dev':
+            print item
+            return
+
+        yield item
 
     def start_requests(self):
         conn = self.conn
@@ -125,6 +133,8 @@ class VgMerchantSpider(CrawlSpider):
         path = url.path
 
         url = urljoin(response.url, path)
+
+        url = url.replace('http://', '')
 
         indexQueryStr = url.find('&')
 

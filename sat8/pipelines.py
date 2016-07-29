@@ -139,7 +139,13 @@ class MySQLStorePipeline(object):
 				self.savePriceHistories(item)
 
 		elif spider.name == "merchant_spider":
-			print item
+			merchant  = item['merchant']
+			priceItem = item['price_item']
+
+			merchantId = self.saveMerchant(merchant)
+
+			priceItem['source_id'] = merchantId
+			self.savePriceItem(priceItem)
 
 		return item
 
@@ -148,4 +154,66 @@ class MySQLStorePipeline(object):
 		sql = "INSERT INTO price_histories (price_id, price, day) VALUES (%s, %s, %s)"
 		self.cursor.execute(sql, (item['id'], item['price'], day))
 		self.conn.commit()
+
+
+	def saveMerchant(self, merchant):
+		query = "SELECT id,name FROM sites WHERE name = %s"
+		self.cursor.execute(query, (merchant['name']))
+		result = self.cursor.fetchone()
+		created_at = strftime("%Y-%m-%d %H:%M:%S")
+		updated_at  = strftime("%Y-%m-%d %H:%M:%S")
+
+		if result == None:
+			sql = "INSERT INTO sites(name, alias, logo, created_at, updated_at) VALUES(%s, %s, %s, %s, %s)"
+			self.cursor.execute(sql, (merchant['name'], merchant['alias'], merchant['logo_hash'], created_at, updated_at))
+			self.conn.commit()
+
+			return self.cursor.lastrowid
+		else:
+			return result['id']
+
+
+	def savePriceItem(self, item):
+		created_at = strftime("%Y-%m-%d %H:%M:%S")
+		updated_at  = strftime("%Y-%m-%d %H:%M:%S")
+		crawled_at = updated_at
+		item['created_at'] = created_at
+		item['updated_at'] = updated_at
+
+		if item['price'] > 0:
+			query = "SELECT * FROM product_prices WHERE link = %s"
+			self.cursor.execute(query, (item['link'].encode('utf-8')))
+			result = self.cursor.fetchone()
+
+			priceId = 0
+
+			if result:
+				updateSql = "UPDATE product_prices SET price = %s, source_id = %s, updated_at = %s, crawled_at = %s WHERE link = %s"
+
+				self.cursor.execute(updateSql, (item['price'], item['source_id'], item['updated_at'], crawled_at, item['link'].encode('utf-8')))
+				self.conn.commit()
+				logging.info("Item already updated in db: %s" % item['link'])
+
+				priceId = result['id']
+
+			else:
+				sql = "INSERT INTO product_prices (title, price, source_id, link, created_at, updated_at, crawled_at) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+				self.cursor.execute(sql, (item['name'].encode('utf-8'), item['price'], item['source_id'], item['link'],  item['created_at'], item['updated_at'], crawled_at))
+				self.conn.commit()
+				logging.info("Item stored in db: %s" % item['link'])
+
+				priceId = self.cursor.lastrowid
+
+			item["id"] = priceId
+
+			# print item.toJson()
+
+
+			# Insert to elasticsearch
+			self.price.insertOrUpdate(priceId, item.toJson())
+
+			# Update price history
+			self.savePriceHistories(item)
+
+
 
