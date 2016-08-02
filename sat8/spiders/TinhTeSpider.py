@@ -19,7 +19,7 @@ from sat8.Helpers.Functions import *
 from sat8.Functions import getImageFromContent
 from sat8.Functions import makeGzFile
 
-class AbstractPostSpider(CrawlSpider):
+class TinhTeSpider(CrawlSpider):
     name = "blog_spider"
     allowed_domains = []
     start_urls = []
@@ -31,7 +31,43 @@ class AbstractPostSpider(CrawlSpider):
     config_urls = [
         {
             "url" : "https://tinhte.vn/forums/ios-tin-tuc-danh-gia.118/page-[0-9]+",
-            "max_page" : 2
+            "max_page" : 5
+        },
+        {
+            "url" : "https://tinhte.vn/forums/android-tin-tuc-danh-gia.151/page-[0-9]+",
+            "max_page" : 5
+        },
+        {
+            "url" : "https://tinhte.vn/forums/wp-tin-tuc-danh-gia.11/page-[0-9]+",
+            "max_page" : 5
+        },
+        {
+            "url" : "https://tinhte.vn/forums/bb-tin-tuc-danh-gia.99/page-[0-9]+",
+            "max_page": 5
+        },
+        {
+            "url" : "https://tinhte.vn/forums/win-tin-tuc-danh-gia.23/page-[0-9]+",
+            "max_page": 5
+        },
+        {
+            "url" : "https://tinhte.vn/forums/mac-tin-tuc-danh-gia.196/page-[0-9]+",
+            "max_page": 5
+        },
+        {
+            "url": "https://tinhte.vn/forums/may-tinh-linux.79/page-[0-9]+",
+            "max_page": 5
+        },
+        {
+            "url": "https://tinhte.vn/forums/may-tinh-chrome-os.402/page-[0-9]+",
+            "max_page": 5
+        },
+        {
+            "url": "https://tinhte.vn/forums/tin-tuc.71/page-[0-9]+",
+            "max_page": 5
+        },
+        {
+            "url": "https://tinhte.vn/forums/danh-gia.660/page-[0-9]+",
+            "max_page": 5
         }
     ]
 
@@ -40,8 +76,8 @@ class AbstractPostSpider(CrawlSpider):
         'title' : '//*[@class="titleBar"]/h1//text()',
         'teaser' : '//*[@class="titleBar"]/h1//text()',
         'avatar' : '//*[@class="messageInfo primaryContent"]//img[1]/@src',
-        'content' : '//*[@class="messageInfo primaryContent"]',
-        'category_value' : '',
+        'content' : '//*[@class="messageInfo primaryContent"]/div[@class="messageContent"]/article',
+        'category_value' : 'Tinh tế',
         'category_id' : 8,
         'type' : 'post'
     }
@@ -64,14 +100,21 @@ class AbstractPostSpider(CrawlSpider):
 
         for href in blog_links:
             url = response.urljoin(href.extract());
-            yield scrapy.Request(url, callback = self.parse_detail_content)
+            request = scrapy.Request(url, callback = self.parse_detail_content)
+            request.meta['tinhte_category_link'] = response.url
+            yield request
 
     def parse_detail_content(self, response):
+
         il = PostItemLoader(item = BlogItem(), response=response)
+        il.add_value('link', response.url)
         il.add_value('link', response.url)
         il.add_xpath('title', self.configs['title'])
         il.add_xpath('teaser', self.configs['teaser'])
         il.add_xpath('avatar', self.configs['avatar'])
+        il.add_value('tinhte_category_link', response.meta['tinhte_category_link'])
+        il.add_value('is_tinhte', 1)
+
 
         il.add_value('category_id', 1)
 

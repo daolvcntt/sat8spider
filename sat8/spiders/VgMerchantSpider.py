@@ -63,9 +63,13 @@ class VgMerchantSpider(CrawlSpider):
             itemLoader.add_xpath('alias', './/div[@class="name"]//a/@title')
             itemLoader.add_xpath('logo', './/td[@class="avatar"]/img/@data-original')
 
+
             merchant = itemLoader.load_item()
             merchant["name"] = self.getUrlFromLink(response, merchant["name"])
             merchant["star"] = len(star)
+            merchant["logo"] = merchant["logo"].replace("small_", "")
+            merchant["is_craw"] = 1;
+
 
             image_links = []
 

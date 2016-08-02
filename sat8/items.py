@@ -98,6 +98,8 @@ class BlogItem(Item):
 	typ = Field()
 	category = Field()
 	post_type = Field()
+	tinhte_category_link = Field()
+	is_tinhte = Field()
 
 	def toJson(self):
 		return {
@@ -205,6 +207,7 @@ class MerchantItem(Item):
 	product_link = Field()
 	product_name = Field()
 	product_price = Field()
+	is_craw = Field()
 
 class ProductItemLoader(ItemLoader):
 	default_output_processor = TakeFirst()
