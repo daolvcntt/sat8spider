@@ -20,7 +20,7 @@ from sat8.Functions import getImageFromContent
 from sat8.Functions import makeGzFile
 
 class TinhTeSpider(CrawlSpider):
-    name = "blog_spider"
+    name = "tinhte_spider"
     allowed_domains = []
     start_urls = []
 
@@ -31,44 +31,44 @@ class TinhTeSpider(CrawlSpider):
     config_urls = [
         {
             "url" : "https://tinhte.vn/forums/ios-tin-tuc-danh-gia.118/page-[0-9]+",
-            "max_page" : 5
+            "max_page" : 2
         },
-        {
-            "url" : "https://tinhte.vn/forums/android-tin-tuc-danh-gia.151/page-[0-9]+",
-            "max_page" : 5
-        },
-        {
-            "url" : "https://tinhte.vn/forums/wp-tin-tuc-danh-gia.11/page-[0-9]+",
-            "max_page" : 5
-        },
-        {
-            "url" : "https://tinhte.vn/forums/bb-tin-tuc-danh-gia.99/page-[0-9]+",
-            "max_page": 5
-        },
-        {
-            "url" : "https://tinhte.vn/forums/win-tin-tuc-danh-gia.23/page-[0-9]+",
-            "max_page": 5
-        },
-        {
-            "url" : "https://tinhte.vn/forums/mac-tin-tuc-danh-gia.196/page-[0-9]+",
-            "max_page": 5
-        },
-        {
-            "url": "https://tinhte.vn/forums/may-tinh-linux.79/page-[0-9]+",
-            "max_page": 5
-        },
-        {
-            "url": "https://tinhte.vn/forums/may-tinh-chrome-os.402/page-[0-9]+",
-            "max_page": 5
-        },
-        {
-            "url": "https://tinhte.vn/forums/tin-tuc.71/page-[0-9]+",
-            "max_page": 5
-        },
-        {
-            "url": "https://tinhte.vn/forums/danh-gia.660/page-[0-9]+",
-            "max_page": 5
-        }
+        # {
+        #     "url" : "https://tinhte.vn/forums/android-tin-tuc-danh-gia.151/page-[0-9]+",
+        #     "max_page" : 5
+        # },
+        # {
+        #     "url" : "https://tinhte.vn/forums/wp-tin-tuc-danh-gia.11/page-[0-9]+",
+        #     "max_page" : 5
+        # },
+        # {
+        #     "url" : "https://tinhte.vn/forums/bb-tin-tuc-danh-gia.99/page-[0-9]+",
+        #     "max_page": 5
+        # },
+        # {
+        #     "url" : "https://tinhte.vn/forums/win-tin-tuc-danh-gia.23/page-[0-9]+",
+        #     "max_page": 5
+        # },
+        # {
+        #     "url" : "https://tinhte.vn/forums/mac-tin-tuc-danh-gia.196/page-[0-9]+",
+        #     "max_page": 5
+        # },
+        # {
+        #     "url": "https://tinhte.vn/forums/may-tinh-linux.79/page-[0-9]+",
+        #     "max_page": 5
+        # },
+        # {
+        #     "url": "https://tinhte.vn/forums/may-tinh-chrome-os.402/page-[0-9]+",
+        #     "max_page": 5
+        # },
+        # {
+        #     "url": "https://tinhte.vn/forums/tin-tuc.71/page-[0-9]+",
+        #     "max_page": 5
+        # },
+        # {
+        #     "url": "https://tinhte.vn/forums/danh-gia.660/page-[0-9]+",
+        #     "max_page": 5
+        # }
     ]
 
     configs = {
@@ -104,7 +104,10 @@ class TinhTeSpider(CrawlSpider):
             request.meta['tinhte_category_link'] = response.url
             yield request
 
+
     def parse_detail_content(self, response):
+
+        sel = Selector(response)
 
         il = PostItemLoader(item = BlogItem(), response=response)
         il.add_value('link', response.url)
@@ -114,7 +117,6 @@ class TinhTeSpider(CrawlSpider):
         il.add_xpath('avatar', self.configs['avatar'])
         il.add_value('tinhte_category_link', response.meta['tinhte_category_link'])
         il.add_value('is_tinhte', 1)
-
 
         il.add_value('category_id', 1)
 
@@ -140,26 +142,54 @@ class TinhTeSpider(CrawlSpider):
 
         item['typ'] = 'blog'
 
-        if self.env == 'dev':
-            print item
-            return
+        # if 'avatar' in item:
+        #     avatar = item['avatar']
+        #     item['avatar'] = hashlib.sha1(avatar).hexdigest() + '.jpg'
 
-        if 'avatar' in item:
-            avatar = item['avatar']
-            item['avatar'] = hashlib.sha1(avatar).hexdigest() + '.jpg'
+        #     self.processing_avatar_image(avatar)
+        # else:
+        #     item['avatar'] = ''
 
-            self.processing_avatar_image(avatar)
-        else:
-            item['avatar'] = ''
+        # if 'content' in item:
+        #     self.processing_content_image(response)
 
-        if 'content' in item:
-            self.processing_content_image(response)
+        #     # Replace something
+        #     item['content'] = replace_link(item['content'])
+        #     item['content'] = replace_image(item['content'], self.pathSaveImage)
 
-            # Replace something
-            item['content'] = replace_link(item['content'])
-            item['content'] = replace_image(item['content'], self.pathSaveImage)
+        # Bình luận của thành viên
+        commentNodes = sel.xpath('//*[@class="sectionMain message "]')
+        comments = []
+        image_links = []
 
-        yield(item)
+        for commentNode in commentNodes:
+            # print commentNode
+            avatar  = commentNode.xpath('.//div[@class="messageUserInfo"]//a[contains(@class, "avatar")]/img/@src').extract()
+            user    = commentNode.xpath('.//div[@class="messageUserInfo"]//a[@class="username"]/text()').extract()
+            comment = commentNode.xpath('.//div[@class="messageInfo primaryContent"]').extract()
+
+            avatar  = getUrlWithoutParams(avatar[0])
+
+            self.process_comment(comment[0], response)
+
+            comment = replace_image(comment[0], self.pathSaveImage)
+
+            a = {
+                "avatar" : avatar,
+                "avatar_hash" : sha1FileName(getUrlWithoutParams(avatar)),
+                "user": user[0],
+                "comment" : comment
+            }
+
+            comments.append(a)
+
+            image_links.append(a['avatar'])
+
+        yield {
+            "post" : item,
+            "comments": comments,
+            # "image_links": image_links
+        }
 
 
     def processing_avatar_image(self, avatar):
@@ -208,6 +238,27 @@ class TinhTeSpider(CrawlSpider):
             print imgLink
 
             imageName = hashlib.sha1(imgLink.encode('utf-8')).hexdigest() + '.jpg'
+            pathSaveImage = settings['IMAGES_STORE'] + '/posts/' + imageName
+
+            # Download to tmp file
+            urllib.urlretrieve(imgLink, pathSaveImage)
+
+            # Upload to bucket
+            google_bucket_upload_object(self.bucket, pathSaveImage, 'uploads/posts/' + imageName)
+
+
+    def process_comment(self, comment, response):
+        selector = Selector(text=comment)
+        images = selector.xpath('//img/@src')
+
+        for image in images:
+
+            imgLink = response.urljoin(image.extract())
+            # imgLink = imgLink[0]
+
+            print imgLink
+
+            imageName = sha1FileName(imgLink)
             pathSaveImage = settings['IMAGES_STORE'] + '/posts/' + imageName
 
             # Download to tmp file

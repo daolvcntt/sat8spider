@@ -58,17 +58,10 @@ class MySQLStorePipeline(object):
 			else:
 				# Neu co avatar thi moi insert
 				if item['avatar'] != '':
-
-					if "is_tinhte" in item:
-						content = item['content'];
-						sql = "INSERT INTO posts (title, content, type, is_tinhte, tinhte_category_link, category, teaser, avatar, link, category_id, product_id, user_id, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-						self.cursor.execute(sql, (item['title'].encode('utf-8'), content, item['post_type'] , item['is_tinhte'], item['tinhte_category_link'] ,item['category'].encode('utf-8') ,item['teaser'].encode('utf-8'), item['avatar'], item['link'], item['category_id'], item['product_id'], item['user_id'], item['created_at'], item['updated_at']))
-						self.conn.commit()
-					else:
-						content = item['content'];
-						sql = "INSERT INTO posts (title, content, type, category, teaser, avatar, link, category_id, product_id, user_id, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-						self.cursor.execute(sql, (item['title'].encode('utf-8'), content, item['post_type'] ,item['category'].encode('utf-8') ,item['teaser'].encode('utf-8'), item['avatar'], item['link'], item['category_id'], item['product_id'], item['user_id'], item['created_at'], item['updated_at']))
-						self.conn.commit()
+					content = item['content'];
+					sql = "INSERT INTO posts (title, content, type, category, teaser, avatar, link, category_id, product_id, user_id, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+					self.cursor.execute(sql, (item['title'].encode('utf-8'), content, item['post_type'] ,item['category'].encode('utf-8') ,item['teaser'].encode('utf-8'), item['avatar'], item['link'], item['category_id'], item['product_id'], item['user_id'], item['created_at'], item['updated_at']))
+					self.conn.commit()
 
 					# Insert to elasticsearch
 					postId = self.cursor.lastrowid
@@ -148,11 +141,43 @@ class MySQLStorePipeline(object):
 		elif spider.name == "merchant_spider":
 			merchant  = item['merchant']
 			priceItem = item['price_item']
+			product   = item['product']
 
 			merchantId = self.saveMerchant(merchant)
+			merchant['id'] = merchantId
 
 			priceItem['source_id'] = merchantId
 			self.savePriceItem(priceItem)
+
+			self.saveMerchantRate(merchant, product['id'])
+
+
+		elif spider.name == "tinhte_spider":
+			post    = item['post']
+			comments = item['comments']
+
+			query = "SELECT id,title FROM posts WHERE link = %s"
+			self.cursor.execute(query, (post['link']))
+			result = self.cursor.fetchone()
+
+			postId = 0
+
+			if result:
+				postId = result['id']
+				logging.info("Item already stored in db: %s" % post['title'])
+			else:
+				content = post['content'];
+				sql = "INSERT INTO posts (title, content, type, is_tinhte, tinhte_category_link, category, teaser, avatar, link, category_id, product_id, user_id, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+				self.cursor.execute(sql, (post['title'].encode('utf-8'), content, post['post_type'] , post['is_tinhte'], post['tinhte_category_link'] ,post['category'].encode('utf-8') ,post['teaser'].encode('utf-8'), post['avatar'], post['link'], post['category_id'], post['product_id'], post['user_id'], post['created_at'], post['updated_at']))
+				self.conn.commit()
+
+				postId = self.cursor.lastrowid
+
+				# Insert cau tra loi
+				for comment in comments:
+					sql = "INSERT INTO post_comments(post_id, user_name, user_avatar, comment, is_crawl, created_at, updated_at) VALUES(%s, %s, %s, %s, %s, %s, %s)"
+					self.cursor.execute(sql, (postId, comment["user"], comment['avatar_hash'], comment['comment'], 1, post['created_at'], post['updated_at']))
+					self.conn.commit()
 
 		return item
 
@@ -175,7 +200,9 @@ class MySQLStorePipeline(object):
 			self.cursor.execute(sql, (merchant['name'], merchant['alias'], merchant['logo_hash'], merchant['is_craw'] ,created_at, updated_at))
 			self.conn.commit()
 
-			return self.cursor.lastrowid
+			merchantId = self.cursor.lastrowid
+
+			return merchantId;
 		else:
 			return result['id']
 
@@ -221,6 +248,22 @@ class MySQLStorePipeline(object):
 
 			# Update price history
 			self.savePriceHistories(item)
+
+			return priceId
+
+		return 0
+
+
+	# Fake dữ liệu đánh giá với các gian hàng VG
+	def saveMerchantRate(self, merchant, productId):
+		sql = "DELETE FROM merchant_rates WHERE merchant_id = %s AND product_id = %s AND user_id = %s";
+		self.cursor.execute(sql, (merchant['id'], productId, 0))
+		# self.cursor.commit();
+
+		sql ="INSERT INTO merchant_rates(merchant_id, product_id, user_id, value) VALUES(%s, %s, %s, %s)";
+		self.cursor.execute(sql, (merchant['id'], productId, 0, merchant['star']))
+		self.conn.commit();
+
 
 
 

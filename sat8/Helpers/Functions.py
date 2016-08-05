@@ -124,3 +124,11 @@ def sha1FileName(fileName):
 
 def md5(string):
     return hashlib.md5(string).hexdigest()
+
+def getUrlWithoutParams(url):
+    index = url.find('?')
+
+    if index > -1 :
+        return url[0:index]
+
+    return url

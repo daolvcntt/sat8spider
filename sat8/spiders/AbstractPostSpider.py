@@ -98,7 +98,7 @@ class AbstractPostSpider(CrawlSpider):
 
         if 'avatar' in item:
             avatar = item['avatar']
-            item['avatar'] = hashlib.sha1(avatar).hexdigest() + '.jpg'
+            item['avatar'] = sha1FileName(avatar)
 
             self.processing_avatar_image(avatar)
         else:
@@ -120,7 +120,7 @@ class AbstractPostSpider(CrawlSpider):
 
 
     def processing_avatar_image(self, avatar):
-        imageName = hashlib.sha1(avatar).hexdigest() + '.jpg'
+        imageName = sha1FileName(avatar)
         # Download image to host
         pathSaveImage = settings['IMAGES_STORE'] + '/full/' + imageName
         pathSaveImageSmall = settings['IMAGES_STORE'] + '/thumbs/small/' + imageName
@@ -164,7 +164,7 @@ class AbstractPostSpider(CrawlSpider):
 
             print imgLink
 
-            imageName = hashlib.sha1(imgLink.encode('utf-8')).hexdigest() + '.jpg'
+            imageName = sha1FileName(imgLink)
             pathSaveImage = settings['IMAGES_STORE'] + '/posts/' + imageName
 
             # Download to tmp file

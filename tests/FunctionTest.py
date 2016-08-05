@@ -107,6 +107,13 @@ class FunctionTest(unittest.TestCase):
 
         self.assertEqual(expected, actual)
 
+    def test_getUrlWithoutParams(self):
+        url = 'http://abc.com/1.jpg?121212'
+        expected = 'http://abc.com/1.jpg'
+        actual = getUrlWithoutParams(url)
+
+        self.assertEqual(expected, actual)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -47,6 +47,7 @@ class VgMerchantSpider(CrawlSpider):
         for pl in linksToListMerchant:
             url = response.urljoin(pl.extract());
             request = scrapy.Request(url, callback=self.parse_list_merchant)
+            request.meta['product'] = response.meta['product']
             yield request
             break
 
@@ -83,6 +84,7 @@ class VgMerchantSpider(CrawlSpider):
 
             request = scrapy.Request(linkProduct, callback=self.parse_product_detail)
             request.meta['merchant'] = merchant
+            request.meta['product'] = response.meta['product']
             yield request
 
 
@@ -96,13 +98,14 @@ class VgMerchantSpider(CrawlSpider):
 
         item = {
             "merchant" : response.meta['merchant'],
+            "product" : response.meta['product'],
             "price_item" : priceItem,
             "image_links" : response.meta['merchant']["image_links"]
         }
 
-        if self.env == 'dev':
-            print item
-            return
+        # if self.env == 'dev':
+        #     print item
+        #     return
 
         yield item
 
@@ -126,6 +129,7 @@ class VgMerchantSpider(CrawlSpider):
         for product in products:
             url = 'http://vatgia.com/home/quicksearch.php?keyword=%s&show=product&verified=1' %product['keyword']
             request = scrapy.Request(url)
+            request.meta['product'] = product
             yield request
 
 
