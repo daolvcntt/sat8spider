@@ -163,6 +163,7 @@ class MySQLStorePipeline(object):
 			postId = 0
 			insertComment = 0
 
+			# Nếu có rồi thì bỏ qua
 			if result:
 				postId = result['id']
 				post = result
@@ -172,6 +173,7 @@ class MySQLStorePipeline(object):
 				self.cursor.execute(query, (postId))
 				result = self.cursor.fetchone()
 
+				# Nếu không có bình luận thì mới thêm bình luận
 				if result["count"] == 0:
 					insertComment = 1
 

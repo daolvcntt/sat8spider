@@ -31,44 +31,44 @@ class TinhTeSpider(CrawlSpider):
     config_urls = [
         {
             "url" : "https://tinhte.vn/forums/ios-tin-tuc-danh-gia.118/page-[0-9]+",
-            "max_page" : 2
+            "max_page" : 5
         },
-        # {
-        #     "url" : "https://tinhte.vn/forums/android-tin-tuc-danh-gia.151/page-[0-9]+",
-        #     "max_page" : 5
-        # },
-        # {
-        #     "url" : "https://tinhte.vn/forums/wp-tin-tuc-danh-gia.11/page-[0-9]+",
-        #     "max_page" : 5
-        # },
-        # {
-        #     "url" : "https://tinhte.vn/forums/bb-tin-tuc-danh-gia.99/page-[0-9]+",
-        #     "max_page": 5
-        # },
-        # {
-        #     "url" : "https://tinhte.vn/forums/win-tin-tuc-danh-gia.23/page-[0-9]+",
-        #     "max_page": 5
-        # },
-        # {
-        #     "url" : "https://tinhte.vn/forums/mac-tin-tuc-danh-gia.196/page-[0-9]+",
-        #     "max_page": 5
-        # },
-        # {
-        #     "url": "https://tinhte.vn/forums/may-tinh-linux.79/page-[0-9]+",
-        #     "max_page": 5
-        # },
-        # {
-        #     "url": "https://tinhte.vn/forums/may-tinh-chrome-os.402/page-[0-9]+",
-        #     "max_page": 5
-        # },
-        # {
-        #     "url": "https://tinhte.vn/forums/tin-tuc.71/page-[0-9]+",
-        #     "max_page": 5
-        # },
-        # {
-        #     "url": "https://tinhte.vn/forums/danh-gia.660/page-[0-9]+",
-        #     "max_page": 5
-        # }
+        {
+            "url" : "https://tinhte.vn/forums/android-tin-tuc-danh-gia.151/page-[0-9]+",
+            "max_page" : 5
+        },
+        {
+            "url" : "https://tinhte.vn/forums/wp-tin-tuc-danh-gia.11/page-[0-9]+",
+            "max_page" : 5
+        },
+        {
+            "url" : "https://tinhte.vn/forums/bb-tin-tuc-danh-gia.99/page-[0-9]+",
+            "max_page": 5
+        },
+        {
+            "url" : "https://tinhte.vn/forums/win-tin-tuc-danh-gia.23/page-[0-9]+",
+            "max_page": 5
+        },
+        {
+            "url" : "https://tinhte.vn/forums/mac-tin-tuc-danh-gia.196/page-[0-9]+",
+            "max_page": 5
+        },
+        {
+            "url": "https://tinhte.vn/forums/may-tinh-linux.79/page-[0-9]+",
+            "max_page": 5
+        },
+        {
+            "url": "https://tinhte.vn/forums/may-tinh-chrome-os.402/page-[0-9]+",
+            "max_page": 5
+        },
+        {
+            "url": "https://tinhte.vn/forums/tin-tuc.71/page-[0-9]+",
+            "max_page": 5
+        },
+        {
+            "url": "https://tinhte.vn/forums/danh-gia.660/page-[0-9]+",
+            "max_page": 5
+        }
     ]
 
     configs = {
