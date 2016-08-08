@@ -161,10 +161,20 @@ class MySQLStorePipeline(object):
 			result = self.cursor.fetchone()
 
 			postId = 0
+			insertComment = 0
 
 			if result:
 				postId = result['id']
+				post = result
 				logging.info("Item already stored in db: %s" % post['title'])
+
+				query = "SELECT count(*) as count FROM post_comments WHERE post_id = %s"
+				self.cursor.execute(query, (postId))
+				result = self.cursor.fetchone()
+
+				if result["count"] == 0:
+					insertComment = 1
+
 			else:
 				content = post['content'];
 				sql = "INSERT INTO posts (title, content, type, is_tinhte, tinhte_category_link, category, teaser, avatar, link, category_id, product_id, user_id, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
@@ -173,11 +183,23 @@ class MySQLStorePipeline(object):
 
 				postId = self.cursor.lastrowid
 
+				insertComment = 1
+
+			if insertComment == 1:
 				# Insert cau tra loi
 				for comment in comments:
 					sql = "INSERT INTO post_comments(post_id, user_name, user_avatar, comment, is_crawl, created_at, updated_at) VALUES(%s, %s, %s, %s, %s, %s, %s)"
 					self.cursor.execute(sql, (postId, comment["user"], comment['avatar_hash'], comment['comment'], 1, post['created_at'], post['updated_at']))
 					self.conn.commit()
+
+			self.post.insertOrUpdate(postId, {
+			    "id" : postId,
+				"link" : post['link'],
+				"title" : post['title'],
+				"teaser" : post['teaser'],
+				"category" : post['category'],
+				"content" : post['content']
+			})
 
 		return item
 

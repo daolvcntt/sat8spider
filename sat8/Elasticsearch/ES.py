@@ -42,6 +42,13 @@ class ES():
 
 		return document
 
+
+	def insert(self, id, document):
+		index = self.getIndex()
+		doc_type = self.getDocType()
+		result = self.es.index(index=index, doc_type=doc_type, id=id, body=document)
+		return result
+
 	# Cập nhật tài liệu
 	def update(self, id, document):
 		index = self.getIndex()

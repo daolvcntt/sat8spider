@@ -51,7 +51,7 @@ def replace_link(content):
 def replace_image(content, newPath):
     images = re.findall('src="(.+?)"', content)
     for image in images:
-        content = re.sub(image, newPath +  hashlib.sha1(image).hexdigest() + '.jpg', content)
+        content = re.sub(image, newPath +  sha1FileName(image), content)
 
     return content
 

@@ -142,23 +142,27 @@ class TinhTeSpider(CrawlSpider):
 
         item['typ'] = 'blog'
 
-        # if 'avatar' in item:
-        #     avatar = item['avatar']
-        #     item['avatar'] = hashlib.sha1(avatar).hexdigest() + '.jpg'
+        if 'avatar' in item:
+            avatar = item['avatar']
 
-        #     self.processing_avatar_image(avatar)
-        # else:
-        #     item['avatar'] = ''
+            if avatar == 'styles/default/xenforo/clear.png':
+                avatar = 'https://tinhte.vn/styles/default/xenforo/clear.png'
 
-        # if 'content' in item:
-        #     self.processing_content_image(response)
+            self.processing_avatar_image(avatar)
 
-        #     # Replace something
-        #     item['content'] = replace_link(item['content'])
-        #     item['content'] = replace_image(item['content'], self.pathSaveImage)
+            item['avatar'] = sha1FileName(avatar)
+        else:
+            item['avatar'] = ''
+
+        if 'content' in item:
+            self.processing_content_image(response)
+
+            # Replace something
+            item['content'] = replace_link(item['content'])
+            item['content'] = replace_image(item['content'], self.pathSaveImage)
 
         # Bình luận của thành viên
-        commentNodes = sel.xpath('//*[@class="sectionMain message "]')
+        commentNodes = sel.xpath('//*[contains(@class, "sectionMain message")]')
         comments = []
         image_links = []
 
@@ -168,16 +172,20 @@ class TinhTeSpider(CrawlSpider):
             user    = commentNode.xpath('.//div[@class="messageUserInfo"]//a[@class="username"]/text()').extract()
             comment = commentNode.xpath('.//div[@class="messageInfo primaryContent"]').extract()
 
+            user    = user[0]
             avatar  = getUrlWithoutParams(avatar[0])
+            comment = comment[0]
 
-            self.process_comment(comment[0], response)
+            comment = comment.replace("styles/default/xenforo/clear.png", "https://tinhte.vn/styles/default/xenforo/clear.png")
 
-            comment = replace_image(comment[0], self.pathSaveImage)
+            self.process_comment(comment, response)
+
+            comment = replace_image(comment, self.pathSaveImage)
 
             a = {
                 "avatar" : avatar,
                 "avatar_hash" : sha1FileName(getUrlWithoutParams(avatar)),
-                "user": user[0],
+                "user": user,
                 "comment" : comment
             }
 
@@ -185,15 +193,16 @@ class TinhTeSpider(CrawlSpider):
 
             image_links.append(a['avatar'])
 
+
         yield {
             "post" : item,
             "comments": comments,
-            # "image_links": image_links
+            "image_links": image_links
         }
 
 
     def processing_avatar_image(self, avatar):
-        imageName = hashlib.sha1(avatar).hexdigest() + '.jpg'
+        imageName = sha1FileName(avatar)
         # Download image to host
         pathSaveImage = settings['IMAGES_STORE'] + '/full/' + imageName
         pathSaveImageSmall = settings['IMAGES_STORE'] + '/thumbs/small/' + imageName
@@ -237,7 +246,7 @@ class TinhTeSpider(CrawlSpider):
 
             print imgLink
 
-            imageName = hashlib.sha1(imgLink.encode('utf-8')).hexdigest() + '.jpg'
+            imageName = sha1FileName(imgLink)
             pathSaveImage = settings['IMAGES_STORE'] + '/posts/' + imageName
 
             # Download to tmp file
