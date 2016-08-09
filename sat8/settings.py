@@ -92,7 +92,7 @@ except pymysql.Error, e:
 # )
 hostname = socket.gethostname()
 
-if hostname != 'justin-HP-ProBook-450-G0':
+if env.ENABLE_LOG_FILE == True:
 	LOG_FILE = env.LOG_FILE
 	LOG_LEVEL = 'ERROR'
 
