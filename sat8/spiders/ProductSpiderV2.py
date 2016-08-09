@@ -35,7 +35,8 @@ class ProductSpiderV2(CrawlSpider):
 
     RESPONSE_JSON = 2
 
-    def __init__(self):
+    def __init__(self, env = 'production'):
+        self.env = env
         self.conn = settings['MYSQL_CONN']
         self.cursor = self.conn.cursor()
 
@@ -182,13 +183,6 @@ class ProductSpiderV2(CrawlSpider):
 
         image_urls.append(product['image'])
 
-        # Download and resize image
-        # for img in image_urls:
-        #     downloadImageFromUrl(img)
-
-        # echo(image_urls)
-        # return
-        # Price
         price = pil.get_value(product.get('price', "0").encode('utf-8'))
         price = re.sub('\D', '', price)
 
