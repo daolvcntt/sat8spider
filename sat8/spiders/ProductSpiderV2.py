@@ -235,12 +235,9 @@ class ProductSpiderV2(CrawlSpider):
         urlPart = urlparse(response.url)
         product = self.get_product(response)
 
-        print urlPart
-        return
-
         # Nếu trên server thì bỏ qua ko lấy ảnh của thế giới di động
         # ảnh sẽ được lấy trên local
-        if hostname != 'justin-HP-ProBook-450-G0' and urlPart['netloc'] == 'www.thegioididong.com':
+        if hostname != 'justin-HP-ProBook-450-G0' and urlPart.netloc == 'www.thegioididong.com':
             product['image_links'] = []
         else:
             print ''
