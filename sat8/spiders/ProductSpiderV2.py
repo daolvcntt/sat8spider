@@ -18,6 +18,9 @@ import json,urllib
 from urlparse import urljoin
 
 from sat8.Helpers.Functions import *
+import socket
+
+hostname = socket.gethostname()
 
 class ProductSpiderV2(CrawlSpider):
     name = "product_spider"
@@ -229,7 +232,17 @@ class ProductSpiderV2(CrawlSpider):
 
     # Process crawl product
     def parse_detail_content(self, response):
-        yield self.get_product(response)
+        urlPart = urlparse(response.url)
+        product = self.get_product(response)
+
+        # Nếu trên server thì bỏ qua ko lấy ảnh của thế giới di động
+        # ảnh sẽ được lấy trên local
+        if hostname != 'justin-HP-ProBook-450-G0' and urlPart['netloc'] == 'www.thegioididong.com':
+            product['image_links'] = []
+        else:
+            print ''
+
+        yield product
 
     def parseJsonDetailContent(self, response):
         yield self.getProductJson(response)
