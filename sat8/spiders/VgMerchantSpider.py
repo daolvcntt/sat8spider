@@ -103,9 +103,9 @@ class VgMerchantSpider(CrawlSpider):
             "image_links" : response.meta['merchant']["image_links"]
         }
 
-        # if self.env == 'dev':
-        #     print item
-        #     return
+        if self.env == 'dev':
+            print item
+            return
 
         yield item
 

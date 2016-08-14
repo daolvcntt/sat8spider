@@ -22,7 +22,7 @@ cursor = conn.cursor()
 def runIndex():
     indexProducts()
     indexPrices()
-    indexPosts()
+    # indexPosts()
     indexRaovat()
     indexQuestions()
     indexVideos()
@@ -68,6 +68,7 @@ def indexPrices():
     print 'Prices: %s \n' % (updated)
 
 def indexPosts():
+
     queryPost = "SELECT * FROM posts"
     cursor.execute(queryPost)
     posts = cursor.fetchall()
@@ -80,8 +81,12 @@ def indexPosts():
         post.pop('created_at', None)
         post.pop('updated_at', None)
 
-        postEs.insertOrUpdate(post['id'], post)
-        updated += 1
+        try:
+            postEs.insertOrUpdate(post['id'], post)
+            updated += 1
+        except TransportError, e:
+            print post['id']
+            print e
 
         # post['created_at'] = post['created_at'].strftime("%Y-%m-%d %H:%M:%S")
         # post['updated_at'] = post['updated_at'].strftime("%Y-%m-%d %H:%M:%S")
