@@ -83,6 +83,10 @@ class VgMerchantSpider(CrawlSpider):
                 roundRatingCount = float(merchant['rating_count'])
                 merchant['rating_5_count'] = round((round5Rating*roundRatingCount)/100)
 
+
+            if 'rating_5_count' not in merchant:
+                merchant['rating_5_count'] = 0;
+
             merchant["name"] = self.getUrlFromLink(response, merchant["name"])
             merchant["star"] = len(star)
             merchant["logo"] = merchant.get("logo", "").replace("small_", "")
@@ -103,8 +107,7 @@ class VgMerchantSpider(CrawlSpider):
             request.meta['merchant'] = merchant
             request.meta['product'] = response.meta['product']
 
-            print merchant
-            # yield request
+            yield request
 
 
     def parse_product_detail(self, response):
@@ -147,6 +150,9 @@ class VgMerchantSpider(CrawlSpider):
 
         for product in products:
             url = 'http://vatgia.com/home/quicksearch.php?keyword=%s&show=product&verified=1' %product['keyword']
+            if self.env == "dev":
+                url = 'http://vatgia.com/home/quicksearch.php?keyword=iphone&show=product&verified=1'
+
             request = scrapy.Request(url)
             request.meta['product'] = product
             yield request

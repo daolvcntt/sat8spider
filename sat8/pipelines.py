@@ -13,6 +13,7 @@ from sat8.Products.ProductPriceES import ProductPriceES
 from sat8.Products.DbProduct import DbProduct
 
 from time import strftime
+from random import randint
 
 from sat8.Helpers.Functions import *
 
@@ -149,7 +150,7 @@ class MySQLStorePipeline(object):
 			priceItem['source_id'] = merchantId
 			self.savePriceItem(priceItem)
 
-			self.saveMerchantRate(merchant, product['id'])
+			self.saveMerchantRate(merchant)
 
 
 		elif spider.name == "tinhte_spider":
@@ -279,14 +280,35 @@ class MySQLStorePipeline(object):
 
 
 	# Fake dữ liệu đánh giá với các gian hàng VG
-	def saveMerchantRate(self, merchant, productId):
-		sql = "DELETE FROM merchant_rates WHERE merchant_id = %s AND product_id = %s AND user_id = %s";
-		self.cursor.execute(sql, (merchant['id'], productId, 0))
-		# self.cursor.commit();
+	def saveMerchantRate(self, merchant):
+		sql = "DELETE FROM merchant_rates WHERE merchant_id = %s AND user_id = %s";
+		self.cursor.execute(sql, (merchant['id'], 0))
 
-		sql ="INSERT INTO merchant_rates(merchant_id, product_id, user_id, value) VALUES(%s, %s, %s, %s)";
-		self.cursor.execute(sql, (merchant['id'], productId, 0, merchant['star']))
-		self.conn.commit();
+		# 5 sao
+		if merchant['rating_5_count'] > 0:
+			sql ="INSERT INTO merchant_rates(merchant_id, user_id, value) VALUES "
+			for i in range(0, int(merchant['rating_5_count'])):
+				sql += "('"+ str(merchant['id']) +"', '0', '5'),"
+			sql = sql[:len(sql)-1]
+			self.cursor.execute(sql)
+			self.conn.commit()
+
+		# Random sao con lai
+		randomStarCount = int(merchant['rating_count']) - int(merchant['rating_5_count'])
+		if randomStarCount > 0:
+			sql = "INSERT INTO merchant_rates(merchant_id, user_id, value) VALUES "
+			for i in range(0, randomStarCount):
+				sql += "('"+ str(merchant['id']) +"', '0', '"+ str(randint(1,4)) +"'),"
+
+			sql = sql[:len(sql)-1]
+
+			self.cursor.execute(sql)
+			self.conn.commit()
+
+
+
+
+
 
 
 
