@@ -206,6 +206,9 @@ class MerchantItem(Item):
 	product_name = Field()
 	product_price = Field()
 	is_craw = Field()
+	rating_count = Field()
+	rating_5_count = Field()
+	percent_rating_5 = Field()
 
 class ProductItemLoader(ItemLoader):
 	default_output_processor = TakeFirst()
@@ -244,3 +247,4 @@ class MerchantItemLoader(ItemLoader):
 	default_output_processor = TakeFirst()
 	name_in = MapCompose(unicode.strip)
 	alis_in = MapCompose(unicode.strip)
+	rating_5_count_in  = MapCompose(remove_tags, filter_price)

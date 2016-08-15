@@ -63,12 +63,29 @@ class VgMerchantSpider(CrawlSpider):
             itemLoader.add_xpath('name', './/div[@class="name"]//a/@href')
             itemLoader.add_xpath('alias', './/div[@class="name"]//a/@title')
             itemLoader.add_xpath('logo', './/td[@class="avatar"]/img/@data-original')
-
+            itemLoader.add_xpath('rating_count', './/td[@class="company"]/div[@class="rating"]/span[2]/text()')
+            itemLoader.add_xpath('percent_rating_5', './/td[@class="company"]/div[@class="rating"]/span[1]/text()')
 
             merchant = itemLoader.load_item()
+
+            if 'rating_count' not in merchant:
+                merchant['rating_count'] = 0
+
+            if 'percent_rating_5' not in merchant:
+                merchant['percent_rating_5'] = 0
+
+            if merchant['rating_count'] > 0 and merchant['percent_rating_5'] > 0 :
+                round5Rating = merchant.get('percent_rating_5', "0.0").replace('%', '')
+                round5Rating = round5Rating.replace(',', '.')
+                round5Rating = float(round5Rating)
+                round5Rating = round(round5Rating)
+
+                roundRatingCount = float(merchant['rating_count'])
+                merchant['rating_5_count'] = round((round5Rating*roundRatingCount)/100)
+
             merchant["name"] = self.getUrlFromLink(response, merchant["name"])
             merchant["star"] = len(star)
-            merchant["logo"] = merchant["logo"].replace("small_", "")
+            merchant["logo"] = merchant.get("logo", "").replace("small_", "")
             merchant["is_craw"] = 1;
 
 
@@ -85,7 +102,9 @@ class VgMerchantSpider(CrawlSpider):
             request = scrapy.Request(linkProduct, callback=self.parse_product_detail)
             request.meta['merchant'] = merchant
             request.meta['product'] = response.meta['product']
-            yield request
+
+            print merchant
+            # yield request
 
 
     def parse_product_detail(self, response):

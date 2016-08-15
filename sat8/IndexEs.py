@@ -22,7 +22,7 @@ cursor = conn.cursor()
 def runIndex():
     indexProducts()
     indexPrices()
-    # indexPosts()
+    indexPosts()
     indexRaovat()
     indexQuestions()
     indexVideos()
