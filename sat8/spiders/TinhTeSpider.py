@@ -180,6 +180,7 @@ class TinhTeSpider(CrawlSpider):
 
             self.process_comment(comment, response)
 
+            comment = replace_link(comment)
             comment = replace_image(comment, self.pathSaveImage)
 
             a = {
