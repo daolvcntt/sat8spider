@@ -197,7 +197,6 @@ class MySQLStorePipeline(object):
 
 			self.post.insertOrUpdate(postId, {
 			    "id" : postId,
-				"link" : post['link'],
 				"title" : post['title'],
 				"teaser" : post['teaser'],
 				"category" : post['category'],
