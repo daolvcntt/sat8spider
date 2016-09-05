@@ -7,6 +7,7 @@ from scrapy.conf import settings
 from PIL import Image
 import urllib
 import os
+import imghdr
 
 def list_get(array, key, default = ''):
 	if key in array :
@@ -50,7 +51,7 @@ def replace_link(content):
 def replace_image(content, newPath):
     images = re.findall('src="(.+?)"', content)
     for image in images:
-        content = re.sub(image, newPath +  hashlib.sha1(image).hexdigest() + '.jpg', content)
+        content = re.sub(image, newPath +  sha1FileName(image), content)
 
     return content
 
@@ -68,24 +69,42 @@ def getExtension(url):
 
 def downloadImageFromUrl(url, createThumbs = 1):
     ext = getExtension(url);
-    imageName = hashlib.sha1(url).hexdigest() + '.' + ext;
+    imageName = sha1FileName(url);
 
     pathSaveImage = settings['IMAGES_STORE'] + '/full/' + imageName
     pathSaveImageSmall = settings['IMAGES_STORE'] + '/thumbs/small/' + imageName
     pathSaveImageBig   = settings['IMAGES_STORE'] + '/thumbs/big/' + imageName
 
-    if os.path.isfile(pathSaveImage) == False:
-        urllib.urlretrieve(url, pathSaveImage)
+    isFile = os.path.isfile(pathSaveImage)
+
+    if (isFile == True and imghdr.what(pathSaveImage) == None) or (isFile == False):
+        # urllib.urlretrieve(url, pathSaveImage)
+
+        hdr = {
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+            'Accept-Encoding': 'gzip, deflate, sdch',
+            'Accept-Language': 'en-US,en;q=0.8',
+            'Connection': 'keep-alive'
+        }
+
+        imgRequest = urllib2.Request(url, headers=hdr)
+        imgData = urllib2.urlopen(imgRequest).read()
+
+        f = open(pathSaveImage, 'w')
+        f.write(imgData)
+        f.close()
 
     # Resize image
     imageThumbs = settings['IMAGES_THUMBS']
 
-    if os.path.isfile(pathSaveImageSmall) == False:
+    if (os.path.isfile(pathSaveImageSmall) == True and imghdr.what(pathSaveImageSmall) == None) or (os.path.isfile(pathSaveImageSmall) == False):
         im = Image.open(pathSaveImage)
         im.thumbnail(imageThumbs["small"])
         im.save(pathSaveImageSmall, ext);
 
-    if os.path.isfile(pathSaveImageBig) == False:
+    if (os.path.isfile(pathSaveImageBig) == True and imghdr.what(pathSaveImageBig) == None) or (os.path.isfile(pathSaveImageBig) == False):
         im = Image.open(pathSaveImage)
         im.thumbnail(imageThumbs["big"])
         im.save(pathSaveImageBig, ext);
@@ -105,3 +124,11 @@ def sha1FileName(fileName):
 
 def md5(string):
     return hashlib.md5(string).hexdigest()
+
+def getUrlWithoutParams(url):
+    index = url.find('?')
+
+    if index > -1 :
+        return url[0:index]
+
+    return url

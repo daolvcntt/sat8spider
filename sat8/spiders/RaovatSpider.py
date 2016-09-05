@@ -34,7 +34,8 @@ class RaovatSpider(CrawlSpider):
     questionId = 0
     productId = 0;
 
-    def __init__(self):
+    def __init__(self, env="production"):
+        self.env = env
         self.conn = settings['MYSQL_CONN']
         self.cursor = self.conn.cursor()
 
@@ -42,16 +43,15 @@ class RaovatSpider(CrawlSpider):
     def parse_item(self, response):
 
         sel = Selector(response)
-        product_links = sel.xpath('//*[@class="raovat_listing"]/li[@class="info"]//a[@class="tooltip"][1]/@href');
+        product_links = sel.xpath('//*[@class="raovat_listing"]/li[contains(@class,"info")]//a[@class="tooltip"][1]/@href');
         for pl in product_links:
             url = response.urljoin(pl.extract());
             request = scrapy.Request(url, callback=self.parse_raovat)
-            request.meta['productId'] = response.meta['productId']
             yield request
 
 
     def parse_raovat(self, response):
-        productId = response.meta['productId']
+        productId = 0
         raovatItemLoader = RaovatItemLoader(item = RaovatItem(), response = response)
         raovatItemLoader.add_xpath('title', '//*[@class="infomation_raovat fr"]/h1//text()')
         raovatItemLoader.add_value('link', response.url)
@@ -102,6 +102,10 @@ class RaovatSpider(CrawlSpider):
         raovatItem['image']       = self.pathSaveImage + avatar
         raovatItem['image_links'] = image_links
 
+        if self.env == 'dev':
+            print raovatItem
+            return
+
         query = "SELECT id,link FROM classifields WHERE hash_link = %s"
         self.cursor.execute(query, (raovatItem['hash_link']))
         result = self.cursor.fetchone()
@@ -125,27 +129,42 @@ class RaovatSpider(CrawlSpider):
         esRaovat = EsRaovat()
         esRaovat.insertOrUpdate(raovatId, raovatItem.toJson())
 
-        # yield raovatItem
+        yield raovatItem
 
 
     def start_requests(self):
         print '------------------------------', "\n"
-        self.conn = settings['MYSQL_CONN']
-        self.cursor = self.conn.cursor()
-        self.cursor.execute("SELECT DISTINCT id,keyword,rate_keyword FROM products WHERE rate_keyword != '' OR rate_keyword != NULL ORDER BY updated_at DESC")
-        products = self.cursor.fetchall()
+        # self.conn = settings['MYSQL_CONN']
+        # self.cursor = self.conn.cursor()
+        # self.cursor.execute("SELECT DISTINCT id,keyword,rate_keyword FROM products WHERE rate_keyword != '' OR rate_keyword != NULL ORDER BY updated_at DESC")
+        # products = self.cursor.fetchall()
 
         # url = 'http://vatgia.com/raovat/quicksearch.php?keyword=Sony+Xperia+Z3'
         # request = scrapy.Request(url, callback = self.parse_item)
         # request.meta['productId'] = 0
         # yield request
 
-        for product in products:
-            url = 'http://vatgia.com/raovat/quicksearch.php?keyword=%s' %product['rate_keyword']
-            # self.start_urls.append(url)
-            request = scrapy.Request(url, callback = self.parse_item)
-            request.meta['productId'] = product['id']
-            yield request
+        # for product in products:
+        #     url = 'http://vatgia.com/raovat/quicksearch.php?keyword=%s' %product['rate_keyword']
+        #     # self.start_urls.append(url)
+        #     request = scrapy.Request(url, callback = self.parse_item)
+        #     request.meta['productId'] = product['id']
+        #     yield request
+
+        links = [
+            # Laptop
+            'http://vatgia.com/raovat/type.php?iCat=1675&page={#page#}',
+            # Dien thoai
+            'http://vatgia.com/raovat/type.php?iCat=6286&page={#page#}',
+            # May anh
+            'http://vatgia.com/raovat/type.php?iCat=1532&page={#page#}'
+        ]
+
+        for link in links:
+            for i in range(1,6):
+                url = link.replace('{#page#}', str(i))
+                request = scrapy.Request(url, callback=self.parse_item)
+                yield request
 
         # yield scrapy.Request(response.url, callback=self.parse_item)
         print '------------------------------', "\n\n"

@@ -14,6 +14,7 @@ class ProductItem(Item):
 	id = Field()
 	name = Field()
 	price = Field()
+	min_price = Field()
 	hash_name = Field()
 	brand = Field()
 	image = Field()
@@ -44,9 +45,7 @@ class ProductItem(Item):
 			"image" : self.get("image", ""),
 			"images" : self.get("images", ""),
 			"spec" : self.get("spec", ""),
-			"link" : self.get("link", ""),
-			"created_at" : self.get("created_at", strftime("%Y-%m-%d %H:%M:%S")),
-			"updated_at" : self.get("updated_at", strftime("%Y-%m-%d %H:%M:%S")),
+			"link" : self.get("link", "")
 		}
 
 class ProductPriceItem(Item):
@@ -97,6 +96,8 @@ class BlogItem(Item):
 	typ = Field()
 	category = Field()
 	post_type = Field()
+	tinhte_category_link = Field()
+	is_tinhte = Field()
 
 	def toJson(self):
 		return {
@@ -174,6 +175,8 @@ class RaovatItem(Item):
 	image_urls = Field()
 	image_links = Field()
 	info = Field()
+	phone = Field()
+	source = Field()
 
 	def toJson(self):
 		return {
@@ -190,6 +193,29 @@ class RaovatItem(Item):
 			"info" : self.get('info', "")
 		}
 
+
+class MerchantItem(Item):
+	id = Field()
+	name = Field()
+	logo = Field()
+	logo_hash = Field()
+	alias = Field()
+	star = Field()
+	image_links = Field()
+	product_link = Field()
+	product_name = Field()
+	product_price = Field()
+	is_craw = Field()
+	rating_count = Field()
+	rating_5_count = Field()
+	percent_rating_5 = Field()
+
+
+class DpreviewItem(Item):
+	id = Field()
+	name = Field()
+	announce = Field()
+	type = Field()
 
 class ProductItemLoader(ItemLoader):
 	default_output_processor = TakeFirst()
@@ -223,3 +249,15 @@ class RaovatItemLoader(ItemLoader):
 	teaser_in = MapCompose(unicode.strip)
 	user_name_in = MapCompose(unicode.strip)
 	price_in = MapCompose(remove_tags, filter_price)
+
+class MerchantItemLoader(ItemLoader):
+	default_output_processor = TakeFirst()
+	name_in = MapCompose(unicode.strip)
+	alis_in = MapCompose(unicode.strip)
+	rating_5_count_in  = MapCompose(remove_tags, filter_price)
+
+
+class DpreviewItemLoader(ItemLoader):
+	default_output_processor = TakeFirst()
+	name_in = MapCompose(unicode.strip)
+	announce_in = MapCompose(unicode.strip)

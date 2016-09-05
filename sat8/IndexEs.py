@@ -1,6 +1,7 @@
 from scrapy.conf import settings
 
 from elasticsearch import Elasticsearch
+from elasticsearch import TransportError
 from sat8.Databases.DB import DB
 from sat8.Elasticsearch.ES import ES
 from sat8.Posts.PostES import PostES
@@ -24,6 +25,7 @@ def runIndex():
     indexPosts()
     indexRaovat()
     indexQuestions()
+    indexVideos()
 
 def indexProducts():
     queryProduct = "SELECT * FROM products"
@@ -66,6 +68,7 @@ def indexPrices():
     print 'Prices: %s \n' % (updated)
 
 def indexPosts():
+
     queryPost = "SELECT * FROM posts"
     cursor.execute(queryPost)
     posts = cursor.fetchall()
@@ -78,11 +81,15 @@ def indexPosts():
         post.pop('created_at', None)
         post.pop('updated_at', None)
 
+        try:
+            postEs.insertOrUpdate(post['id'], post)
+            updated += 1
+        except TransportError, e:
+            print post['id']
+            print e
+
         # post['created_at'] = post['created_at'].strftime("%Y-%m-%d %H:%M:%S")
         # post['updated_at'] = post['updated_at'].strftime("%Y-%m-%d %H:%M:%S")
-        postEs.insertOrUpdate(post['id'], post)
-
-        updated += 1
 
     print 'Posts: %s \n' % (updated)
 
@@ -150,5 +157,7 @@ def indexQuestions():
 
     print 'Questions: %s \n' % (updated)
 
-
+# try:
 runIndex()
+# except TransportError, e:
+    # print e

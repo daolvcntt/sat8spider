@@ -16,7 +16,10 @@ class DownloadImagePipeline(object):
             for image_url in item['image_links']:
 
                 ext = getExtension(image_url)
-                imageName = hashlib.sha1(image_url).hexdigest() + '.' + ext
+                try:
+                    imageName = hashlib.sha1(image_url).hexdigest() + '.' + ext
+                except UnicodeEncodeError, e:
+                    imageName = hashlib.sha1(image_url.encode('utf-8')).hexdigest() + '.' + ext
 
                 # Download to local
                 thumbs = downloadImageFromUrl(image_url)

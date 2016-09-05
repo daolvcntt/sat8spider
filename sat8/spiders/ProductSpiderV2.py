@@ -18,6 +18,9 @@ import json,urllib
 from urlparse import urljoin
 
 from sat8.Helpers.Functions import *
+import socket
+
+hostname = socket.gethostname()
 
 class ProductSpiderV2(CrawlSpider):
     name = "product_spider"
@@ -35,7 +38,8 @@ class ProductSpiderV2(CrawlSpider):
 
     RESPONSE_JSON = 2
 
-    def __init__(self):
+    def __init__(self, env = 'production'):
+        self.env = env
         self.conn = settings['MYSQL_CONN']
         self.cursor = self.conn.cursor()
 
@@ -46,6 +50,7 @@ class ProductSpiderV2(CrawlSpider):
 
         # HTML
         if linkItem['response_type'] == self.RESPONSE_HTML:
+
             sel = Selector(response)
             product_links = sel.xpath(linkItem['link_item'])
 
@@ -127,10 +132,11 @@ class ProductSpiderV2(CrawlSpider):
         product['name'] = product['name'].strip(' \t\n\r')
         product['name'] = product['name'].strip()
 
-        product['image']      = hashlib.sha1(pil.get_value(product['image'])).hexdigest() + '.' + getExtension(product['image'])
+        product['image']      = sha1FileName(product['image'])
 
         product['price']      = price
-        product['hash_name']  = hashlib.md5(pil.get_value(product['name']).encode('utf-8')).hexdigest()
+        product['min_price']  = price
+        product['hash_name']  = md5(product['name'].encode('utf-8'))
         product['created_at'] = strftime("%Y-%m-%d %H:%M:%S")
         product['updated_at'] = strftime("%Y-%m-%d %H:%M:%S")
 
@@ -168,7 +174,7 @@ class ProductSpiderV2(CrawlSpider):
             imgLink = response.urljoin(img.extract())
             image_urls.append(imgLink)
 
-            imgLinkHash = hashlib.sha1(imgLink).hexdigest() + '.' + getExtension(imgLink)
+            imgLinkHash = sha1FileName(imgLink)
             dataImage.append(imgLinkHash)
 
         product = pil.load_item()
@@ -180,23 +186,17 @@ class ProductSpiderV2(CrawlSpider):
 
         image_urls.append(product['image'])
 
-        # Download and resize image
-        # for img in image_urls:
-        #     downloadImageFromUrl(img)
-
-        # echo(image_urls)
-        # return
-        # Price
         price = pil.get_value(product.get('price', "0").encode('utf-8'))
         price = re.sub('\D', '', price)
 
         product['name']       = product['name'].strip(' \t\n\r')
         product['name']       = product['name'].strip()
-        product['image']      = hashlib.sha1(product['image']).hexdigest() + '.' + getExtension(product['image'])
+        product['image']      = sha1FileName(product['image'])
         product['images']     = ',' . join(dataImage)
         product['image_links'] = image_urls
-        product['hash_name']  = hashlib.md5(pil.get_value(product['name']).encode('utf-8')).hexdigest()
+        product['hash_name']  = md5(product['name'].encode('utf-8'))
         product['price']      = price
+        product['min_price']  = price
         product['created_at'] = strftime("%Y-%m-%d %H:%M:%S")
         product['updated_at'] = strftime("%Y-%m-%d %H:%M:%S")
 
@@ -232,7 +232,17 @@ class ProductSpiderV2(CrawlSpider):
 
     # Process crawl product
     def parse_detail_content(self, response):
-        yield self.get_product(response)
+        urlPart = urlparse(response.url)
+        product = self.get_product(response)
+
+        # Nếu trên server thì bỏ qua ko lấy ảnh của thế giới di động
+        # ảnh sẽ được lấy trên local
+        if hostname != 'justin-HP-ProBook-450-G0' and urlPart.netloc == 'www.thegioididong.com':
+            product['image_links'] = []
+        else:
+            print ''
+
+        yield product
 
     def parseJsonDetailContent(self, response):
         yield self.getProductJson(response)
@@ -273,12 +283,18 @@ class ProductSpiderV2(CrawlSpider):
                         if cookies != '' and formdata != None:
                             cookies = parseJson4Params(cookies)
 
+                        # print headers
+                        # return
+
                         # Tăng biến phân trang
                         if link['param_page'] in formdata and isinstance(formdata, dict):
                             formdata[link['param_page']] = str(i * link['step_page'])
 
                         request = scrapy.FormRequest(url=startLink, callback=self.parse_item, formdata=formdata, method=method, headers=headers, cookies=cookies)
                         request.meta['link_item'] = link
+
+                        print startLink
+
                         yield request
 
         except ValueError as e:
@@ -304,7 +320,8 @@ class ProductSpiderV2(CrawlSpider):
 
     # Make request
     def makeRequest(self, url, linkItem):
-        request = scrapy.Request(url, callback = self.parse_detail_content)
+        headers = settings['APP_CONFIG']['default_request_headers']
+        request = scrapy.Request(url, callback = self.parse_detail_content, headers = headers)
         request.meta['link_item'] = linkItem
         request.meta['dont_redirect'] = True
 

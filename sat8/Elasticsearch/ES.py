@@ -3,6 +3,7 @@
 #
 from elasticsearch import Elasticsearch
 from elasticsearch import NotFoundError
+from elasticsearch import TransportError
 import json
 
 class ES():
@@ -34,12 +35,19 @@ class ES():
 
 		exist = self.get(doc_type, id)
 
-		if(exist != 'null'):
+		if exist != 'null':
 			result = self.update(id, document)
 		else:
 			result = self.es.index(index=index, doc_type=doc_type, id=id, body=document)
 
 		return document
+
+
+	def insert(self, id, document):
+		index = self.getIndex()
+		doc_type = self.getDocType()
+		result = self.es.index(index=index, doc_type=doc_type, id=id, body=document)
+		return result
 
 	# Cập nhật tài liệu
 	def update(self, id, document):
@@ -54,6 +62,8 @@ class ES():
 			document = self.es.get(index = index, doc_type = doc_type, id = id)
 			return document['_source']
 		except NotFoundError, e:
+			return 'null'
+		except TransportError, e:
 			return 'null'
 
 	# Delete tài liệu

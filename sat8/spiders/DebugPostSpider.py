@@ -19,10 +19,12 @@ from sat8.Helpers.Functions import *
 from sat8.Functions import getImageFromContent
 from sat8.Functions import makeGzFile
 
-class AbstractPostSpider(CrawlSpider):
+class DebugPostSpider(CrawlSpider):
     name = "blog_spider"
     allowed_domains = []
-    start_urls = []
+    start_urls = [
+        'http://sohoa.vnexpress.net/danh-gia/dien-thoai/sony-xperia-z5-nhieu-cai-tien-nhung-thieu-diem-nhan-3309336.html'
+    ]
 
     bucket = 'static.giaca.org'
 
@@ -36,36 +38,20 @@ class AbstractPostSpider(CrawlSpider):
     ]
 
     configs = {
-        # "links" : '//*[@class="cate_content"]/article/header/h1/a/@href',
-        # 'title' : '//*[@class="the-article-header"]/h1//text()',
-        # 'teaser' : '//*[@class="the-article-summary"]//text()',
-        # 'avatar' : '//*[@class="the-article-body"]//img[1]/@src',
-        # 'content' : '//*[@class="the-article-body"]',
-        # 'category' : '//*[contains(@class, "parent") and contains(@class, "current") and not(contains(@class, "homepage"))]/a[1]//text()',
-        # 'type' : 'post'
+        "links" : '//*[@class="list_news"]//h2[@class="title_news"]/a[1]/@href',
+        'title' : '//*[@class="title_news"]/h1//text()',
+        'teaser' : '//*[@class="short_intro txt_666"]//text()',
+        'avatar' : '//*[@class="width_common space_bottom_20"]//img[1 or 2 or 3 or 4]/@src',
+        'content' : '//*[@class="content_danhgia_chitiet"][1]',
+        'category_value' : 'Đánh giá',
+        'category_id' : 2,
+        'type' : 'review'
     }
 
     def __init__(self, env="production"):
         self.env = env
-        # Add start_urls
-        config_urls = self.config_urls
-        for url in config_urls:
-            if url["max_page"] > 0:
-                for i in range(1, url["max_page"]):
-                    self.start_urls.append(url["url"].replace('[0-9]+', str(i)))
-            else:
-                self.start_urls.append(url["url"])
 
     def parse(self, response):
-        sel = Selector(response)
-
-        blog_links = sel.xpath(self.configs['links'])
-
-        for href in blog_links:
-            url = response.urljoin(href.extract());
-            yield scrapy.Request(url, callback = self.parse_detail_content)
-
-    def parse_detail_content(self, response):
         il = PostItemLoader(item = BlogItem(), response=response)
         il.add_value('link', response.url)
         il.add_xpath('title', self.configs['title'])
@@ -94,11 +80,13 @@ class AbstractPostSpider(CrawlSpider):
 
         item = il.load_item()
 
+
+
         item['typ'] = 'blog'
 
         if 'avatar' in item:
             avatar = item['avatar']
-            item['avatar'] = sha1FileName(avatar)
+            item['avatar'] = hashlib.sha1(avatar).hexdigest() + '.jpg'
 
             self.processing_avatar_image(avatar)
         else:
@@ -116,11 +104,11 @@ class AbstractPostSpider(CrawlSpider):
             print item
             return
 
-        yield(item)
+        yield item
 
 
     def processing_avatar_image(self, avatar):
-        imageName = sha1FileName(avatar)
+        imageName = hashlib.sha1(avatar).hexdigest() + '.jpg'
         # Download image to host
         pathSaveImage = settings['IMAGES_STORE'] + '/full/' + imageName
         pathSaveImageSmall = settings['IMAGES_STORE'] + '/thumbs/small/' + imageName
@@ -164,7 +152,7 @@ class AbstractPostSpider(CrawlSpider):
 
             print imgLink
 
-            imageName = sha1FileName(imgLink)
+            imageName = hashlib.sha1(imgLink.encode('utf-8')).hexdigest() + '.jpg'
             pathSaveImage = settings['IMAGES_STORE'] + '/posts/' + imageName
 
             # Download to tmp file

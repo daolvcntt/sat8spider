@@ -12,6 +12,3 @@ from scrapy.conf import settings
 class QuickRunDbPriceCrawler(DbPriceSpider):
 
     env = 'quick'
-
-    def parse_detail_content(self, response):
-        yield self.get_product(response)
