@@ -210,6 +210,13 @@ class MerchantItem(Item):
 	rating_5_count = Field()
 	percent_rating_5 = Field()
 
+
+class DpreviewItem(Item):
+	id = Field()
+	name = Field()
+	announce = Field()
+	type = Field()
+
 class ProductItemLoader(ItemLoader):
 	default_output_processor = TakeFirst()
 	price_in = MapCompose(remove_tags, filter_price)
@@ -248,3 +255,9 @@ class MerchantItemLoader(ItemLoader):
 	name_in = MapCompose(unicode.strip)
 	alis_in = MapCompose(unicode.strip)
 	rating_5_count_in  = MapCompose(remove_tags, filter_price)
+
+
+class DpreviewItemLoader(ItemLoader):
+	default_output_processor = TakeFirst()
+	name_in = MapCompose(unicode.strip)
+	announce_in = MapCompose(unicode.strip)
