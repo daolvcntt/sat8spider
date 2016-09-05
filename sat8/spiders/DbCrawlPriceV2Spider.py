@@ -100,6 +100,9 @@ class DbCrawlPriceV2Spider(CrawlSpider):
                 request.meta['linkItem'] = linkItem
                 request.meta['site'] = site
                 request.meta['item'] = pl
+
+                print url
+
                 yield request
 
     # Get product json
@@ -287,6 +290,8 @@ class DbCrawlPriceV2Spider(CrawlSpider):
         request.meta['site'] = site
         request.meta['link_item'] = linkItem
         request.meta['dont_redirect'] = True
+
+        print url
 
         return request
 

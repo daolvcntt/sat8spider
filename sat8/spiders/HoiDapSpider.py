@@ -16,24 +16,25 @@ import urllib
 import logging
 
 class HoiDapSpider(CrawlSpider):
-    name = "blog_spider"
+    name = "hoidap_spider"
     allowed_domains = ['vatgia.com']
 
     questionId = 0
     productId = 0;
 
-    def __init__(self):
+    def __init__(self, env="production"):
+        self.env = env
         self.conn = settings['MYSQL_CONN']
         self.cursor = self.conn.cursor()
 
 
     def parse_item(self, response):
         sel = Selector(response)
-        product_links = sel.xpath('//*[@class="hoidap_view_list_div"]//a[@class="tooltip"]/@href');
+        product_links = sel.xpath('//*[@id="box_main_content"]//a[@class="tooltip"]/@href');
         for pl in product_links:
             url = response.urljoin(pl.extract());
             request = scrapy.Request(url, callback = self.parse_question_content)
-            request.meta['productId'] = response.meta['productId']
+            request.meta['productId'] = 0
             yield request
 
 
@@ -119,17 +120,29 @@ class HoiDapSpider(CrawlSpider):
 
     def start_requests(self):
         print '------------------------------', "\n"
-        self.conn = settings['MYSQL_CONN']
-        self.cursor = self.conn.cursor()
-        self.cursor.execute("SELECT DISTINCT id,keyword,rate_keyword FROM products WHERE rate_keyword != '' OR rate_keyword != NULL ORDER BY created_at DESC")
-        products = self.cursor.fetchall()
+        # self.conn = settings['MYSQL_CONN']
+        # self.cursor = self.conn.cursor()
+        # self.cursor.execute("SELECT DISTINCT id,keyword,rate_keyword FROM products WHERE rate_keyword != '' OR rate_keyword != NULL ORDER BY created_at DESC")
+        # products = self.cursor.fetchall()
 
-        for product in products:
-            url = 'http://vatgia.com/hoidap/quicksearch.php?keyword=%s' %product['rate_keyword']
-            # self.start_urls.append(url)
-            request = scrapy.Request(url, callback = self.parse_item)
-            request.meta['productId'] = product['id']
-            yield request
+        # for product in products:
+        #     url = 'http://vatgia.com/hoidap/quicksearch.php?keyword=%s' %product['rate_keyword']
+        #     # self.start_urls.append(url)
+        #     request = scrapy.Request(url, callback = self.parse_item)
+        #     request.meta['productId'] = product['id']
+        #     yield request
+
+
+        links = [
+            'http://vatgia.com/hoidap/type.php?iCat=3943&page={#page#}',
+            'http://vatgia.com/hoidap/type.php?iCat=3878&page={#page#}'
+        ]
+
+        for link in links:
+            for i in range(1,6):
+                url = link.replace('{#page#}', str(i))
+                request = scrapy.Request(url, callback=self.parse_item)
+                yield request
 
         # yield scrapy.Request(response.url, callback=self.parse_item)
         print '------------------------------', "\n\n"

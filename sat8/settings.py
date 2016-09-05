@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+import socket
 import logging
 import pymysql.cursors
 import env
@@ -16,7 +17,7 @@ RETRY_ENABLED              = True
 DOWNLOAD_TIMEOUT           = 500
 COOKIES_ENABLED            = True
 
-USER_AGENT = 'Googlebot/2.1 (+http://www.google.com/bot.html)'
+USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36'
 
 SPIDER_MODULES = ['sat8.spiders']
 NEWSPIDER_MODULE = 'sat8.spiders'
@@ -89,6 +90,23 @@ except pymysql.Error, e:
 # 	format='%(levelname)s: %(message)s',
 # 	level=logging.INFO
 # )
+hostname = socket.gethostname()
 
-LOG_FILE = env.LOG_FILE
-LOG_LEVEL = 'ERROR'
+if env.ENABLE_LOG_FILE == True:
+	LOG_FILE = env.LOG_FILE
+	LOG_LEVEL = 'ERROR'
+
+def default_request_headers():
+	return {
+		'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36',
+		'Accept-Encoding': 'gzip, deflate, sdch',
+		'Accept-Language': 'en-US,en;q=0.8,vi;q=0.6,zh-CN;q=0.4,zh;q=0.2,nb;q=0.2,ru;q=0.2,cs;q=0.2',
+		'Cache-Control': 'no-cache',
+		'Connection': 'keep-alive'
+	}
+
+DEFAULT_REQUEST_HEADERS = default_request_headers()
+
+APP_CONFIG = {
+	'default_request_headers' : default_request_headers()
+}
