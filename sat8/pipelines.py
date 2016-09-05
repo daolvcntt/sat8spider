@@ -293,7 +293,11 @@ class MySQLStorePipeline(object):
 			self.conn.commit()
 
 		# Random sao con lai
-		randomStarCount = int(merchant['rating_count']) - int(merchant['rating_5_count'])
+		rating_count = float(merchant['rating_count']);
+		rating_5_count = float(merchant['rating_5_count']);
+
+		randomStarCount = int(rating_count) - int(rating_5_count)
+
 		if randomStarCount > 0:
 			sql = "INSERT INTO merchant_rates(merchant_id, user_id, value) VALUES "
 			for i in range(0, randomStarCount):
