@@ -61,7 +61,7 @@ class VgMerchantSpider(CrawlSpider):
             star = m.xpath('.//span[@class="product_rating_star"]//i[@class="star_10"]').extract()
             itemLoader = MerchantItemLoader(item = MerchantItem(), selector = m)
             itemLoader.add_xpath('name', './/div[@class="name"]//a/@href')
-            itemLoader.add_xpath('alias', './/div[@class="name"]//a/@title')
+            itemLoader.add_xpath('alias', './/div[@class="name"]//a/text()')
             itemLoader.add_xpath('logo', './/td[@class="avatar"]/img/@data-original')
             itemLoader.add_xpath('rating_count', './/td[@class="company"]/div[@class="rating"]/span[2]/text()')
             itemLoader.add_xpath('percent_rating_5', './/td[@class="company"]/div[@class="rating"]/span[1]/text()')
