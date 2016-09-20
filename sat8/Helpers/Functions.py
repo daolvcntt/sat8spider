@@ -1,4 +1,8 @@
+# -*- coding: utf-8 -*-
+
 from mimetypes import MimeTypes
+from urlparse import urlparse
+
 import urllib2
 import re
 import hashlib
@@ -8,6 +12,8 @@ from PIL import Image
 import urllib
 import os
 import imghdr
+
+
 
 def list_get(array, key, default = ''):
 	if key in array :
@@ -132,3 +138,15 @@ def getUrlWithoutParams(url):
         return url[0:index]
 
     return url
+
+
+# Lấy id sản phẩm vg từ link
+def getVGProductId(link):
+    if 'record_id' in link:
+        parsed = urlparse(link)
+        record_id = urlparse.parse_qs(parsed.query)['record_id']
+        return int(record_id)
+
+    parsed = urlparse(link)
+    path = parsed.path
+    return int(path.split('/')[2])
