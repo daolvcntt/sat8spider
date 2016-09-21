@@ -33,6 +33,7 @@ class ProductItem(Item):
 	is_tablet = Field()
 	is_mobile = Field()
 	is_camera = Field()
+	type = Field()
 
 	def toJson(self):
 		return {
