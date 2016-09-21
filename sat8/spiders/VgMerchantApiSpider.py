@@ -18,6 +18,7 @@ import json,urllib
 from urlparse import urljoin
 
 from sat8.Helpers.Functions import *
+from sat8.Helpers.Google_Bucket import *
 
 import requests
 from requests.auth import HTTPBasicAuth
@@ -28,7 +29,7 @@ from sat8.env import API_VG_USER, API_VG_PASSWORD
 class VgMerchantApiSpider(CrawlSpider):
     name = "merchant_spider"
     allowed_domains = []
-    start_urls = []
+    start_urls = ['http://vatgia.com']
     rules = ()
 
     env = 'production'
@@ -39,15 +40,73 @@ class VgMerchantApiSpider(CrawlSpider):
         self.cursor = self.conn.cursor()
 
     def parse(self, response):
-        sel = Selector(response)
-        linksToListMerchant = sel.xpath('//*[@class="product_thumb_view"]//a[@class="picture_link"]/@href')
+        conn = self.conn
+        cursor = self.cursor
 
-        for pl in linksToListMerchant:
-            url = response.urljoin(pl.extract());
-            request = scrapy.Request(url, callback=self.parse_list_merchant)
-            request.meta['product'] = response.meta['product']
-            yield request
-            break
+        print '------------------------------', "\n"
+        self.conn = settings['MYSQL_CONN']
+        self.cursor = self.conn.cursor()
+
+        sql = "SELECT id, name, source_id, link FROM products WHERE source_id = 185 ORDER BY updated_at DESC"
+
+        if self.env == "dev":
+            sql += " LIMIT 5"
+
+        self.cursor.execute(sql)
+        products = self.cursor.fetchall()
+
+        image_links = []
+
+
+
+        for product in products:
+            url = 'http://graph.vatgia.vn/v1/products/estore/' + str(getVGProductId(product['link']))
+
+            response = requests.get(url, auth=HTTPDigestAuth(API_VG_USER, API_VG_PASSWORD))
+            data = response.json()['data']
+
+            # Lặp mảng danh sách gian hàng
+            for merchant in data:
+                print merchant['logo']
+
+                if merchant['logo'] == '' or merchant['logo'] == None:
+                    merchant['logo'] = 'http://giaca.org/images/grey.gif'
+
+                thumbs = downloadImageFromUrl(merchant['logo'])
+
+                # Upload bucket
+                imageName = sha1FileName(merchant['logo'])
+
+                google_bucket_upload_object('static.giaca.org', thumbs['full'], 'uploads/full/' + imageName)
+                google_bucket_upload_object('static.giaca.org', thumbs['big'], 'uploads/thumbs/big/' + imageName)
+                google_bucket_upload_object('static.giaca.org', thumbs['small'], 'uploads/thumbs/small/' + imageName)
+
+                item = {}
+
+                item['merchant'] = {
+                    "name" : merchant['url'].replace('http://www.', ''),
+                    "alias": merchant['company'],
+                    "logo_hash" : sha1FileName(merchant['logo']),
+                    "is_craw": 1,
+                    "rating_count": merchant['total_rate'],
+                    "rating_5_count": merchant['good_rate'],
+                    "created_at" : strftime("%Y-%m-%d %H:%M:%S"),
+                    "updated_at" : strftime("%Y-%m-%d %H:%M:%S")
+                }
+
+                item['product'] = product
+
+                item['price_item'] = {
+                    "title": product['name'],
+                    "price": merchant['price'],
+                    "source_id": product['source_id'],
+                    "link": merchant['url_product'],
+                    "create_at": strftime("%Y-%m-%d %H:%M:%S"),
+                    "updated_at": strftime("%Y-%m-%d %H:%M:%S"),
+                    "crawled_at": strftime("%Y-%m-%d %H:%M:%S")
+                }
+
+                yield item
 
 
     def parse_list_merchant(self, response):
@@ -130,60 +189,62 @@ class VgMerchantApiSpider(CrawlSpider):
         yield item
 
 
-    def start_requests(self):
-        conn = self.conn
-        cursor = self.cursor
+    # def start_requests(self):
+    #     conn = self.conn
+    #     cursor = self.cursor
 
-        print '------------------------------', "\n"
-        self.conn = settings['MYSQL_CONN']
-        self.cursor = self.conn.cursor()
+    #     print '------------------------------', "\n"
+    #     self.conn = settings['MYSQL_CONN']
+    #     self.cursor = self.conn.cursor()
 
-        sql = "SELECT id, name, link FROM products WHERE source_id = 185 ORDER BY updated_at DESC"
+    #     sql = "SELECT id, name, source_id, link FROM products WHERE source_id = 185 ORDER BY updated_at DESC"
 
-        if self.env == "dev":
-            sql += " LIMIT 5"
+    #     if self.env == "dev":
+    #         sql += " LIMIT 5"
 
-        self.cursor.execute(sql)
-        products = self.cursor.fetchall()
+    #     self.cursor.execute(sql)
+    #     products = self.cursor.fetchall()
 
-
-        for product in products:
-            url = 'http://graph.vatgia.vn/v1/products/estore/' + str(getVGProductId(product['link']))
-            response = requests.get(url, auth=HTTPDigestAuth(API_VG_USER, API_VG_PASSWORD))
-            data = response.json()['data']
-
-            for merchant in data:
-                echo(merchant['company'])
+    #     image_links = []
 
 
-    # Lấy id sản phẩm vg từ link
-    def getProductId(link):
-        if 'record_id' in link:
-            parsed = urlparse(link)
-            record_id = urlparse.parse_qs(parsed.query)['record_id']
-            return record_id
 
-        parsed = urlparse(link)
-        path = parsed.path
-        return path.split('/')[2]
+    #     for product in products:
+    #         url = 'http://graph.vatgia.vn/v1/products/estore/' + str(getVGProductId(product['link']))
+
+    #         response = requests.get(url, auth=HTTPDigestAuth(API_VG_USER, API_VG_PASSWORD))
+    #         data = response.json()['data']
+
+    #         # Lặp mảng danh sách gian hàng
+    #         for merchant in data:
+    #             image_links.append(merchant["logo"])
+    #             item = {}
+    #             item['merchant'] = {
+    #                 "name" : merchant['url'].replace('http://www.', ''),
+    #                 "alias": merchant['company'],
+    #                 "logo" : sha1FileName(merchant['logo']),
+    #                 "is_crawl": 1,
+    #                 "rating_count": merchant['total_rate'],
+    #                 "rating_5_count": merchant['good_rate'],
+    #                 "created_at" : strftime("%Y-%m-%d %H:%M:%S"),
+    #                 "updated_at" : strftime("%Y-%m-%d %H:%M:%S")
+    #             }
+
+    #             item['product'] = product
+
+    #             item['price_item'] = {
+    #                 "title": product['name'],
+    #                 "price": merchant['price'],
+    #                 "source_id": product['source_id'],
+    #                 # "link": merchant['product_detail_url'],
+    #                 "link": "",
+    #                 "create_at": strftime("%Y-%m-%d %H:%M:%S"),
+    #                 "updated_at": strftime("%Y-%m-%d %H:%M:%S"),
+    #                 "crawled_at": strftime("%Y-%m-%d %H:%M:%S")
+    #             }
+
+    #             # yield(item)
 
 
-    def getProductDetailLink(self, response, url):
-        url = urlparse(url)
-
-        path = url.path
-
-        url = urljoin(response.url, path)
-
-        return url
-
-    # Make request
-    def makeRequest(self, url, linkItem):
-        headers = settings['APP_CONFIG']['default_request_headers']
-        request = scrapy.Request(url, callback = self.parse_detail_content, headers = headers)
-        request.meta['link_item'] = linkItem
-        request.meta['dont_redirect'] = True
-
-        return request
 
 

@@ -68,10 +68,19 @@ def getExtension(url):
     arrayUrl = url.split('.')
     ext = arrayUrl[len(arrayUrl)-1]
     ext = ext.lower();
-    if ext == 'jpg':
-        ext = 'jpeg';
 
-    return ext;
+    mime = get_mime_type(url)
+
+    if mime == 'image/gif':
+        return 'gif'
+    elif mime == 'image/jpeg':
+        return 'jpeg'
+    elif mime == 'image/png':
+        return 'png'
+    elif mime == 'image/bmp':
+        return 'bmp'
+    else:
+        return ext;
 
 def downloadImageFromUrl(url, createThumbs = 1):
     ext = getExtension(url);

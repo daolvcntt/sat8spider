@@ -256,7 +256,7 @@ class MySQLStorePipeline(object):
 
 			else:
 				sql = "INSERT INTO product_prices (title, price, source_id, link, created_at, updated_at, crawled_at) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-				self.cursor.execute(sql, (item['name'].encode('utf-8'), item['price'], item['source_id'], item['link'],  item['created_at'], item['updated_at'], crawled_at))
+				self.cursor.execute(sql, (item['title'].encode('utf-8'), item['price'], item['source_id'], item['link'],  item['created_at'], item['updated_at'], crawled_at))
 				self.conn.commit()
 				logging.info("Item stored in db: %s" % item['link'])
 
@@ -268,7 +268,11 @@ class MySQLStorePipeline(object):
 
 
 			# Insert to elasticsearch
-			self.price.insertOrUpdate(priceId, item.toJson())
+			item.pop('created_at', None)
+			item.pop('updated_at', None)
+			item.pop('crawled_at', None)
+
+			self.price.insertOrUpdate(priceId, item)
 
 			# Update price history
 			self.savePriceHistories(item)
