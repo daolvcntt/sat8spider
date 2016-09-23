@@ -34,6 +34,7 @@ class ProductItem(Item):
 	is_mobile = Field()
 	is_camera = Field()
 	type = Field()
+	category_id = Field()
 
 	def toJson(self):
 		return {
@@ -42,6 +43,7 @@ class ProductItem(Item):
 			"price" : self.get("price", 0),
 			"hash_name" : self.get("hash_name", ""),
 			"source_id" : self.get("source_id", 0),
+			"category_id": self.get("category_id", 0),
 			"brand" : self.get("brand", ""),
 			"image" : self.get("image", ""),
 			"images" : self.get("images", ""),
