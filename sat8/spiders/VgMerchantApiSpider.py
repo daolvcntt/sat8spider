@@ -113,3 +113,4 @@ class VgMerchantApiSpider(CrawlSpider):
                     yield item
             else:
                 print response
+                print 'ProductID: ' + product['id']
