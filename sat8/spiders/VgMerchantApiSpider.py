@@ -51,7 +51,7 @@ class VgMerchantApiSpider(CrawlSpider):
 
         if self.env == "dev":
             # sql += " LIMIT 5"
-            sql = "SELECT id, name, source_id, link FROM products WHERE source_id = 185 AND id = 3795 ORDER BY updated_at DESC"
+            sql = "SELECT id, name, source_id, link FROM products WHERE source_id = 185 AND id = 3426 ORDER BY updated_at DESC"
 
         self.cursor.execute(sql)
         products = self.cursor.fetchall()
@@ -64,47 +64,52 @@ class VgMerchantApiSpider(CrawlSpider):
             url = 'http://graph.vatgia.vn/v1/products/estore/' + str(getVGProductId(product['link']))
 
             response = requests.get(url, auth=HTTPDigestAuth(API_VG_USER, API_VG_PASSWORD))
-            data = response.json()['data']
+            json = response.json()
 
-            # Lặp mảng danh sách gian hàng
-            for merchant in data:
-                print merchant['logo']
+            if 'data' in json:
+                data = json['data']
 
-                if merchant['logo'] == '' or merchant['logo'] == None:
-                    merchant['logo'] = 'http://giaca.org/images/grey.gif'
+                # Lặp mảng danh sách gian hàng
+                for merchant in data:
+                    print merchant['logo']
 
-                thumbs = downloadImageFromUrl(merchant['logo'])
+                    if merchant['logo'] == '' or merchant['logo'] == None:
+                        merchant['logo'] = 'http://giaca.org/images/grey.gif'
 
-                # Upload bucket
-                imageName = sha1FileName(merchant['logo'])
+                    thumbs = downloadImageFromUrl(merchant['logo'])
 
-                google_bucket_upload_object('static.giaca.org', thumbs['full'], 'uploads/full/' + imageName)
-                google_bucket_upload_object('static.giaca.org', thumbs['big'], 'uploads/thumbs/big/' + imageName)
-                google_bucket_upload_object('static.giaca.org', thumbs['small'], 'uploads/thumbs/small/' + imageName)
+                    # Upload bucket
+                    imageName = sha1FileName(merchant['logo'])
 
-                item = {}
+                    google_bucket_upload_object('static.giaca.org', thumbs['full'], 'uploads/full/' + imageName)
+                    google_bucket_upload_object('static.giaca.org', thumbs['big'], 'uploads/thumbs/big/' + imageName)
+                    google_bucket_upload_object('static.giaca.org', thumbs['small'], 'uploads/thumbs/small/' + imageName)
 
-                item['merchant'] = {
-                    "name" : merchant['url'].replace('http://www.', ''),
-                    "alias": merchant['company'],
-                    "logo_hash" : sha1FileName(merchant['logo']),
-                    "is_craw": 1,
-                    "rating_count": merchant['total_rate'],
-                    "rating_5_count": merchant['good_rate'],
-                    "created_at" : strftime("%Y-%m-%d %H:%M:%S"),
-                    "updated_at" : strftime("%Y-%m-%d %H:%M:%S")
-                }
+                    item = {}
 
-                item['product'] = product
+                    item['merchant'] = {
+                        "name" : merchant['url'].replace('http://www.', ''),
+                        "alias": merchant['company'],
+                        "logo_hash" : sha1FileName(merchant['logo']),
+                        "is_craw": 1,
+                        "rating_count": merchant['total_rate'],
+                        "rating_5_count": merchant['good_rate'],
+                        "created_at" : strftime("%Y-%m-%d %H:%M:%S"),
+                        "updated_at" : strftime("%Y-%m-%d %H:%M:%S")
+                    }
 
-                item['price_item'] = {
-                    "title": product['name'],
-                    "price": merchant['price'],
-                    "source_id": product['source_id'],
-                    "link": merchant['url_product'],
-                    "create_at": strftime("%Y-%m-%d %H:%M:%S"),
-                    "updated_at": strftime("%Y-%m-%d %H:%M:%S"),
-                    "crawled_at": strftime("%Y-%m-%d %H:%M:%S")
-                }
+                    item['product'] = product
 
-                yield item
+                    item['price_item'] = {
+                        "title": product['name'],
+                        "price": merchant['price'],
+                        "source_id": product['source_id'],
+                        "link": merchant['url_product'],
+                        "create_at": strftime("%Y-%m-%d %H:%M:%S"),
+                        "updated_at": strftime("%Y-%m-%d %H:%M:%S"),
+                        "crawled_at": strftime("%Y-%m-%d %H:%M:%S")
+                    }
+
+                    yield item
+            else:
+                print response
