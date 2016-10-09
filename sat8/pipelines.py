@@ -203,6 +203,37 @@ class MySQLStorePipeline(object):
 				"content" : post['content']
 			})
 
+		elif spider.name == 'vg_get_products_by_brand_url_spider':
+			query = "SELECT * FROM products WHERE id_vatgia = %s"
+			self.cursor.execute(query, (item['id_vatgia']))
+			result = self.cursor.fetchone()
+
+			productId = 0;
+
+			if item['price'] > 0 :
+
+				if result:
+					productId = result['id']
+					logging.info("Item already stored in db: %s" % item['name'])
+				else:
+					sql = "INSERT INTO products (category_id, source_id, name, price, min_price, hash_name, brand_id, image, images, link,created_at, updated_at, announce_date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+					self.cursor.execute(sql, (item['category_id'], item['source_id'], item['name'].encode('utf-8'), item['price'], item['min_price'] ,item['hash_name'].encode('utf-8'), item['brand_id'], item['image'].encode('utf-8'), item['images'] , item['link'], item['created_at'], item['updated_at'], item['announce_date']))
+					self.conn.commit()
+					logging.info("Item stored in db: %s" % item['link'])
+
+					productId = self.cursor.lastrowid
+
+				item["id"] = productId
+				self.product.insertOrUpdate(productId, {
+				    'id' : productId,
+				    'name' : product['name'],
+				    'category_id': product['category_id'],
+				    'source_id' : product['source_id'],
+				    'brand_id' : product['brand_id'],
+				    'price': product['price'],
+				    'min_price': product['min_price']
+				})
+
 		return item
 
 	def savePriceHistories(self, item):

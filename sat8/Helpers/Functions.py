@@ -54,10 +54,15 @@ def replace_link(content):
     filter_content = re.sub('<a\s(.+?)>(.+?)</a>', '\\2', content, flags=re.MULTILINE)
     return filter_content
 
-def replace_image(content, newPath):
+def replace_image(content, newPath, schema = ''):
     images = re.findall('src="(.+?)"', content)
     for image in images:
-        content = re.sub(image, newPath +  sha1FileName(image), content)
+        if schema != '':
+            newImage = schema + image
+        else:
+            newImage = image
+
+        content = re.sub(image, newPath +  sha1FileName(newImage), content)
 
     return content
 

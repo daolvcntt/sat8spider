@@ -35,6 +35,7 @@ class ProductItem(Item):
 	is_camera = Field()
 	type = Field()
 	category_id = Field()
+	announce_date = Field()
 
 	def toJson(self):
 		return {
@@ -87,6 +88,7 @@ class BlogItem(Item):
 	title = Field()
 	teaser = Field()
 	content = Field()
+	content_text = Field()
 	avatar = Field()
 	image_urls = Field()
 	category_id = Field()
@@ -213,6 +215,22 @@ class MerchantItem(Item):
 	rating_5_count = Field()
 	percent_rating_5 = Field()
 
+class RealEstateItem(Item):
+	id = Field()
+	title = Field()
+	slug = Field()
+	teaser = Field()
+	content = Field()
+	content_text = Field()
+	source = Field()
+	source_link = Field()
+	image = Field()
+	images = Field()
+	image_links = Field()
+	characters = Field()
+	created_at = Field()
+	updated_at = Field()
+
 
 class DpreviewItem(Item):
 	id = Field()
@@ -264,3 +282,7 @@ class DpreviewItemLoader(ItemLoader):
 	default_output_processor = TakeFirst()
 	name_in = MapCompose(unicode.strip)
 	announce_in = MapCompose(unicode.strip)
+
+class RealEstateItemLoader(ItemLoader):
+	default_output_processor = TakeFirst()
+	title_in = MapCompose(unicode.strip)
