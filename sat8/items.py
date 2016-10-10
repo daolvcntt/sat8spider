@@ -226,6 +226,7 @@ class RealEstateItem(Item):
 	source_link = Field()
 	image = Field()
 	images = Field()
+	images_array = Field()
 	image_links = Field()
 	characters = Field()
 	created_at = Field()

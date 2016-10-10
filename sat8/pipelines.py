@@ -10,6 +10,8 @@ from sat8.Posts.PostES import PostES
 from sat8.Products.ProductES import ProductES
 from sat8.Products.ProductPriceES import ProductPriceES
 
+from sat8.RealEstate.RealEstateES import RealEstateES
+
 from sat8.Products.DbProduct import DbProduct
 
 from time import strftime
@@ -28,6 +30,7 @@ class MySQLStorePipeline(object):
 		self.product = ProductES()
 		self.price = ProductPriceES()
 		self.dbProduct = DbProduct()
+		self.realEstate = RealEstateES()
 
 	def process_item(self, item, spider):
 
@@ -234,6 +237,34 @@ class MySQLStorePipeline(object):
 				    'min_price': product['min_price']
 				})
 
+		elif spider.name == 'nhadat_spider':
+			query = "SELECT * FROM real_estate WHERE source_link = %s"
+			self.cursor.execute(query, (item['source_link']))
+			result = self.cursor.fetchone()
+
+			id = 0
+
+			if result:
+				id = result['id']
+			else:
+				query = "INSERT INTO real_estate(title, teaser, content, image, images, characters, source, source_link, created_at, updated_at) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+				self.cursor.execute(query, (item['title'], item['teaser'], item['content'], item['image'], item['images'], item['characters'], item['source'], item['source_link'], item['created_at'], item['updated_at']))
+				self.conn.commit()
+				logging.info("Item stored in db: %s" % item['source_link'])
+
+				id = self.cursor.lastrowid
+
+				self.realEstate.insertOrUpdate(id, {
+				    'id' : id,
+				    'title' : item['title'],
+				    'teaser': item['teaser'],
+				    'content' : item['content'],
+				    'characters' : item['characters'],
+				    'source': item['source'],
+				    'source_link': item['source_link']
+				})
+
+				self.saveRealEstateImagesQueue(id, item['images_array'])
 		return item
 
 	def savePriceHistories(self, item):
@@ -337,6 +368,20 @@ class MySQLStorePipeline(object):
 			sql = "INSERT INTO merchant_rates(merchant_id, user_id, value) VALUES "
 			for i in range(0, randomStarCount):
 				sql += "('"+ str(merchant['id']) +"', '0', '"+ str(randint(1,4)) +"'),"
+
+			sql = sql[:len(sql)-1]
+
+			self.cursor.execute(sql)
+			self.conn.commit()
+
+	def saveRealEstateImagesQueue(self, id, images):
+		created_at = strftime("%Y-%m-%d %H:%M:%S")
+		updated_at  = strftime("%Y-%m-%d %H:%M:%S")
+
+		if len(images) > 0:
+			sql = "INSERT INTO real_estate_queue_images(post_id, image, created_at, updated_at) VALUES "
+			for img in images:
+				sql += "('"+ str(id) +"', '"+ img +"', '"+ created_at +"', '"+ updated_at +"'),"
 
 			sql = sql[:len(sql)-1]
 

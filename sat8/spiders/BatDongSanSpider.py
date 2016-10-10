@@ -54,7 +54,7 @@ class BatDongSanSpider(CrawlSpider):
         il = RealEstateItemLoader(item = RealEstateItem(), response=response)
         il.add_value('source', url_parts.netloc)
         il.add_value('source_link', response.url)
-        il.add_xpath('title', '//*[@id="product-detail"]/h1/text()')
+        il.add_xpath('title', '//*[@id="product-detail"]//h1[1]/text()')
 
         il.add_xpath('image', '//*[@id="product-detail"]//div[@class="img-map"]//img[1]/@src')
         il.add_xpath('content', '//*[@class="pm-content stat"]')
@@ -80,16 +80,18 @@ class BatDongSanSpider(CrawlSpider):
         selector = Selector(response)
         images = selector.xpath('//*[@id="thumbs"]//img/@src');
 
+        dataImage = []
         for img in images:
             image = img.extract().replace('80x60', '745x510')
             image_links.append(image);
 
-            item['images'].append(sha1FileName(image))
+            item['images'].append(image)
 
-        item['image_links'] = image_links
+        item['images'] = ',' . join(item['images'])
+
+
 
         if 'content' in item:
-            self.processing_content_image(response)
             # Replace something
             item['content'] = replace_link(item['content'])
 
@@ -98,6 +100,8 @@ class BatDongSanSpider(CrawlSpider):
         images = selector.xpath('//*[@class="pm-content-detail"]//img/@src')
         for img in images:
             image_links.append(img.extract())
+
+        item['images_array'] = image_links
 
         if self.env == 'dev':
             print item
