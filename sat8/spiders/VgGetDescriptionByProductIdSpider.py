@@ -64,7 +64,6 @@ class VgGetDescriptionByProductIdSpider(CrawlSpider):
 
         for pro in products:
             url = 'http://graph.vatgia.vn/v1/products/technical/' + str(pro['id_vatgia'])
-            echo(url)
 
             response = requests.get(url, auth=HTTPDigestAuth(API_VG_USER, API_VG_PASSWORD))
             json_data = response.json()

@@ -58,8 +58,10 @@ class VgGetProductsByBrandUrlSpider(CrawlSpider):
         image_links = []
 
         for link in links:
-            for i in range(1, link['max_page']+1):
+            for i in range(link['max_page']+1, 1, -1):
                 url = 'http://graph.vatgia.vn/v1/products/fromurl?url=' + link['link'] + '&page=' + str(i)
+
+                print url
 
                 response = requests.get(url, auth=HTTPDigestAuth(API_VG_USER, API_VG_PASSWORD))
                 json = response.json()
@@ -69,8 +71,6 @@ class VgGetProductsByBrandUrlSpider(CrawlSpider):
 
                     for product in data:
                         product['link'] = 'test';
-
-                        print product['name']
 
                         if product['main_picture'] != '' or product['main_picture'] != None:
                             image_links.append(product['main_picture'])
@@ -87,13 +87,26 @@ class VgGetProductsByBrandUrlSpider(CrawlSpider):
                             "price": product['price'],
                             "min_price": product['price'],
                             "image": sha1FileName(product['main_picture']),
+                            "image_links": product['pictures'],
                             "is_crawl": 1,
                             "created_at" : strftime("%Y-%m-%d %H:%M:%S"),
                             "updated_at" : strftime("%Y-%m-%d %H:%M:%S"),
                             "announce_date" : product['date'],
-                            "image_links" : image_links
+                            "image_links" : image_links,
+                            "category_id": link['category_id'],
+                            "brand_id": link['brand_id'],
+                            "source_id": link['source_id']
                         }
 
-                        yield item
+                        dataImage = []
+                        for img in product['pictures']:
+                            dataImage.append(sha1FileName(img))
+
+                        item['images'] = "," . join(dataImage)
+
+                        if self.env == 'dev':
+                            print item
+                        else:
+                            yield item
                 else:
                     print 'Khong co data'

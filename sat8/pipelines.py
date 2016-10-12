@@ -213,29 +213,29 @@ class MySQLStorePipeline(object):
 
 			productId = 0;
 
-			if item['price'] > 0 :
-
-				if result:
-					productId = result['id']
-					logging.info("Item already stored in db: %s" % item['name'])
-				else:
-					sql = "INSERT INTO products (category_id, source_id, name, price, min_price, hash_name, brand_id, image, images, link,created_at, updated_at, announce_date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-					self.cursor.execute(sql, (item['category_id'], item['source_id'], item['name'].encode('utf-8'), item['price'], item['min_price'] ,item['hash_name'].encode('utf-8'), item['brand_id'], item['image'].encode('utf-8'), item['images'] , item['link'], item['created_at'], item['updated_at'], item['announce_date']))
+			if result:
+				productId = result['id']
+				logging.info("Item already stored in db: %s" % item['name'])
+			else:
+				if item['price'] > 0:
+					sql = "INSERT INTO products (id_vatgia, category_id, source_id, name, price, min_price, hash_name, brand_id, image, images, link,created_at, updated_at, announce_date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+					self.cursor.execute(sql, (item['id_vatgia'], item['category_id'], item['source_id'], item['name'].encode('utf-8'), item['price'], item['min_price'] ,item['hash_name'].encode('utf-8'), item['brand_id'], item['image'].encode('utf-8'), item['images'] , item['link'], item['created_at'], item['updated_at'], item['announce_date']))
 					self.conn.commit()
 					logging.info("Item stored in db: %s" % item['link'])
 
 					productId = self.cursor.lastrowid
 
-				item["id"] = productId
-				self.product.insertOrUpdate(productId, {
-				    'id' : productId,
-				    'name' : product['name'],
-				    'category_id': product['category_id'],
-				    'source_id' : product['source_id'],
-				    'brand_id' : product['brand_id'],
-				    'price': product['price'],
-				    'min_price': product['min_price']
-				})
+			item["id"] = productId
+
+			self.product.insertOrUpdate(productId, {
+			    'id' : productId,
+			    'name' : item['name'],
+			    'category_id': item['category_id'],
+			    'source_id' : item['source_id'],
+			    'brand_id' : item['brand_id'],
+			    'price': item['price'],
+			    'min_price': item['min_price']
+			})
 
 		elif spider.name == 'nhadat_spider':
 			query = "SELECT * FROM real_estate WHERE source_link = %s"
@@ -247,24 +247,28 @@ class MySQLStorePipeline(object):
 			if result:
 				id = result['id']
 			else:
-				query = "INSERT INTO real_estate(title, teaser, content, image, images, characters, source, source_link, created_at, updated_at) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-				self.cursor.execute(query, (item['title'], item['teaser'], item['content'], item['image'], item['images'], item['characters'], item['source'], item['source_link'], item['created_at'], item['updated_at']))
+				query = "INSERT INTO real_estate(title, placement, placement_text, all_keyword, teaser, content, image, images, characters, source, source_link, created_at, updated_at) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+				self.cursor.execute(query, (item['title'], item['placement'], item['placement_text'], item['all_keyword'], item['teaser'], item['content'], item['image'], item['images'], item['characters'], item['source'], item['source_link'], item['created_at'], item['updated_at']))
 				self.conn.commit()
 				logging.info("Item stored in db: %s" % item['source_link'])
 
 				id = self.cursor.lastrowid
 
-				self.realEstate.insertOrUpdate(id, {
-				    'id' : id,
-				    'title' : item['title'],
-				    'teaser': item['teaser'],
-				    'content' : item['content'],
-				    'characters' : item['characters'],
-				    'source': item['source'],
-				    'source_link': item['source_link']
-				})
-
 				self.saveRealEstateImagesQueue(id, item['images_array'])
+
+			self.realEstate.insertOrUpdate(id, {
+			    'id' : id,
+			    'title' : item['title'],
+			    'all_keyword' : item['all_keyword'],
+			    'all_keyword_lower': item['all_keyword_lower'],
+			    'all_keyword_lower_no_accent' : item['all_keyword_lower_no_accent'],
+			    'teaser': item['teaser'],
+			    'content' : item['content'],
+			    'characters' : item['characters'],
+			    'source': item['source'],
+			    'source_link': item['source_link']
+			})
+
 		return item
 
 	def savePriceHistories(self, item):

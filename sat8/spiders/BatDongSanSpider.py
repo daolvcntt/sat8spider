@@ -10,8 +10,10 @@ from scrapy.linkextractors import LinkExtractor
 from urlparse import urlparse
 
 from PIL import Image
+from slugify import slugify
 
 import urllib
+import html2text
 
 from sat8.Helpers.Google_Bucket import *
 from sat8.Helpers.Functions import *
@@ -19,6 +21,18 @@ from sat8.Helpers.Functions import *
 from sat8.Functions import getImageFromContent
 from sat8.Functions import makeGzFile
 from urlparse import urlparse
+
+
+rules = [
+    {
+        "url": "http://batdongsan.com.vn/ban-can-ho-chung-cu-ha-noi/",
+        "max_page": 2,
+        "city": "Hà Nội",
+        "city_id": 2,
+        "type": "can_ban", # Cần bán
+    }
+]
+
 
 class BatDongSanSpider(CrawlSpider):
     name = "nhadat_spider"
@@ -55,6 +69,7 @@ class BatDongSanSpider(CrawlSpider):
         il.add_value('source', url_parts.netloc)
         il.add_value('source_link', response.url)
         il.add_xpath('title', '//*[@id="product-detail"]//h1[1]/text()')
+        il.add_xpath('placement', '//*[@class="kqchitiet"]');
 
         il.add_xpath('image', '//*[@id="product-detail"]//div[@class="img-map"]//img[1]/@src')
         il.add_xpath('content', '//*[@class="pm-content stat"]')
@@ -65,6 +80,9 @@ class BatDongSanSpider(CrawlSpider):
         il.add_value('updated_at', strftime("%Y-%m-%d %H:%M:%S"))
 
         item = il.load_item()
+
+        keyword = []
+
         item['images'] = []
 
         # Mô tả ngắn
@@ -90,7 +108,6 @@ class BatDongSanSpider(CrawlSpider):
         item['images'] = ',' . join(item['images'])
 
 
-
         if 'content' in item:
             # Replace something
             item['content'] = replace_link(item['content'])
@@ -103,9 +120,25 @@ class BatDongSanSpider(CrawlSpider):
 
         item['images_array'] = image_links
 
+        if 'title' in item:
+            keyword.append(item['title'])
+
+        if 'placement' in item:
+            item['placement'] = replace_link(item['placement'])
+            item['placement_text'] = html2text.html2text(item['placement'])
+            keyword.append(item['placement_text'])
+
+        item['all_keyword'] = ' ' . join(keyword)
+
+        item['all_keyword_lower'] = item['all_keyword'].lower()
+
+        item['all_keyword_lower_no_accent'] = slugify(item['all_keyword_lower'])
+        item['all_keyword_lower_no_accent'] = item['all_keyword_lower_no_accent'].replace('-', ' ')
+
+        item['image_links'] = image_links
+
         if self.env == 'dev':
-            print item
-            return
+            item['image_links'] = []
 
         yield(item)
 
