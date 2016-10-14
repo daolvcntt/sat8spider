@@ -15,7 +15,7 @@ from slugify import slugify
 import urllib
 import html2text
 
-from sat8.Helpers.Google_Bucket import *
+# from sat8.Helpers.Google_Bucket import *
 from sat8.Helpers.Functions import *
 
 from sat8.Functions import getImageFromContent
