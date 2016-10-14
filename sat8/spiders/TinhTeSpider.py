@@ -229,13 +229,13 @@ class TinhTeSpider(CrawlSpider):
 
         # Upload to google bucket
         bucket = self.bucket
-        google_bucket_upload_object(bucket, pathSaveImage, 'uploads/full/' + imageName)
-        google_bucket_upload_object(bucket, pathSaveImageBig, 'uploads/thumbs/big/' + imageName)
-        google_bucket_upload_object(bucket, pathSaveImageSmall, 'uploads/thumbs/small/' + imageName)
+        # google_bucket_upload_object(bucket, pathSaveImage, 'uploads/full/' + imageName)
+        # google_bucket_upload_object(bucket, pathSaveImageBig, 'uploads/thumbs/big/' + imageName)
+        # google_bucket_upload_object(bucket, pathSaveImageSmall, 'uploads/thumbs/small/' + imageName)
 
-        google_bucket_upload_object(bucket, pathSaveImage + '.gz', 'uploads/full/' + imageName + '.gz')
-        google_bucket_upload_object(bucket, pathSaveImageBig + '.gz', 'uploads/thumbs/big/' + imageName + '.gz')
-        google_bucket_upload_object(bucket, pathSaveImageSmall + '.gz', 'uploads/thumbs/small/' + imageName + '.gz')
+        # google_bucket_upload_object(bucket, pathSaveImage + '.gz', 'uploads/full/' + imageName + '.gz')
+        # google_bucket_upload_object(bucket, pathSaveImageBig + '.gz', 'uploads/thumbs/big/' + imageName + '.gz')
+        # google_bucket_upload_object(bucket, pathSaveImageSmall + '.gz', 'uploads/thumbs/small/' + imageName + '.gz')
 
     def processing_content_image(self, response):
         selector = Selector(response)
@@ -254,7 +254,7 @@ class TinhTeSpider(CrawlSpider):
             urllib.urlretrieve(imgLink, pathSaveImage)
 
             # Upload to bucket
-            google_bucket_upload_object(self.bucket, pathSaveImage, 'uploads/posts/' + imageName)
+            # google_bucket_upload_object(self.bucket, pathSaveImage, 'uploads/posts/' + imageName)
 
 
     def process_comment(self, comment, response):
@@ -275,7 +275,7 @@ class TinhTeSpider(CrawlSpider):
             urllib.urlretrieve(imgLink, pathSaveImage)
 
             # Upload to bucket
-            google_bucket_upload_object(self.bucket, pathSaveImage, 'uploads/posts/' + imageName)
+            # google_bucket_upload_object(self.bucket, pathSaveImage, 'uploads/posts/' + imageName)
 
     # def parse_start_url(self, response):
     #     print '------------------------------', "\n"

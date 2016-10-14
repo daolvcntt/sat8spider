@@ -118,4 +118,4 @@ class VgGetDescriptionByProductIdSpider(CrawlSpider):
             urllib.urlretrieve(imgLink, pathSaveImage)
 
             # Upload to bucket
-            google_bucket_upload_object(self.bucket, pathSaveImage, 'uploads/products/' + imageName)
+            # google_bucket_upload_object(self.bucket, pathSaveImage, 'uploads/products/' + imageName)

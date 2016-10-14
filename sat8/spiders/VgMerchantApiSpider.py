@@ -81,9 +81,9 @@ class VgMerchantApiSpider(CrawlSpider):
                     # Upload bucket
                     imageName = sha1FileName(merchant['logo'])
 
-                    google_bucket_upload_object('static.giaca.org', thumbs['full'], 'uploads/full/' + imageName)
-                    google_bucket_upload_object('static.giaca.org', thumbs['big'], 'uploads/thumbs/big/' + imageName)
-                    google_bucket_upload_object('static.giaca.org', thumbs['small'], 'uploads/thumbs/small/' + imageName)
+                    # google_bucket_upload_object('static.giaca.org', thumbs['full'], 'uploads/full/' + imageName)
+                    # google_bucket_upload_object('static.giaca.org', thumbs['big'], 'uploads/thumbs/big/' + imageName)
+                    # google_bucket_upload_object('static.giaca.org', thumbs['small'], 'uploads/thumbs/small/' + imageName)
 
                     item = {}
 

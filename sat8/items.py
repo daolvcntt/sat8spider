@@ -117,8 +117,7 @@ class BlogItem(Item):
 			"user_id" : self.get("user_id", 0),
 			"created_at" : self.get("created_at", strftime("%Y-%m-%d %H:%M:%S")),
 			"updated_at" : self.get("updated_at", strftime("%Y-%m-%d %H:%M:%S")),
-			"category" : self.get("category", ""),
-			"post_type" : self.get("post_type", "post")
+			"category" : self.get("category", "")
 		}
 
 class VideoItem(Item):
