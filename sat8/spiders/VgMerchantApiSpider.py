@@ -18,7 +18,7 @@ import json,urllib
 from urlparse import urljoin
 
 from sat8.Helpers.Functions import *
-from sat8.Helpers.Google_Bucket import *
+# from sat8.Helpers.Google_Bucket import *
 
 import requests
 from requests.auth import HTTPBasicAuth
