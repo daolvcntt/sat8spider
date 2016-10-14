@@ -13,7 +13,7 @@ from time import gmtime, strftime
 from scrapy.linkextractors import LinkExtractor
 from urlparse import urlparse
 
-from sat8.Helpers.Google_Bucket import *
+# from sat8.Helpers.Google_Bucket import *
 from sat8.Helpers.Functions import *
 
 import urllib
