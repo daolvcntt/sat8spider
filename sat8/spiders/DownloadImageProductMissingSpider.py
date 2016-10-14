@@ -11,7 +11,7 @@ from time import gmtime, strftime
 from scrapy.linkextractors import LinkExtractor
 from urlparse import urlparse
 
-from sat8.Helpers.Google_Bucket import *
+# from sat8.Helpers.Google_Bucket import *
 from sat8.Helpers.Functions import *
 
 import urllib
@@ -78,9 +78,9 @@ class DownloadImageProductMissingSpider(CrawlSpider):
             thumbs = downloadImageFromUrl(image)
 
             # Upload bucket
-            google_bucket_upload_object('static.giaca.org', thumbs['full'], 'uploads/full/' + imageName)
-            google_bucket_upload_object('static.giaca.org', thumbs['big'], 'uploads/thumbs/big/' + imageName)
-            google_bucket_upload_object('static.giaca.org', thumbs['small'], 'uploads/thumbs/small/' + imageName)
+            # google_bucket_upload_object('static.giaca.org', thumbs['full'], 'uploads/full/' + imageName)
+            # google_bucket_upload_object('static.giaca.org', thumbs['big'], 'uploads/thumbs/big/' + imageName)
+            # google_bucket_upload_object('static.giaca.org', thumbs['small'], 'uploads/thumbs/small/' + imageName)
 
 
     def start_requests(self):

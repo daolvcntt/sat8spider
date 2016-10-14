@@ -6,7 +6,7 @@ from scrapy.selector import Selector
 from scrapy.conf import settings
 
 from sat8.Helpers.Functions import *
-from sat8.Helpers.Google_Bucket import *
+# from sat8.Helpers.Google_Bucket import *
 
 from sat8.Functions import makeGzFile
 
