@@ -69,7 +69,7 @@ def indexPrices():
 
 def indexPosts():
 
-    queryPost = "SELECT * FROM posts"
+    queryPost = "SELECT id, title, teaser, content, link FROM posts"
     cursor.execute(queryPost)
     posts = cursor.fetchall()
 

@@ -74,6 +74,7 @@ class VgGetDescriptionByProductIdSpider(CrawlSpider):
                 product = data[0]
 
                 spect_json = json.dumps(product['technical'])
+                tags_json = json.dumps(product['keywords'])
 
                 self.processing_content_image(product['description']);
 
@@ -91,8 +92,8 @@ class VgGetDescriptionByProductIdSpider(CrawlSpider):
                     self.cursor.execute(sql, (product['description'], spect_json, pro['id']))
                     self.conn.commit();
                 else:
-                    sql = "INSERT INTO product_metas(content, spec_json, product_id) VALUES(%s,%s,%s)"
-                    self.cursor.execute(sql, (product['description'], spect_json, pro['id']))
+                    sql = "INSERT INTO product_metas(content, spec_json, json_tags_vg, product_id) VALUES(%s,%s,%s,%s)"
+                    self.cursor.execute(sql, (product['description'], spect_json, tags_json, pro['id']))
                     self.conn.commit();
 
 
@@ -104,8 +105,13 @@ class VgGetDescriptionByProductIdSpider(CrawlSpider):
         images = selector.xpath('//img/@src')
 
         for image in images:
+            imgname = image.extract()
+            parse = urlparse(imgname)
 
-            imgLink = 'http://vatgia.com' + image.extract()
+            if parse.scheme:
+                imgLink = imgname
+            else:
+                imgLink = 'http://vatgia.com' + imgname
 
             # imgLink = response.urljoin(image.extract())
 
