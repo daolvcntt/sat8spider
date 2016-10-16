@@ -20,10 +20,10 @@ conn = settings['MYSQL_CONN']
 cursor = conn.cursor()
 
 def runIndex():
-    indexProducts()
-    indexPrices()
-    indexPosts()
-    indexRaovat()
+    #indexProducts()
+    #indexPrices()
+    #indexPosts()
+    #indexRaovat()
     indexQuestions()
     indexVideos()
 
@@ -69,7 +69,7 @@ def indexPrices():
 
 def indexPosts():
 
-    queryPost = "SELECT * FROM posts"
+    queryPost = "SELECT id, title, category, content, teaser, link,category_id FROM posts ORDER BY updated_at DESC"
     cursor.execute(queryPost)
     posts = cursor.fetchall()
 
@@ -78,8 +78,8 @@ def indexPosts():
     for post in posts:
         postEs = PostES()
 
-        post.pop('created_at', None)
-        post.pop('updated_at', None)
+        #post.pop('created_at', None)
+        #post.pop('updated_at', None)
 
         try:
             postEs.insertOrUpdate(post['id'], post)
