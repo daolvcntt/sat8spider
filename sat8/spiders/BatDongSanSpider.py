@@ -48,7 +48,7 @@ class BatDongSanSpider(CrawlSpider):
     def __init__(self, env="production"):
         self.env = env
 
-        for i in range(1, 6):
+        for i in range(6, 1, -1):
             url = 'http://batdongsan.com.vn/ban-can-ho-chung-cu-ha-noi/p' + str(i)
             self.start_urls.append(url);
 

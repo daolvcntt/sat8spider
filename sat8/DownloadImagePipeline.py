@@ -40,7 +40,7 @@ class DownloadImagePipeline(object):
                     # google_bucket_upload_object('static.giaca.org', thumbs['big'], 'uploads/thumbs/big/' + imageName)
                     # google_bucket_upload_object('static.giaca.org', thumbs['small'], 'uploads/thumbs/small/' + imageName)
                 except IOError as e:
-                    print image_url
+                    print 'Can not download this image: ' + image_url
                     # raise e
 
 

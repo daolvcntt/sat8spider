@@ -72,9 +72,9 @@ class FunctionTest(unittest.TestCase):
         self.assertEqual(expected, actual);
 
     def test_downloadImageFromUrl(self):
-        imgLink = 'http://cellphones.com.vn/media/catalog/product/cache/1/image/180x350/9df78eab33525d08d6e5fb8d27136e95/s/7/s7-edge-gold_1.png';
+        imgLink = 'http://file4.batdongsan.com.vn/resize/745x510/2016/10/17/20161017111534-4275.jpg';
         ext = getExtension(imgLink);
-        imageName = hashlib.sha1(imgLink).hexdigest() + '.' + ext;
+        imageName = sha1FileName(imgLink);
 
         pathSaveImage = settings['IMAGES_STORE'] + '/full/' + imageName
         pathSaveImageSmall = settings['IMAGES_STORE'] + '/thumbs/small/' + imageName
