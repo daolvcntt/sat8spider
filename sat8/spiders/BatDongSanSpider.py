@@ -43,7 +43,7 @@ class BatDongSanSpider(CrawlSpider):
 
     bucket = 'static.giaca.org'
 
-    pathSaveImage = 'http://static.giaca.org/uploads/posts/'
+    pathSaveImage = 'http://static.giaca.org/uploads/full/'
 
     def __init__(self, env="production"):
         self.env = env
@@ -103,9 +103,9 @@ class BatDongSanSpider(CrawlSpider):
             image = img.extract().replace('80x60', '745x510')
             image_links.append(image);
 
-            item['images'].append(image)
+            dataImage.append(sha1FileName(image))
 
-        item['images'] = ',' . join(item['images'])
+        item['images'] = ',' . join(dataImage)
 
 
         if 'content' in item:
@@ -136,6 +136,8 @@ class BatDongSanSpider(CrawlSpider):
         item['all_keyword_lower_no_accent'] = item['all_keyword_lower_no_accent'].replace('-', ' ')
 
         item['image_links'] = image_links
+
+        item['image'] = sha1FileName(item['image'])
 
         if self.env == 'dev':
             item['image_links'] = []
