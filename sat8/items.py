@@ -219,6 +219,7 @@ class RealEstateItem(Item):
 	title = Field()
 	slug = Field()
 	teaser = Field()
+	json_tags = Field()
 	placement = Field()
 	placement_text = Field()
 	all_keyword = Field()

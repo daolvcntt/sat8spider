@@ -247,8 +247,8 @@ class MySQLStorePipeline(object):
 			if result:
 				id = result['id']
 			else:
-				query = "INSERT INTO real_estate(title, placement, placement_text, all_keyword, teaser, content, image, images, characters, source, source_link, created_at, updated_at) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-				self.cursor.execute(query, (item['title'], item['placement'], item['placement_text'], item['all_keyword'], item['teaser'], item['content'], item['image'], item['images'], item['characters'], item['source'], item['source_link'], item['created_at'], item['updated_at']))
+				query = "INSERT INTO real_estate(json_tags, title, placement, placement_text, all_keyword, teaser, content, image, images, characters, source, source_link, created_at, updated_at) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+				self.cursor.execute(query, (item['json_tags'], item['title'], item['placement'], item['placement_text'], item['all_keyword'], item['teaser'], item['content'], item['image'], item['images'], item['characters'], item['source'], item['source_link'], item['created_at'], item['updated_at']))
 				self.conn.commit()
 				logging.info("Item stored in db: %s" % item['source_link'])
 

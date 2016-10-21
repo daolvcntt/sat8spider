@@ -14,6 +14,7 @@ from slugify import slugify
 
 import urllib
 import html2text
+import json
 
 # from sat8.Helpers.Google_Bucket import *
 from sat8.Helpers.Functions import *
@@ -25,11 +26,20 @@ from urlparse import urlparse
 
 rules = [
     {
-        "url": "http://batdongsan.com.vn/ban-can-ho-chung-cu-ha-noi/",
-        "max_page": 2,
-        "city": "Hà Nội",
-        "city_id": 2,
-        "type": "can_ban", # Cần bán
+        "url": "http://batdongsan.com.vn/ban-can-ho-chung-cu/p",
+        "max_page": 20
+    },
+    {
+        "url": "http://batdongsan.com.vn/ban-nha-rieng/p",
+        "max_page": 20
+    },
+    {
+        "url": "http://batdongsan.com.vn/cho-thue-can-ho-chung-cu/p",
+        "max_page": 20
+    },
+    {
+        "url": "http://batdongsan.com.vn/cho-thue-nha-rieng/p",
+        "max_page": 20
     }
 ]
 
@@ -48,9 +58,10 @@ class BatDongSanSpider(CrawlSpider):
     def __init__(self, env="production"):
         self.env = env
 
-        for i in range(6, 1, -1):
-            url = 'http://batdongsan.com.vn/ban-can-ho-chung-cu-ha-noi/p' + str(i)
-            self.start_urls.append(url);
+        for rule in rules:
+            for i in range(rule["max_page"], 0, -1):
+                url = rule["url"] + str(i)
+                self.start_urls.append(url)
 
     def parse(self, response):
         sel = Selector(response)
@@ -73,8 +84,9 @@ class BatDongSanSpider(CrawlSpider):
 
         il.add_xpath('image', '//*[@id="product-detail"]//div[@class="img-map"]//img[1]/@src')
         il.add_xpath('content', '//*[@class="pm-content stat"]')
-        il.add_xpath('content_text', '//*[@class="pm-content stat"]//text()');
-        il.add_xpath('characters', '//*[@class="pm-content-detail"]');
+        il.add_xpath('content_text', '//*[@class="pm-content stat"]//text()')
+        il.add_xpath('characters', '//*[@class="pm-content-detail"]')
+
 
         il.add_value('created_at', strftime("%Y-%m-%d %H:%M:%S"))
         il.add_value('updated_at', strftime("%Y-%m-%d %H:%M:%S"))
@@ -82,6 +94,12 @@ class BatDongSanSpider(CrawlSpider):
         item = il.load_item()
 
         keyword = []
+
+        tags = {}
+
+        tagList = Selector(response).xpath('//*[@id="LeftMainContent__productDetail_panelTag"]//a/text()').extract()
+
+        item['json_tags'] = json.dumps(tagList)
 
         item['images'] = []
 
