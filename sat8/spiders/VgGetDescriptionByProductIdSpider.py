@@ -80,8 +80,10 @@ class VgGetDescriptionByProductIdSpider(CrawlSpider):
 
                 # Replace something
                 product['description'] = replace_link(product['description'])
-                product['description'] = replace_image(product['description'], self.pathSaveImage, 'http://vatgia.com')
-
+                try:
+                    product['description'] = replace_image(product['description'], self.pathSaveImage, 'http://vatgia.com')
+                except IOError as e:
+                    print "Erro description image : " + url
 
                 query = "SELECT product_id FROM product_metas WHERE product_id = %s"
                 self.cursor.execute(query, (pro['id']))
@@ -115,7 +117,7 @@ class VgGetDescriptionByProductIdSpider(CrawlSpider):
 
             # imgLink = response.urljoin(image.extract())
 
-            print imgLink
+            print "Download image:" + imgLink
 
             imageName = sha1FileName(imgLink)
             pathSaveImage = settings['IMAGES_STORE'] + '/products/' + imageName
