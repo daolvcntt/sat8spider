@@ -225,17 +225,18 @@ class MySQLStorePipeline(object):
 
 					productId = self.cursor.lastrowid
 
-			item["id"] = productId
+			if productId > 0:
+				item["id"] = productId
 
-			self.product.insertOrUpdate(productId, {
-			    'id' : productId,
-			    'name' : item['name'],
-			    'category_id': item['category_id'],
-			    'source_id' : item['source_id'],
-			    'brand_id' : item['brand_id'],
-			    'price': item['price'],
-			    'min_price': item['min_price']
-			})
+				self.product.insertOrUpdate(productId, {
+				    'id' : productId,
+				    'name' : item['name'],
+				    'category_id': item['category_id'],
+				    'source_id' : item['source_id'],
+				    'brand_id' : item['brand_id'],
+				    'price': item['price'],
+				    'min_price': item['min_price']
+				})
 
 		elif spider.name == 'nhadat_spider':
 			query = "SELECT * FROM real_estate WHERE source_link = %s"
