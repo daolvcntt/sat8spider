@@ -81,7 +81,18 @@ class VgGetDescriptionByProductIdSpider(CrawlSpider):
                 # Replace something
                 product['description'] = replace_link(product['description'])
                 try:
-                    product['description'] = replace_image(product['description'], self.pathSaveImage, 'http://vatgia.com')
+                    selector = Selector(text=product['description'])
+                    images = selector.xpath('//img/@src')
+                    for image in images:
+                        imgname = image.extract()
+                        parse = urlparse(imgname)
+
+                        if parse.scheme:
+                            imgLink = imgname
+                        else:
+                            imgLink = 'http://vatgia.com' + imgname
+
+                        product['description'] = product['description'].replace(imgname, self.pathSaveImage + sha1FileName(imgLink));
                 except IOError as e:
                     print "Erro description image : " + url
 
