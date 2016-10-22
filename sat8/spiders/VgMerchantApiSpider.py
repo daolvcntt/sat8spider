@@ -47,11 +47,11 @@ class VgMerchantApiSpider(CrawlSpider):
         self.conn = settings['MYSQL_CONN']
         self.cursor = self.conn.cursor()
 
-        sql = "SELECT id, name, source_id, link FROM products WHERE source_id = 185 ORDER BY updated_at DESC"
+        sql = "SELECT id, id_vatgia, name, source_id, link FROM products WHERE source_id = 185 ORDER BY updated_at DESC"
 
         if self.env == "dev":
             # sql += " LIMIT 5"
-            sql = "SELECT id, name, source_id, link FROM products WHERE source_id = 185 AND id = 3426 ORDER BY updated_at DESC"
+            sql = "SELECT id, id_vatgia, name, source_id, link FROM products WHERE source_id = 185 AND id = 3426 ORDER BY updated_at DESC"
 
         self.cursor.execute(sql)
         products = self.cursor.fetchall()
@@ -61,7 +61,7 @@ class VgMerchantApiSpider(CrawlSpider):
 
 
         for product in products:
-            url = 'http://graph.vatgia.vn/v1/products/estore/' + str(getVGProductId(product['link']))
+            url = 'http://graph.vatgia.vn/v1/products/estore/' + str(product['id_vatgia'])
 
             response = requests.get(url, auth=HTTPDigestAuth(API_VG_USER, API_VG_PASSWORD))
             json = response.json()
