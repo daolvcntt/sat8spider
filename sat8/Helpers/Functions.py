@@ -15,7 +15,6 @@ import imghdr
 import magic
 
 
-
 def list_get(array, key, default = ''):
 	if key in array :
 		return array[key]
@@ -82,6 +81,8 @@ def getExtension(url):
 
     mm = magic.Magic(mime=True)
     mime = mm.from_file(pathSaveTempImage)
+
+    logFile('mime', mime)
 
     if mime == 'image/gif':
         return 'gif'
@@ -171,3 +172,12 @@ def getVGProductId(link):
     parsed = urlparse(link)
     path = parsed.path
     return int(path.split('/')[2])
+
+
+# Log file
+def logFile(filename, content):
+    f = open(settings['LOG_PATH'] + filename + '.log', 'w')
+    f.write(content)
+    f.close()
+
+    return content

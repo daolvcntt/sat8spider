@@ -110,3 +110,5 @@ DEFAULT_REQUEST_HEADERS = default_request_headers()
 APP_CONFIG = {
 	'default_request_headers' : default_request_headers()
 }
+
+LOG_PATH = env.LOG_PATH

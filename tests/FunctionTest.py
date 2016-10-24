@@ -121,6 +121,11 @@ class FunctionTest(unittest.TestCase):
 
         self.assertEqual(expected, actual)
 
+    def test_logFile(self):
+        expected = 'ok'
+        actual = logFile('test', 'ok')
+        self.assertEqual(expected, actual)
+
 
 if __name__ == '__main__':
     unittest.main()
