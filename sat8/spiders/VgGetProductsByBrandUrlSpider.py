@@ -63,6 +63,8 @@ class VgGetProductsByBrandUrlSpider(CrawlSpider):
 
                 print url
 
+                logFile
+
                 response = requests.get(url, auth=HTTPDigestAuth(API_VG_USER, API_VG_PASSWORD))
                 json = response.json()
 

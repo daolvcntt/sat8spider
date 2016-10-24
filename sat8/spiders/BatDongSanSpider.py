@@ -27,19 +27,19 @@ from urlparse import urlparse
 rules = [
     {
         "url": "http://batdongsan.com.vn/ban-can-ho-chung-cu/p",
-        "max_page": 20
+        "max_page": 1
     },
     {
         "url": "http://batdongsan.com.vn/ban-nha-rieng/p",
-        "max_page": 20
+        "max_page": 1
     },
     {
         "url": "http://batdongsan.com.vn/cho-thue-can-ho-chung-cu/p",
-        "max_page": 20
+        "max_page": 1
     },
     {
         "url": "http://batdongsan.com.vn/cho-thue-nha-rieng/p",
-        "max_page": 20
+        "max_page": 1
     }
 ]
 
@@ -102,6 +102,9 @@ class BatDongSanSpider(CrawlSpider):
         item['json_tags'] = json.dumps(tagList)
 
         item['images'] = []
+
+        print item['json_tags']
+        # return
 
         # Mô tả ngắn
         if 'content_text' in item:

@@ -14,6 +14,7 @@ import os
 import imghdr
 import magic
 
+import logging
 
 def list_get(array, key, default = ''):
 	if key in array :
@@ -92,7 +93,8 @@ def getExtension(url):
         return 'bmp'
     else:
         logFile('mime', mime)
-        return ext;
+        e = ext.split('/')
+        return e[1];
 
 def downloadImageFromUrl(url, createThumbs = 1):
     ext = getExtension(url);
@@ -175,8 +177,15 @@ def getVGProductId(link):
 
 # Log file
 def logFile(filename, content):
-    f = open(settings['LOG_PATH'] + filename + '.log', 'w')
-    f.write(content)
-    f.close()
+    # f = open(settings['LOG_PATH'] + filename + '.log', 'w')
+    # f.write(content)
+    # f.close()
+
+    filename = settings['LOG_PATH'] + filename + '.log'
+
+    print filename
+
+    logging.basicConfig(filename=filename,level=logging.INFO, format='%(asctime)s %(message)s')
+    logging.info(content)
 
     return content
