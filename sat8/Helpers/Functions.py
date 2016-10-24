@@ -82,8 +82,6 @@ def getExtension(url):
     mm = magic.Magic(mime=True)
     mime = mm.from_file(pathSaveTempImage)
 
-    logFile('mime', mime)
-
     if mime == 'image/gif':
         return 'gif'
     elif mime == 'image/jpeg':
@@ -93,6 +91,7 @@ def getExtension(url):
     elif mime == 'image/bmp':
         return 'bmp'
     else:
+        logFile('mime', mime)
         return ext;
 
 def downloadImageFromUrl(url, createThumbs = 1):
