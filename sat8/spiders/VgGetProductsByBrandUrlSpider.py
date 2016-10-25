@@ -47,7 +47,7 @@ class VgGetProductsByBrandUrlSpider(CrawlSpider):
         self.conn = settings['MYSQL_CONN']
         self.cursor = self.conn.cursor()
 
-        sql = "SELECT * FROM vatgia_brand_links"
+        sql = "SELECT * FROM vatgia_brand_links ORDER BY id DESC"
 
         if self.env == "dev":
             sql = "SELECT * FROM vatgia_brand_links  LIMIT 5"
