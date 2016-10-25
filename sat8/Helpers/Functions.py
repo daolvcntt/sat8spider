@@ -93,7 +93,7 @@ def getExtension(url):
         return 'bmp'
     else:
         logFile('mime', mime)
-        e = ext.split('/')
+        e = mime.split('/')
         return e[1];
 
 def downloadImageFromUrl(url, createThumbs = 1):
