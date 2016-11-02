@@ -27,19 +27,19 @@ from urlparse import urlparse
 rules = [
     {
         "url": "http://batdongsan.com.vn/ban-can-ho-chung-cu/p",
-        "max_page": 1
+        "max_page": 20
     },
     {
         "url": "http://batdongsan.com.vn/ban-nha-rieng/p",
-        "max_page": 1
+        "max_page": 20
     },
     {
         "url": "http://batdongsan.com.vn/cho-thue-can-ho-chung-cu/p",
-        "max_page": 1
+        "max_page": 20
     },
     {
         "url": "http://batdongsan.com.vn/cho-thue-nha-rieng/p",
-        "max_page": 1
+        "max_page": 20
     }
 ]
 
