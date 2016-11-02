@@ -26,25 +26,25 @@ from urlparse import urlparse
 
 rules = [
     {
-        "url": "http://batdongsan.com.vn/ban-can-ho-chung-cu/p",
+        "url": "http://batdongsan.com.vn/can-ho-chung-cu/p",
         "max_page": 1
     },
     {
-        "url": "http://batdongsan.com.vn/ban-nha-rieng/p",
+        "url": "http://batdongsan.com.vn/cao-oc-van-phong/p",
         "max_page": 1
     },
     {
-        "url": "http://batdongsan.com.vn/cho-thue-can-ho-chung-cu/p",
+        "url": "http://batdongsan.com.vn/trung-tam-thuong-mai/p",
         "max_page": 1
     },
     {
-        "url": "http://batdongsan.com.vn/cho-thue-nha-rieng/p",
+        "url": "http://batdongsan.com.vn/khu-do-thi-moi/p",
         "max_page": 1
     }
 ]
 
 
-class BatDongSanSpider(CrawlSpider):
+class BatDongSanDuAnSpider(CrawlSpider):
     name = "nhadat_spider"
     allowed_domains = []
     start_urls = [
@@ -66,7 +66,7 @@ class BatDongSanSpider(CrawlSpider):
     def parse(self, response):
         sel = Selector(response)
 
-        blog_links = sel.xpath('//*[contains(@class, "search-productItem")]/div[@class="p-title"]/a[1]/@href')
+        blog_links = sel.xpath('//*[contains(@class, "prj-list")]//ul[@class="list-view"]//div[@class="thumb"]/a[1]/@href')
 
         for href in blog_links:
             url = response.urljoin(href.extract());
@@ -79,19 +79,19 @@ class BatDongSanSpider(CrawlSpider):
         il = RealEstateItemLoader(item = RealEstateItem(), response=response)
         il.add_value('source', url_parts.netloc)
         il.add_value('source_link', response.url)
-        il.add_xpath('title', '//*[@id="product-detail"]//h1[1]/text()')
-        il.add_xpath('placement', '//*[@class="kqchitiet"]');
+        il.add_xpath('title', '//*[@class="prj-detail"]/h1[1]/text()')
+        il.add_xpath('placement', '//*[@class="prj-othername"]');
 
-        il.add_xpath('image', '//*[@id="product-detail"]//div[@class="img-map"]//img[1]/@src')
-        il.add_xpath('content', '//*[@class="pm-content stat"]')
-        il.add_xpath('content_text', '//*[@class="pm-content stat"]//text()')
-        il.add_xpath('characters', '//*[@class="pm-content-detail"]')
+        il.add_xpath('image', '//*[@id="imgslide"]//div[@class="slideitem"]//img[1]/@src')
+        il.add_xpath('content', '//*[@class="prj-noidung a1"]')
+        il.add_xpath('content_text', '//*[@class="prj-noidung a1"]//text()')
+        il.add_xpath('characters', '//*[@class="prj-right"]')
+
+        il.add_value('type', 1);
 
 
         il.add_value('created_at', strftime("%Y-%m-%d %H:%M:%S"))
         il.add_value('updated_at', strftime("%Y-%m-%d %H:%M:%S"))
-
-        il.add_value('type', 0);
 
         item = il.load_item()
 
@@ -99,13 +99,8 @@ class BatDongSanSpider(CrawlSpider):
 
         tags = {}
 
-        tagList = Selector(response).xpath('//*[@id="LeftMainContent__productDetail_panelTag"]//a/text()').extract()
-
-        item['json_tags'] = json.dumps(tagList)
-
         item['images'] = []
 
-        print item['json_tags']
         # return
 
         # Mô tả ngắn
@@ -119,13 +114,12 @@ class BatDongSanSpider(CrawlSpider):
             image_links.append(item['image'])
 
         selector = Selector(response)
-        images = selector.xpath('//*[@id="thumbs"]//img/@src');
+        images = selector.xpath('//*[@id="imgslide"]//img/@src');
 
         dataImage = []
         for img in images:
-            image = img.extract().replace('80x60', '745x510')
+            image = img.extract();
             image_links.append(image);
-
             dataImage.append(sha1FileName(image))
 
         item['images'] = ',' . join(dataImage)
@@ -134,10 +128,11 @@ class BatDongSanSpider(CrawlSpider):
         if 'content' in item:
             # Replace something
             item['content'] = replace_link(item['content'])
+            item['content'] = replace_image(item['content'], self.pathSaveImage)
 
         # Download image characters
         selector = Selector(response)
-        images = selector.xpath('//*[@class="pm-content-detail"]//img/@src')
+        images = selector.xpath('//*[@class="prj-noidung a1"]//img/@src')
         for img in images:
             image_links.append(img.extract())
 
@@ -161,6 +156,8 @@ class BatDongSanSpider(CrawlSpider):
         item['image_links'] = image_links
 
         item['image'] = sha1FileName(item['image'])
+
+        item['json_tags'] = '[]';
 
         if self.env == 'dev':
             item['image_links'] = []

@@ -217,6 +217,7 @@ class MerchantItem(Item):
 class RealEstateItem(Item):
 	id = Field()
 	title = Field()
+	type = Field()
 	slug = Field()
 	teaser = Field()
 	json_tags = Field()
