@@ -8,6 +8,8 @@ import StringIO
 import tempfile
 import time
 
+import env
+
 # URI scheme for Google Cloud Storage.
 GOOGLE_STORAGE = 'gs'
 
@@ -18,9 +20,9 @@ LOCAL_FILE = 'file'
 # under Credentials, create a new client ID for an installed application.
 # Required only if you have not configured client ID/secret in
 # the .boto file or as environment variables.
-CLIENT_ID = '357469820882-rafsas8umtg6t7c11oqpskv3q9a55k8p.apps.googleusercontent.com'
-CLIENT_SECRET = 'MXoq05non8N3SGP3ZzlhryHy'
+CLIENT_ID = env.GOOGLE_STORAGE_CLIENT_ID
+CLIENT_SECRET = env.GOOGLE_STORAGE_CLIENT_SECRET
 
-BUCKET_NAME = 'static-giaca-org'
+BUCKET_NAME = env.GOOGLE_STORAGE_BUCKET_NAME
 
 gcs_oauth2_boto_plugin.SetFallbackClientIdAndSecret(CLIENT_ID, CLIENT_SECRET)

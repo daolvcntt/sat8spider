@@ -10,6 +10,8 @@ from sat8.Posts.PostES import PostES
 from sat8.Products.ProductES import ProductES
 from sat8.Products.ProductPriceES import ProductPriceES
 
+from sat8.RealEstate.RealEstateES import RealEstateES
+
 from sat8.Products.DbProduct import DbProduct
 
 from time import strftime
@@ -28,6 +30,7 @@ class MySQLStorePipeline(object):
 		self.product = ProductES()
 		self.price = ProductPriceES()
 		self.dbProduct = DbProduct()
+		self.realEstate = RealEstateES()
 
 	def process_item(self, item, spider):
 
@@ -87,14 +90,14 @@ class MySQLStorePipeline(object):
 					# sql = "UPDATE products SET price = %s, min_price = %s, image = %s, images = %s, updated_at = %s WHERE id = %s"
 					# self.cursor.execute(sql, (item['price'], item['min_price'], item['image'], item['images'], item['updated_at'], productId))
 
-					sql = "UPDATE products SET image = %s, images = %s, updated_at = %s WHERE id = %s"
-					self.cursor.execute(sql, (item['image'], item['images'] ,item['updated_at'], productId))
+					sql = "UPDATE products SET updated_at = %s WHERE id = %s"
+					self.cursor.execute(sql, (item['updated_at'], productId))
 					self.conn.commit()
 
 					logging.info("Item already stored in db: %s" % item['name'])
 				else:
-					sql = "INSERT INTO products (source_id, name, price, min_price, hash_name, brand_id, image, images, is_smartphone, is_laptop, is_tablet, is_camera, link, spec, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-					self.cursor.execute(sql, (item['source_id'], item['name'].encode('utf-8'), item['price'], item['min_price'] ,item['hash_name'].encode('utf-8'), item['brand_id'], item['image'].encode('utf-8'), item['images'] , item['is_mobile'], item['is_laptop'], item['is_tablet'], item['is_camera'] ,item['link'], item['spec'], item['created_at'], item['updated_at']))
+					sql = "INSERT INTO products (category_id, type, source_id, name, price, min_price, hash_name, brand_id, image, images, is_smartphone, is_laptop, is_tablet, is_camera, link, spec, created_at, updated_at) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+					self.cursor.execute(sql, (item['category_id'], item['type'], item['source_id'], item['name'].encode('utf-8'), item['price'], item['min_price'] ,item['hash_name'].encode('utf-8'), item['brand_id'], item['image'].encode('utf-8'), item['images'] , item['is_mobile'], item['is_laptop'], item['is_tablet'], item['is_camera'] ,item['link'], item['spec'], item['created_at'], item['updated_at']))
 					self.conn.commit()
 					logging.info("Item stored in db: %s" % item['link'])
 
@@ -203,6 +206,70 @@ class MySQLStorePipeline(object):
 				"content" : post['content']
 			})
 
+		elif spider.name == 'vg_get_products_by_brand_url_spider':
+			query = "SELECT * FROM products WHERE id_vatgia = %s"
+			self.cursor.execute(query, (item['id_vatgia']))
+			result = self.cursor.fetchone()
+
+			productId = 0;
+
+			if result:
+				productId = result['id']
+				logging.info("Item already stored in db: %s" % item['name'])
+			else:
+				if item['price'] > 0:
+					sql = "INSERT INTO products (id_vatgia, category_id, source_id, name, price, min_price, hash_name, brand_id, image, images, link,created_at, updated_at, announce_date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+					self.cursor.execute(sql, (item['id_vatgia'], item['category_id'], item['source_id'], item['name'].encode('utf-8'), item['price'], item['min_price'] ,item['hash_name'].encode('utf-8'), item['brand_id'], item['image'].encode('utf-8'), item['images'] , item['link'], item['created_at'], item['updated_at'], item['announce_date']))
+					self.conn.commit()
+					logging.info("Item stored in db: %s" % item['link'])
+
+					productId = self.cursor.lastrowid
+
+			if productId > 0:
+				item["id"] = productId
+
+				self.product.insertOrUpdate(productId, {
+				    'id' : productId,
+				    'name' : item['name'],
+				    'category_id': item['category_id'],
+				    'source_id' : item['source_id'],
+				    'brand_id' : item['brand_id'],
+				    'price': item['price'],
+				    'min_price': item['min_price']
+				})
+
+		elif spider.name == 'nhadat_spider':
+			query = "SELECT * FROM real_estate WHERE source_link = %s"
+			self.cursor.execute(query, (item['source_link']))
+			result = self.cursor.fetchone()
+
+			id = 0
+
+			if result:
+				id = result['id']
+			else:
+				query = "INSERT INTO real_estate(type, json_tags, title, placement, placement_text, all_keyword, teaser, content, image, images, characters, source, source_link, created_at, updated_at) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+				self.cursor.execute(query, (item['type'], item['json_tags'], item['title'], item['placement'], item['placement_text'], item['all_keyword'], item['teaser'], item['content'], item['image'], item['images'], item['characters'], item['source'], item['source_link'], item['created_at'], item['updated_at']))
+				self.conn.commit()
+				logging.info("Item stored in db: %s" % item['source_link'])
+
+				id = self.cursor.lastrowid
+
+				self.saveRealEstateImagesQueue(id, item['images_array'])
+
+			self.realEstate.insertOrUpdate(id, {
+			    'id' : id,
+			    'title' : item['title'],
+			    'all_keyword' : item['all_keyword'],
+			    'all_keyword_lower': item['all_keyword_lower'],
+			    'all_keyword_lower_no_accent' : item['all_keyword_lower_no_accent'],
+			    'teaser': item['teaser'],
+			    'content' : item['content'],
+			    'characters' : item['characters'],
+			    'source': item['source'],
+			    'source_link': item['source_link']
+			})
+
 		return item
 
 	def savePriceHistories(self, item):
@@ -256,7 +323,7 @@ class MySQLStorePipeline(object):
 
 			else:
 				sql = "INSERT INTO product_prices (title, price, source_id, link, created_at, updated_at, crawled_at) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-				self.cursor.execute(sql, (item['name'].encode('utf-8'), item['price'], item['source_id'], item['link'],  item['created_at'], item['updated_at'], crawled_at))
+				self.cursor.execute(sql, (item['title'].encode('utf-8'), item['price'], item['source_id'], item['link'],  item['created_at'], item['updated_at'], crawled_at))
 				self.conn.commit()
 				logging.info("Item stored in db: %s" % item['link'])
 
@@ -268,7 +335,11 @@ class MySQLStorePipeline(object):
 
 
 			# Insert to elasticsearch
-			self.price.insertOrUpdate(priceId, item.toJson())
+			item.pop('created_at', None)
+			item.pop('updated_at', None)
+			item.pop('crawled_at', None)
+
+			self.price.insertOrUpdate(priceId, item)
 
 			# Update price history
 			self.savePriceHistories(item)
@@ -302,6 +373,20 @@ class MySQLStorePipeline(object):
 			sql = "INSERT INTO merchant_rates(merchant_id, user_id, value) VALUES "
 			for i in range(0, randomStarCount):
 				sql += "('"+ str(merchant['id']) +"', '0', '"+ str(randint(1,4)) +"'),"
+
+			sql = sql[:len(sql)-1]
+
+			self.cursor.execute(sql)
+			self.conn.commit()
+
+	def saveRealEstateImagesQueue(self, id, images):
+		created_at = strftime("%Y-%m-%d %H:%M:%S")
+		updated_at  = strftime("%Y-%m-%d %H:%M:%S")
+
+		if len(images) > 0:
+			sql = "INSERT INTO real_estate_queue_images(post_id, image, created_at, updated_at) VALUES "
+			for img in images:
+				sql += "('"+ str(id) +"', '"+ img +"', '"+ created_at +"', '"+ updated_at +"'),"
 
 			sql = sql[:len(sql)-1]
 

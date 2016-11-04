@@ -13,7 +13,7 @@ class SohoaVnExpress_KinhNghiem_Spider(AbstractPostSpider):
     config_urls = [
         {
             "url" : "http://sohoa.vnexpress.net/tin-tuc/kinh-nghiem/page/[0-9]+.html",
-            "max_page" : 5
+            "max_page" : 15
         }
     ]
 

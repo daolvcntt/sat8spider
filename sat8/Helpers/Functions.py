@@ -1,4 +1,8 @@
+# -*- coding: utf-8 -*-
+
 from mimetypes import MimeTypes
+from urlparse import urlparse
+
 import urllib2
 import re
 import hashlib
@@ -8,6 +12,9 @@ from PIL import Image
 import urllib
 import os
 import imghdr
+import magic
+
+import logging
 
 def list_get(array, key, default = ''):
 	if key in array :
@@ -48,10 +55,15 @@ def replace_link(content):
     filter_content = re.sub('<a\s(.+?)>(.+?)</a>', '\\2', content, flags=re.MULTILINE)
     return filter_content
 
-def replace_image(content, newPath):
+def replace_image(content, newPath, schema = ''):
     images = re.findall('src="(.+?)"', content)
     for image in images:
-        content = re.sub(image, newPath +  sha1FileName(image), content)
+        if schema != '':
+            newImage = schema + image
+        else:
+            newImage = image
+
+        content = re.sub(image, newPath +  sha1FileName(newImage), content)
 
     return content
 
@@ -62,10 +74,27 @@ def getExtension(url):
     arrayUrl = url.split('.')
     ext = arrayUrl[len(arrayUrl)-1]
     ext = ext.lower();
-    if ext == 'jpg':
-        ext = 'jpeg';
 
-    return ext;
+    pathSaveTempImage = settings['IMAGES_STORE'] + '/full/temp.txt'
+
+    # Temp file
+    urllib.urlretrieve(url, pathSaveTempImage)
+
+    mm = magic.Magic(mime=True)
+    mime = mm.from_file(pathSaveTempImage)
+
+    if mime == 'image/gif':
+        return 'gif'
+    elif mime == 'image/jpeg':
+        return 'jpeg'
+    elif mime == 'image/png':
+        return 'png'
+    elif mime == 'image/bmp':
+        return 'bmp'
+    else:
+        logFile('mime', mime)
+        e = mime.split('/')
+        return e[1];
 
 def downloadImageFromUrl(url, createThumbs = 1):
     ext = getExtension(url);
@@ -77,37 +106,37 @@ def downloadImageFromUrl(url, createThumbs = 1):
 
     isFile = os.path.isfile(pathSaveImage)
 
-    if (isFile == True and imghdr.what(pathSaveImage) == None) or (isFile == False):
-        # urllib.urlretrieve(url, pathSaveImage)
+    # if (isFile == True and imghdr.what(pathSaveImage) == None) or (isFile == False):
+    urllib.urlretrieve(url, pathSaveImage)
 
-        hdr = {
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-            'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-            'Accept-Encoding': 'gzip, deflate, sdch',
-            'Accept-Language': 'en-US,en;q=0.8',
-            'Connection': 'keep-alive'
-        }
+    # hdr = {
+    #     'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36',
+    #     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    #     'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+    #     'Accept-Encoding': 'gzip, deflate, sdch',
+    #     'Accept-Language': 'en-US,en;q=0.8',
+    #     'Connection': 'keep-alive'
+    # }
 
-        imgRequest = urllib2.Request(url, headers=hdr)
-        imgData = urllib2.urlopen(imgRequest).read()
+    # imgRequest = urllib2.Request(url, headers=hdr)
+    # imgData = urllib2.urlopen(imgRequest).read()
 
-        f = open(pathSaveImage, 'w')
-        f.write(imgData)
-        f.close()
+    # f = open(pathSaveImage, 'w')
+    # f.write(imgData)
+    # f.close()
 
     # Resize image
     imageThumbs = settings['IMAGES_THUMBS']
 
-    if (os.path.isfile(pathSaveImageSmall) == True and imghdr.what(pathSaveImageSmall) == None) or (os.path.isfile(pathSaveImageSmall) == False):
-        im = Image.open(pathSaveImage)
-        im.thumbnail(imageThumbs["small"])
-        im.save(pathSaveImageSmall, ext);
+    # if (os.path.isfile(pathSaveImageSmall) == True and imghdr.what(pathSaveImageSmall) == None) or (os.path.isfile(pathSaveImageSmall) == False):
+    im = Image.open(pathSaveImage)
+    im.thumbnail(imageThumbs["small"])
+    im.save(pathSaveImageSmall, ext);
 
-    if (os.path.isfile(pathSaveImageBig) == True and imghdr.what(pathSaveImageBig) == None) or (os.path.isfile(pathSaveImageBig) == False):
-        im = Image.open(pathSaveImage)
-        im.thumbnail(imageThumbs["big"])
-        im.save(pathSaveImageBig, ext);
+    # if (os.path.isfile(pathSaveImageBig) == True and imghdr.what(pathSaveImageBig) == None) or (os.path.isfile(pathSaveImageBig) == False):
+    im = Image.open(pathSaveImage)
+    im.thumbnail(imageThumbs["big"])
+    im.save(pathSaveImageBig, ext);
 
     return {
         "full" : pathSaveImage,
@@ -132,3 +161,31 @@ def getUrlWithoutParams(url):
         return url[0:index]
 
     return url
+
+
+# Lấy id sản phẩm vg từ link
+def getVGProductId(link):
+    if 'record_id' in link:
+        parsed = urlparse(link)
+        record_id = urlparse.parse_qs(parsed.query)['record_id']
+        return int(record_id)
+
+    parsed = urlparse(link)
+    path = parsed.path
+    return int(path.split('/')[2])
+
+
+# Log file
+def logFile(filename, content):
+    # f = open(settings['LOG_PATH'] + filename + '.log', 'w')
+    # f.write(content)
+    # f.close()
+
+    filename = settings['LOG_PATH'] + filename + '.log'
+
+    print filename
+
+    logging.basicConfig(filename=filename,level=logging.INFO, format='%(asctime)s %(message)s')
+    logging.info(content)
+
+    return content

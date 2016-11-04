@@ -61,7 +61,7 @@ IMAGES_THUMBS = {
 	'small': (120, 120),
 	'big': (270, 270),
 }
-DOWNLOAD_DELAY = 0.5
+DOWNLOAD_DELAY = env.DOWNLOAD_DELAY
 
 # SQL DATABASE SETTING
 MYSQL_SERVER   = env.MYSQL_SERVER
@@ -110,3 +110,5 @@ DEFAULT_REQUEST_HEADERS = default_request_headers()
 APP_CONFIG = {
 	'default_request_headers' : default_request_headers()
 }
+
+LOG_PATH = env.LOG_PATH
