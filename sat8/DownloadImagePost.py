@@ -17,7 +17,7 @@ from Functions import getImageFromContent
 from Functions import makeGzFile
 
 from Helpers.Functions import *
-from Helpers.Google_Bucket import *
+# from Helpers.Google_Bucket import *
 
 bucket = 'static.giaca.org'
 
@@ -69,13 +69,13 @@ for post in posts:
                     makeGzFile(pathSaveImageSmall)
 
                     # Upload to google bucket
-                    google_bucket_upload_object(bucket, pathSaveImage, 'uploads/full/' + imageName)
-                    google_bucket_upload_object(bucket, pathSaveImageBig, 'uploads/thumbs/big/' + imageName)
-                    google_bucket_upload_object(bucket, pathSaveImageSmall, 'uploads/thumbs/small/' + imageName)
+                    # google_bucket_upload_object(bucket, pathSaveImage, 'uploads/full/' + imageName)
+                    # google_bucket_upload_object(bucket, pathSaveImageBig, 'uploads/thumbs/big/' + imageName)
+                    # google_bucket_upload_object(bucket, pathSaveImageSmall, 'uploads/thumbs/small/' + imageName)
 
-                    google_bucket_upload_object(bucket, pathSaveImage + '.gz', 'uploads/full/' + imageName + '.gz')
-                    google_bucket_upload_object(bucket, pathSaveImageBig + '.gz', 'uploads/thumbs/big/' + imageName + '.gz')
-                    google_bucket_upload_object(bucket, pathSaveImageSmall + '.gz', 'uploads/thumbs/small/' + imageName + '.gz')
+                    # google_bucket_upload_object(bucket, pathSaveImage + '.gz', 'uploads/full/' + imageName + '.gz')
+                    # google_bucket_upload_object(bucket, pathSaveImageBig + '.gz', 'uploads/thumbs/big/' + imageName + '.gz')
+                    # google_bucket_upload_object(bucket, pathSaveImageSmall + '.gz', 'uploads/thumbs/small/' + imageName + '.gz')
 
                 except IOError:
                     print("cannot create thumbnail for post ID: ", post['id'])

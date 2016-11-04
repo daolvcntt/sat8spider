@@ -122,6 +122,7 @@ class ProductSpiderV2(CrawlSpider):
         pil.add_value('is_laptop', linkItem['is_laptop'])
         pil.add_value('is_mobile', linkItem['is_mobile'])
         pil.add_value('is_tablet', linkItem['is_tablet'])
+        pil.add_value('type', linkItem['type'])
 
         product = pil.load_item()
 
@@ -162,6 +163,8 @@ class ProductSpiderV2(CrawlSpider):
         pil.add_value('is_mobile', linkItem['is_mobile'])
         pil.add_value('is_tablet', linkItem['is_tablet'])
         pil.add_value('is_camera', linkItem['is_camera'])
+        pil.add_value('type', linkItem['type'])
+        pil.add_value('category_id', linkItem['category_id'])
 
         # Ảnh chi tiết sản phẩm
         sel = Selector(response)
@@ -208,7 +211,7 @@ class ProductSpiderV2(CrawlSpider):
         conn = self.conn
         cursor = self.cursor
 
-        query = "SELECT sites.* FROM sites WHERE allow_crawl = 1"
+        query = "SELECT sites.* FROM sites WHERE allow_crawl = 1 AND id = 185"
 
         # Nếu env = testing thì thêm điều kiện testing
         if self.env == 'testing':
@@ -242,7 +245,10 @@ class ProductSpiderV2(CrawlSpider):
         else:
             print ''
 
-        yield product
+        if self.env == 'production':
+            yield product
+        else:
+            print product
 
     def parseJsonDetailContent(self, response):
         yield self.getProductJson(response)

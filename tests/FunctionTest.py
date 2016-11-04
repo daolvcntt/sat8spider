@@ -60,7 +60,7 @@ class FunctionTest(unittest.TestCase):
         imgLink = 'http://google.com/sexy.jpg'
         content = '<p><img src="'+ imgLink +'" /></p>'
 
-        expected = '<p><img src="http://static.giaca.org/uploads/full/' + hashlib.sha1(imgLink).hexdigest() + '.jpg" /></p>'
+        expected = '<p><img src="http://static.giaca.org/uploads/full/' + sha1FileName(imgLink) + '" /></p>'
         actual = replace_image(content, 'http://static.giaca.org/uploads/full/')
 
         self.assertEqual(expected, actual)
@@ -72,9 +72,9 @@ class FunctionTest(unittest.TestCase):
         self.assertEqual(expected, actual);
 
     def test_downloadImageFromUrl(self):
-        imgLink = 'http://cellphones.com.vn/media/catalog/product/cache/1/image/180x350/9df78eab33525d08d6e5fb8d27136e95/s/7/s7-edge-gold_1.png';
+        imgLink = 'http://file4.batdongsan.com.vn/resize/745x510/2016/10/17/20161017111534-4275.jpg';
         ext = getExtension(imgLink);
-        imageName = hashlib.sha1(imgLink).hexdigest() + '.' + ext;
+        imageName = sha1FileName(imgLink);
 
         pathSaveImage = settings['IMAGES_STORE'] + '/full/' + imageName
         pathSaveImageSmall = settings['IMAGES_STORE'] + '/thumbs/small/' + imageName
@@ -112,6 +112,18 @@ class FunctionTest(unittest.TestCase):
         expected = 'http://abc.com/1.jpg'
         actual = getUrlWithoutParams(url)
 
+        self.assertEqual(expected, actual)
+
+    def test_getVGProductId(self):
+        url = 'http://vatgia.com/438/2415665/apple-iphone-3g-s-3gs-8gb-black-b%E1%BA%A3n-qu%E1%BB%91c-t%E1%BA%BF-2012.html';
+        expected = 2415665
+        actual = getVGProductId(url)
+
+        self.assertEqual(expected, actual)
+
+    def test_logFile(self):
+        expected = 'ok'
+        actual = logFile('test', 'ok')
         self.assertEqual(expected, actual)
 
 

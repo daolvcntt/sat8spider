@@ -13,7 +13,7 @@ class SohoaVnExpress_ChuDe_Spider(AbstractPostSpider):
     config_urls = [
         {
             "url" : "http://sohoa.vnexpress.net/chu-de/page/[0-9]+.html",
-            "max_page" : 5
+            "max_page" : 15
         }
     ]
 

@@ -1,3 +1,4 @@
+
 from scrapy.conf import settings
 
 from elasticsearch import Elasticsearch
@@ -69,7 +70,7 @@ def indexPrices():
 
 def indexPosts():
 
-    queryPost = "SELECT * FROM posts"
+    queryPost = "SELECT id, title, teaser, content, link FROM posts"
     cursor.execute(queryPost)
     posts = cursor.fetchall()
 
@@ -161,3 +162,4 @@ def indexQuestions():
 runIndex()
 # except TransportError, e:
     # print e
+

@@ -33,6 +33,9 @@ class ProductItem(Item):
 	is_tablet = Field()
 	is_mobile = Field()
 	is_camera = Field()
+	type = Field()
+	category_id = Field()
+	announce_date = Field()
 
 	def toJson(self):
 		return {
@@ -41,6 +44,7 @@ class ProductItem(Item):
 			"price" : self.get("price", 0),
 			"hash_name" : self.get("hash_name", ""),
 			"source_id" : self.get("source_id", 0),
+			"category_id": self.get("category_id", 0),
 			"brand" : self.get("brand", ""),
 			"image" : self.get("image", ""),
 			"images" : self.get("images", ""),
@@ -84,6 +88,7 @@ class BlogItem(Item):
 	title = Field()
 	teaser = Field()
 	content = Field()
+	content_text = Field()
 	avatar = Field()
 	image_urls = Field()
 	category_id = Field()
@@ -112,8 +117,7 @@ class BlogItem(Item):
 			"user_id" : self.get("user_id", 0),
 			"created_at" : self.get("created_at", strftime("%Y-%m-%d %H:%M:%S")),
 			"updated_at" : self.get("updated_at", strftime("%Y-%m-%d %H:%M:%S")),
-			"category" : self.get("category", ""),
-			"post_type" : self.get("post_type", "post")
+			"category" : self.get("category", "")
 		}
 
 class VideoItem(Item):
@@ -210,6 +214,30 @@ class MerchantItem(Item):
 	rating_5_count = Field()
 	percent_rating_5 = Field()
 
+class RealEstateItem(Item):
+	id = Field()
+	title = Field()
+	type = Field()
+	slug = Field()
+	teaser = Field()
+	json_tags = Field()
+	placement = Field()
+	placement_text = Field()
+	all_keyword = Field()
+	all_keyword_lower = Field()
+	all_keyword_lower_no_accent = Field()
+	content = Field()
+	content_text = Field()
+	source = Field()
+	source_link = Field()
+	image = Field()
+	images = Field()
+	images_array = Field()
+	image_links = Field()
+	characters = Field()
+	created_at = Field()
+	updated_at = Field()
+
 
 class DpreviewItem(Item):
 	id = Field()
@@ -261,3 +289,7 @@ class DpreviewItemLoader(ItemLoader):
 	default_output_processor = TakeFirst()
 	name_in = MapCompose(unicode.strip)
 	announce_in = MapCompose(unicode.strip)
+
+class RealEstateItemLoader(ItemLoader):
+	default_output_processor = TakeFirst()
+	title_in = MapCompose(unicode.strip)
