@@ -27,7 +27,23 @@ from urlparse import urlparse
 rules = [
     {
         "url": "http://rongbay.com/Ha-Noi/Can-ho-chung-cu-Mua-Ban-nha-dat-c15-t5-trang@page@.html",
-        "max_page": 1
+        "max_page": 10
+    },
+    {
+        "url": "http://rongbay.com/Ha-Noi/Biet-thu-lien-ke-phan-lo-Mua-Ban-nha-dat-c15-t1-trang@page@.html",
+        "max_page": 10
+    },
+    {
+        "url": "http://rongbay.com/Ha-Noi/Nha-mat-pho-Mua-Ban-nha-dat-c15-t639-trang@page@.html",
+        "max_page": 10
+    },
+    {
+        "url": "http://rongbay.com/Ha-Noi/Cua-hang-mat-bang-Mua-Ban-nha-dat-c15-t2-trang@page@.html",
+        "max_page": 10
+    },
+    {
+        "url": "http://rongbay.com/Ha-Noi/Dat-o-Mua-Ban-nha-dat-c15-t626-trang@page@.html",
+        "max_page": 10
     }
 ]
 
