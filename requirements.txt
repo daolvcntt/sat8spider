@@ -1,0 +1,8 @@
+scrapy==1.3
+PyMySQL
+Pillow>=4.0
+filemagic>=1.6
+elasticsearch
+slugify
+html2text
+requests
