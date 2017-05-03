@@ -184,8 +184,12 @@ class ProductSpiderV2(CrawlSpider):
 
         parseUrlImage = urlparse(product['image'])
 
+        # Tạo link ảnh chuẩn http://xxx
         if parseUrlImage.scheme == '':
-            product['image'] = urljoin('http://' + parseUrlImage.netloc, parseUrlImage.path)
+            if parseUrlImage.netloc != '':
+                product['image'] = urljoin('http://' + parseUrlImage.netloc, parseUrlImage.path)
+            else:
+                product['image'] = urljoin('http://' + url_parts.netloc, parseUrlImage.path)
 
         image_urls.append(product['image'])
 
@@ -202,6 +206,9 @@ class ProductSpiderV2(CrawlSpider):
         product['min_price']  = price
         product['created_at'] = strftime("%Y-%m-%d %H:%M:%S")
         product['updated_at'] = strftime("%Y-%m-%d %H:%M:%S")
+
+        if 'spec' not in product:
+            product['spec'] = '';
 
         return product
 
