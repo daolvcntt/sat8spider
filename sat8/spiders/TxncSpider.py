@@ -12,7 +12,7 @@ class TxncSpider(ProductSpiderV2):
         cursor = self.cursor
 
         query = "SELECT sites.* FROM sites WHERE allow_crawl = 1 AND id IN(2492, 2494, 2497, 2501)"
-        #query = "SELECT sites.* FROM sites WHERE allow_crawl = 1 AND id IN(2498)"
+        #query = "SELECT sites.* FROM sites WHERE allow_crawl = 1 AND id IN(2501)"
         query = query + " AND sites.env_quick = 1";
 
         cursor.execute(query)
